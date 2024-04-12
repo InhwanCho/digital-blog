@@ -1,0 +1,134 @@
+---
+title:  '파이썬에서 OS모듈로 경로/폴더 생성'
+
+
+tags:
+  - python
+  - os
+  - path
+  - 경로
+  - sys
+  - 모듈
+
+date: 2022-12-12
+lastmod: 2022-12-29
+ 
+---
+
+## 현재 파일이 실행되고있는 경로를 파악하는 함수
+
+```python
+import os
+
+os.getcwd()
+
+# 또는 쉘명령어로 파악 가능
+#윈도우에서 확인할 경우
+!cwd 
+%cwd 
+#맥에서는
+!pwd
+%pwd
+```
+
+## 폴더를 생성하는 함수
+
+```python
+import os
+
+os.mkdir('folder_name')
+#만약 다중 폴더(폴더의 폴더)를 생성할 경우
+os.makedirs('./folder_name/folder_name/')
+
+#또는 쉘명령어로 생성 가능
+!mkdir folder_name
+%mkdir folder_name
+
+!mkdir folder_name/folder_name
+%mkdir folder_name/folder_name
+```
+
+## 응용하여 폴더가 없으면 폴더 생성하는 함수 생성
+
+```python
+import os
+
+PATH = './folder/folder/' 
+if not os.path.exists(PATH):
+    os.makedirs(PATH)
+```
+
+## 파일 실행 경로를 수정하기
+
+```python
+import os
+
+PATH = './folder/folder/' 
+
+os.chdir(PATH)
+#또는 쉘 명령어로
+!cd folder/folder/
+%cd folder/folder/
+```
+
+## 경로에 파일 리스트 확인
+
+```python
+import os
+#현재 경로
+os.listdir()
+
+#해당 경로
+PATH = './folder/folder/' 
+os.listdir(PATH)
+
+#또는 쉘 명령어로
+!ls
+%ls folder/folder/
+```
+
+## 파일/폴더 삭제
+
+```python
+import os
+#파일 삭제
+os.remove('./folder/test_file.txt')
+
+#폴더 삭제(빈 폴더만 삭제 가능)
+os.rmdir('./folder/test_folder')
+
+
+#폴더(빈 폴더가 아닌 폴더) 삭제를 원할 시
+import shutil
+
+shutil.rmtree('./folder/test_folder')#복구가 안되니 신중하게 실행하세요
+```
+
+## 파일 존재 유무 확인
+
+```python
+import os
+os.path.exists('./folder/test_file.txt')
+# True
+```
+
+## 경로 조작 및 파일 이름 변경
+
+```python
+#경로 생성
+import os
+print('출력 결과 :' + ' join(): ' + os.path.join('test_folder', 'test_file.txt'))
+# 출력 결과 : 'join(): test_folder/test_file.txt'
+
+os.rename(a,b) #a->b
+#이를 활용하여 폴더 내의 파일들의 이름을 변경할 수 있습니다.
+```
+
+## 파일 및 폴더 이동
+
+```python
+import shutil
+
+#디렉토리가 없으면 오류가 나며, 파일 이름 변경하여 사용하여도 기존의 파일은 없어지고 새로운 파일이 생성된 채 옮겨집니다(리눅스의 mv랑 유사)
+shutil.move('./test_folder/test.txt','./test_folder/test_folder2/test2.txt')
+```

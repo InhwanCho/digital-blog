@@ -1,0 +1,133 @@
+---
+title:  '파이토치로 nn모듈의 CNN사용하기'
+
+tags:
+- torch
+- pytorch
+- cnn
+- mnist
+
+date: 2022-12-12
+lastmod: 2022-12-12
+ 
+---
+
+## 파이토치로 CNN 모델 생성(fasion_mnist data)
+
+```python
+from torch.utils.data import Dataset, DataLoader
+import torchvision.transforms as transforms
+from torchvision import datasets
+import torch.nn as nn
+import torch.nn.functional as F
+import torch
+import torch.optim as optim
+
+#ToTensor() - 데이터를 tensor로 바꿔준다.
+#Normalize(mean, std, inplace=False) - 정규화한다.
+# Fasion-mnist 데이터 불러오기
+transform = transforms.Compose([transforms.ToTensor()])
+trainset = datasets.FashionMNIST(root='/content',
+                                 train=True, download=True,
+                                 transform = transform)
+testset = datasets.FashionMNIST(root='/content',
+                                 train=False, download=True,
+                                 transform = transform)
+
+#데이터로더로 데이터 정제
+train_loader = DataLoader(trainset, batch_size=64, shuffle=True, num_workers=2)
+test_loader = DataLoader(testset, batch_size=64, shuffle=False, num_workers=2)
+
+#반복문에서 사용할 수 있도록 iter로 만들기
+images, labels = next(iter(train_loader))
+images.shape, labels.shape #(torch.Size([64, 1, 28, 28]), torch.Size([64]))
+
+#nn.Module 클래스 상속(CNN 모델 만들기)
+class FashionCNN(nn.Module):
+    
+    def __init__(self):
+        super(FashionCNN, self).__init__()
+
+        #    ImgIn shape=(1, 28, 28, 1)
+        #    Conv     -> (1, 28, 28, 32)
+        #    Pool     -> (1, 14, 14, 32) 
+        self.layer1 = nn.Sequential(
+            nn.Conv2d(1,32,3, padding=1), #padding을 하여 이미지 크기 손실이 없음
+            nn.BatchNorm2d(32),
+            nn.ReLU(),
+            nn.MaxPool2d(2,2)
+        )
+
+        #    ImgIn shape=(1, 14, 14, 1)
+        #    Conv     -> (1, 12, 12, 64)
+        #    Pool     -> (1, 6, 6, 64)
+        self.layer2 = nn.Sequential(
+            nn.Conv2d(32,64,3), #padding옵션이 없어서 이미지 크기가 -2되었음(kenel size=3이기때문에)
+            nn.BatchNorm2d(64),
+            nn.ReLU(),
+            nn.MaxPool2d(2)
+        )
+        
+        self.fc1 = nn.Linear(64*6*6, 600) #layer2출력이 64, 이미지 사이즈가 6*6이기 때문에 1차원으로 표현하면 64*6*6
+        self.drop = nn.Dropout2d(0.25)
+        self.fc2 = nn.Linear(600, 120)
+        self.fc3 = nn.Linear(120, 10)
+        
+    def forward(self, x):
+        out = self.layer1(x)
+        out = self.layer2(out)
+        out = out.view(out.size(0), -1) #64*6*6(1차원으로 변경)
+        out = self.fc1(out)
+        out = self.drop(out)
+        out = self.fc2(out)
+        out = self.fc3(out)
+        
+        return out
+model = FashionCNN()
+
+#손실함수, 옵티마이저 정의
+criterion = nn.CrossEntropyLoss()
+optimizer = optim.SGD(model.parameters(), lr=0.001,momentum=0.9)
+
+#학습 (20epochs)
+for epoch in range(20):
+  running_loss = 0.0
+
+  for i, data in enumerate(train_loader, 0):
+    inputs , labels = data
+
+    optimizer.zero_grad()
+
+    outputs = model(inputs)
+    loss = criterion(outputs, labels)
+    loss.backward()
+    optimizer.step()
+
+    running_loss += loss.item()
+    #item() == tensor에 저장된 값만 가져옴(텐서에서 값만 가져옴)
+
+    if i % 100 == 99:
+      print('Epoch : {}, Iter : {}, Loss : {}'.format(epoch+1,i+1, running_loss/2000))
+      runngin_loss = 0.0
+
+#평가
+correct = 0
+total = 0
+with torch.no_grad():
+  for data in test_loader:
+    images, labels = data
+    outputs = model(images)
+    _, predicted = torch.max(outputs.data, 1)
+    total += labels.size(0)
+    correct += (predicted == labels).sum().item()
+
+print(100 * correct / total)
+#90.69
+
+#저장
+PATH = './fashion_mnist.pth'
+torch.save(model.state_dict(), PATH)
+#불러오기
+model = FashionCNN()
+model.load_state_dict(torch.load(PATH))
+```

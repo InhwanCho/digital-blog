@@ -1,0 +1,32 @@
+---
+title: 'CSS 가상 클래스(Pseudo-classes)'
+
+tags:
+  - css
+  - must-know
+summary: 'CSS에서 사용되는 수도 클래스에 대해 알아보겠습니다.'
+date: 2024-03-11
+---
+
+CSS의 가상 클래스(Pseudo-classes)는 선택자에 특별한 상태를 정의할 때 사용합니다.
+
+가상 클래스를 이용하면 요소가 특정 상태에 있을 때 스타일을 적용할 수 있습니다.
+
+자주 사용되는 CSS 가상 클래스의 종류와 예시를 표로 정리한 것입니다
+
+| 가상 클래스     | 설명                                                            | 예시                                          |
+| --------------- | --------------------------------------------------------------- | --------------------------------------------- |
+| :hover          | 사용자 마우스가 요소 위에 있을 때 적용                          | `a:hover { color: red; }`                     |
+| :focus          | 요소가 포커스를 받았을 때 (예: 입력 필드에 커서가 있을 때) 적용 | `input:focus { border: 2px solid blue; }`     |
+| :active         | 요소가 활성화됐을 때 (예: 버튼을 클릭하는 순간) 적용            | `button:active { background-color: yellow; }` |
+| :visited        | 링크를 방문한 후 적용                                           | `a:visited { color: purple; }`                |
+| :first-child    | 형제 요소 중 첫 번째 요소에 적용                                | `p:first-child { font-weight: bold; }`        |
+| :last-child     | 형제 요소 중 마지막 요소에 적용                                 | `p:last-child { color: green; }`              |
+| :nth-child(n)   | 형제 요소 중 n번째 요소에 적용                                  | `p:nth-child(2) { color: orange; }`           |
+| :nth-of-type(n) | 동일한 타입의 형제 요소 중 n번째 요소에 적용                    | `div:nth-of-type(odd) { background: #eee; }`  |
+| :not(selector)  | 주어진 선택자가 아닌 요소에 적용                                | `:not(p) { color: red; }`                     |
+| :checked        | 체크박스나 라디오 버튼이 체크되었을 때 적용                     | `input:checked { height: 50px; }`             |
+| :disabled       | 비활성화된 폼 요소에 적용                                       | `input:disabled { background: #ccc; }`        |
+| :empty          | 내용이 비어 있는 요소에 적용                                    | `p:empty { display: none; }`                  |
+| :root           | 문서의 루트 요소에 적용                                         | `:root { --main-color: green; }`              |
+

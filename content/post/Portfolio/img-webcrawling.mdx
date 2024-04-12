@@ -1,0 +1,102 @@
+---
+title:  '파이썬 미니프로젝트 part 1'
+
+tags:
+  - project
+  - portfoilo
+
+date: 2022-12-19
+lastmod: 2022-12-23
+ 
+---
+
+## google image save using Chrome driver
+
+1. 구글 이미지를 웹크롤링을 이용하여 이미지 저장 후
+2. 이미지 분류 모델(Swin Transformer모델을 이용한 파인 튜닝) 
+3. `모델 불러오기 + 구글 이미지를 분류 & 삭제(+정렬)`
+
+```python
+import time
+import urllib.request
+from urllib.request import urlopen, urlparse, urlunparse, urlretrieve
+from selenium import webdriver
+from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.common.by import By
+import os
+import pandas as pd
+from tqdm.notebook import tqdm
+
+chrome_path ='../Desktop/chromedriver'      #크롬드라이버 경로(각자 환경에 맞춰 수정)
+
+chrome_options = webdriver.ChromeOptions()
+chrome_options.add_argument("lang=ko_KR") # 한국어
+chrome_options.add_argument('window-size=1920x1080') #윈도우 창크기를 키움
+
+
+def selenium_scroll_option():
+    # 스크롤 높이 가져옴
+    last_height = driver.execute_script('return document.body.scrollHeight')
+    while True:
+        # 끝까지 스크롤 다운
+        driver.execute_script('window.scrollTo(0, document.body.scrollHeight);')
+        time.sleep(3)
+        # 스크롤 다운 후 스크롤 높이 다시 가져옴
+        new_height = driver.execute_script('return document.body.scrollHeight')
+
+        if new_height == last_height:
+            break
+        last_height = new_height
+```
+
+```python
+# 키워드 검색하기
+keyword = input("검색할 키워드를 입력 : ")
+image_name = input("저장할 이미지(+폴더) 이름 : ")
+#폴더가 없으면 폴더 생성
+if not os.path.exists(f'./{image_name}'):
+    print(f'create directory ... {image_name}')
+    os.mkdir(f'./{image_name}')
+driver = webdriver.Chrome(chrome_path)
+driver.get('http://www.google.co.kr/imghp?hl=ko')
+browser = driver.find_element(By.CSS_SELECTOR, 'body > div.L3eUgb > div.o3j99.ikrT4e.om7nvf > form 
+                              > div:nth-child(1) > div.A8SBwf > div.RNNXgb > div > div.a4bIc > input' )
+browser.click()
+browser.send_keys(keyword)
+browser.send_keys(Keys.RETURN)
+
+
+
+###### 이 부분의 bb함수 부분은 '검색 결과 더보기'버튼을 누르는 함수인데 버전마다 차이가 있으니 수정해서 사용해야됩니다. 본인은 mac/ 4.6.0 사용
+selenium_scroll_option() # 스크롤하여 이미지를 많이 확보
+bb = driver.find_element(By.CSS_SELECTOR, '#islmp > div > div > div > div > div.gBPM8 > div.qvfT1 > div.YstHxe > input')
+bb.click() # 이미지 더보기 클릭
+selenium_scroll_option()
+
+
+
+#이미지 src요소를 리스트업해서 이미지 url 저장
+images = driver.find_elements(By.CSS_SELECTOR, ".rg_i.Q4LuWd") # 클래스 네임에서 공백은 .을 찍어줌
+
+images_url = []
+for i in images: 
+
+    if i.get_attribute('src')!= None :
+        images_url.append(i.get_attribute('src'))
+    else :
+        images_url.append(i.get_attribute('data-src'))
+# driver.close()
+
+
+# 겹치는 이미지 url 제거
+print("전체 다운로드한 이미지 개수: {}\n동일한 이미지를 제거한 이미지 개수: {}".format(len(images_url), len(pd.DataFrame(images_url)[0].unique())))
+images_url=pd.DataFrame(images_url)[0].unique()
+
+
+# 이미지 저장
+# 저장되는 규칙은 folder_name(경로)/이미지 이름(크롤링 시 폴더 생성 input 이름)_번호.jpg
+folder_name = (f'./{image_name}/')
+for i, url in enumerate(tqdm(images_url), 0): 
+    urlretrieve(url, folder_name + image_name + '_' + str(i) + '.jpg')
+driver.close()
+```

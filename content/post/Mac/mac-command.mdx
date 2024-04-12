@@ -1,0 +1,119 @@
+---
+title:  'Terminal 주요 단축키'
+
+
+tags:
+  - terminal
+  - 단축키
+  - 명령어
+  - shell
+  - 터미널
+
+date: 2022-11-22
+lastmod: 2022-12-14
+ 
+---
+
+## 맥북 terminal 명령어
+
+- 현재 디렉토리 확인
+
+>`pwd`  
+/Users/inhwan/
+
+- 현재 디렉토리 파일리스트 보기 ls, 숨김 파일까지 확인 할 경우 ls -la
+
+>`ls`  
+LICENSE      _config.yml  
+>`ls -la`  
+-rw-r--r--   1 inhwan  staff   227 11 19 09:40 .editorconfig  
+drwxr-xr-x  15 inhwan  staff   480 11 21 23:02 .git
+
+- 디렉토리(폴더) 이동 cd
+
+>`cd`  
+/Users/inhwan/ - 으로 이동됨(기본 디렉토리)  
+`cd Music`  
+~/Music -으로 폴더 이동  
+`cd ..`
+/Users/inhwan/ - 전 폴더로 이동함
+
+- 디렉토리(폴더) 생성
+
+>`mkdir test_folder`  
+`touch test_folder/` - 위와 동일  
+test_folder가 현위치(pwd)에 생성
+
+- 파일 생성
+
+>`touch test_file.md`  
+>`touch test_folder/test_file.txt` - 이런 방식으로 사용가능
+
+- 디렉토리(폴더) 및 파일 삭제
+
+>`rmdir test_folder` - 빈 폴더만 삭제 가능  
+`rm -R test_folder`  - 빈 폴더 및 파일 강제 삭제
+`rm -rf test_folder` - 위와 강제 동일  
+`rm test_file.md` - 파일 삭제  
+
+- 디렉토리(폴더) 및 파일 이동
+
+> `mv test_file.md test_folder/`
+
+- 디렉토리(폴더) 및 파일 이름 변경
+
+> `mv test_file.md test_folder/test_rename.md`  
+`mv test_folder/ test_folder_rename`
+
+- 파일 열기
+
+> `open test_file.md`  
+`open test_folder/test_rename.md`
+
+- 파일 복사
+
+>`cp test_file.md new_file.md`
+
+- 명령어 입력 기록 확인
+
+>`history`  
+ 2645  ls  
+ 2646  cd Music  
+ 2647  cd
+
+- 파일 내용 확인
+
+>`cat test_file.md`
+
+- 파일 내용 수정(텍스트 에디터)
+
+>`vim test_file.txt`  
+`nano test_file.txt`  
+이것들에 대해서는 따로 포스팅을 하였으며 참고.<br/>
+(생각보다 초기에 접근이 쉽지 않음)
+
+- 디렉토리(폴더) 및 파일 위치 찾기
+
+>`which python`  
+/opt/anaconda3/bin/python
+
+- 파일 위치 찾기
+
+>`find .(현재 디렉토리) -type f -name 'test_1.text'`  
+만약 정확한 파일 이름을 모르면 *(와일드카드) 사용 가능  
+ex
+`find . -type f -name 'test*'`
+
+- 터미널 화면 초기화
+
+>`clear`  
+혹은 `command + 'k'` 입력
+
+- 터미널에서 작성 중인 글 지우기
+
+>`control + 'U'` 입력
+
+- 관리자 권한으로 실행(sudo)
+
+>`sudo apt-get update`
+

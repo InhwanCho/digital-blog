@@ -1,0 +1,285 @@
+---
+title:  'Github commands'
+
+tags:
+  - git
+
+date: 2022-12-11
+lastmod: 2022-12-11
+---
+
+## Github 연결
+
+- 맥 OS에는 기본적으로 git이 설치되어있습니다.
+  
+```shell
+$git --version
+# 이 명령어를 수행하면 버전이 나온다면 git이 설치가 되어있는 겁니다.
+# git version 2.37.1 (Apple Git-137.1)
+```
+
+## Github이랑 컴퓨터랑 연동(처음 등록할 경우) 및 기본 명령어
+
+- 일단 깃허브에 `+` 를 눌러서 repo를 생성하고 다음과 같이 진행하면 됩니다.
+
+`요약하면 아래와 같습니다.`
+  
+```shell
+#-------------------------------------
+# .git이라는 숨김 폴더를 생성
+$git init
+
+# https뒤에는 자기 repo.git을 입력
+# .git폴더가 생성된 폴더와 깃허브 repo를 연결
+$git remote add origin https://github.com/InhwanCho/hexo_blog_backup.git 
+
+# 추가할 파일을 입력 '.' 또는 '-A'는 모든 파일을 의미
+$git add .
+
+# 깃허브 repo에 올릴때의 메시지
+$git commit -m 'write some message'
+
+# 깃허브에 최종적으로 올림
+# 처음에는 --set-upstream을 입력해야만 하지만, 추후에는 'git push'만 입력해도 됩니다
+# 만약 기존의 데이터에 강제로 덮어 씌우려면 --force를 넣으면 됩니다.
+$git push --set-upstream origin main 
+#-------------------------------------
+
+# (명령어 확인(메뉴얼 호출)) - 명령어 궁금하면 입력
+$git --help
+# 나가려면 q누르면 됩니다
+```
+
+### git config (컴퓨터에 깃허브 아이디,이메일,페스워드(토큰)을 등록하는 명령어)
+
+```shell
+$git config --global user.name YOUR_NAME
+$git config --global user.email YOUR_EMAIL
+$git config --global user.password YOUR_TOKEN
+
+# 유저,이메일,토큰을 등록한 이후 등록이 잘 되었는지 확인(화면 나가려면 q누르기)
+$git config --list  
+```
+
+### git init (컴퓨터에 github repo를 연결하는 명령어)(git clone으로 할 경우 이 명령어를 사용할 필요 없음)
+
+- 깃에 연결할 폴더에 cd 명령어로 이동 후, 해당 명령어 실행 시 .git파일 생성(숨김 파일)
+- 동시에 깃명령어 수행하는 폴더로 변경(iterm2를 사용할 경우(커스터마이징) 브런치네임이 나옴)
+
+```shell
+$git init
+$git remote add origin https://github.com/InhwanCho/Study.git
+# 깃이랑 폴더를 연결
+# 파일 처음 커밋하려면 푸시 안됨 이거 먼저 해줘야 합니다
+```
+
+### git clone (보통 url.git)
+
+- git clone ../StudyforGit(repository name)
+- 상대방, 혹은 자신의 깃에 연결하여 `다운`
+- 폴더나 url에 연결 url에 보통 연결
+
+```shell
+#맨 뒤에 보통 .git을 붙여줘야 한다.
+$git clone https://github.com/InhwanCho/Study.git
+```
+
+### git status
+
+- 파일 수정 후 상태 확인 창.(확인 할 필요는 없지만 초반에는 도움이 많이 되는 명령어)
+  
+```shell
+$git status
+```
+
+### git add 'filename' or . or '-A'
+
+- 파일 수정 후 페이지에 변경할 파일명 등록. '.'이나 '-A'입력 시 폴더 전체를 등록
+  
+```shell
+$git add .
+$git add -A
+
+# 만약 하나씩 등록을 원할 경우
+$git add test.text
+```
+
+### git commit -m 'message'
+
+```shell
+# add한 파일들을 홈페이지에 올림.
+$git commit -m 'this is a test message'
+```
+
+### git push
+
+```shell
+# commit한 파일을 홈페이지에 확정으로 올림.
+$git push
+
+# 파일이 처음 생성된 경우(깃허브 자체 연동 처음한 경우)
+$git push origin master
+# 위의 명령어로 실행해야 함(이후에는 git push만 하여도 작동)
+```
+
+### git pull
+
+```shell
+# 홈페이지에서 수정된 정보를 디렉토리와 비교해서 업데이트(혼자 작업할때는 거의 사용 안함)
+$git pull
+```
+
+### 변경 로그 확인(log, diff)
+
+```shell
+$git log #전체 로그 출력
+$git log --oneline -n 3 #3개만 출력을 원할 경우
+
+# 파일 수정 후 변경된 부분을 표시하는 명령어(나오려면 q)
+$git diff
+```
+
+### add된 명령 취소하기(커밋 전)
+
+```shell
+$git reset HEAD^
+```
+
+### git revert(push된 명령 취소하기)(로그 남음)
+
+```shell
+#log에서 커밋된 로그(ex.abdc0123abdc0123)를 되돌리기
+$git log --oneline -n 3 #3개의 로그 출력
+
+
+$git reset --hard abdc0123abdc0123
+# -> 
+git revert abdc0123abdc0123 --no-edit 
+# ->
+$git push
+```
+
+### git reset(push된 명령 취소하기)
+
+- revert랑 유사하지만 reset은 로그를 남기지 않기때문에 revert가 보다 유용함
+
+```shell
+$git reset --hard abdc0123abdc0123 
+#->
+$git reset abdc0123abdc0123 --no-edit
+#->
+$git push --force
+```
+
+### revert한것을 다시 되돌리고 싶을 경우
+
+```shell
+# revert한 로그를 다시 revert하기 (1으로 머지)
+$git revert -m 1 abcd0321abcd0321
+```
+
+## branch 사용하기
+
+### branch 리스트 확인
+
+```shell
+# 현재 연결된 브렌치를 확인 *로 표시됨.
+$git branch -a
+```
+
+### branch 생성 및 선택
+
+```shell
+# 생성(작업 후 add, commit까진 작업이 동일함) 
+# 다만, push를 git push 'branch name'으로 해야함
+$git branch test_branch_name
+
+#git 2.23버전 부터 git checkout을 대신하여 switch와 restore가 나오게 되었다.
+
+#checkout의 기능이 너무 많아 분리하였다고 볼 수 있다.
+ - checkout: Switch branches or restore working tree files
+ - switch: Switch branches
+ - restore: Restore working tree files
+# 선택
+$git checkout test_branch_name
+$git switch test_branch_name
+$git restore test_branch_name
+```
+
+### 새로운 branch로 푸쉬하기
+
+```shell
+$git push --set-upstream origin test_branch_name
+#또는
+$git push -u origin test_branch_name
+
+#1회만 해주면 다음부터는 그냥 push로 진행 가능
+```
+
+### branch 끼리 푸쉬된 항목 합치기
+
+```shell
+#다시 메인 업스트림 branch로 이동(보통 main)
+$git checkout main
+
+#병합
+$git merge test_branch_name
+$git add .
+$git commit -m 'we have just merged the branch'
+$git push
+```
+
+### branch 삭제
+
+```shell
+# (merge안하고 하면 경고뜸. 무시해도 됨)
+$git branch -d test_branch_name
+
+# branch를 메모리에서 완전히 제거
+$git push origin --delete test_branch_name
+```
+
+### 토큰 만료
+
+> fatal authentication failed for github
+
+깃허브가서 토큰 발급 -> 저장
+
+- Mac 사용자면, key chain(키체인) -> 왼쪽의 `로그인` 클릭 -> `github` 검색 -> 전체 삭제
+
+```shell
+#기존 등록된 로그인 정보 지우기
+$git config --system --unset credential.helper
+
+#다시 아이디, 비밀번호 등록
+$git config --global user.name InhwanCho
+$git config --global user.email asdf@naver.com
+$git config --global user.password ghp_adfsfd붙어넣기sdfsdf
+```
+
+
+
+
+## 깃허브의 특정 폴더 및 파일만 다운 받고 싶을때
+
+아래 링크에서(깃허브 공식) 특정 주소를 입력하면 특정 파일 및 폴더만 다운 받을 수 있습니다.
+또한, 링크를 생성할 수 있습니다.
+<br/>
+
+[다운 깃](https://minhaskamal.github.io/DownGit/#/home '다운깃')
+
+---
+
+## github의 특정 version을 커밋하고 싶은 경우
+
+```bash
+$git clone https://github.com/aaaaa.git
+
+$cd aaaaa
+
+# 커밋 넘버 확인하기 - 선택
+# $git log  
+
+# 커밋 넘버 입력하여 버전 되돌리기 - 커밋 넘버를 전부 칠 필요는 없음.
+$git reset --hard 72d39edd 
+```

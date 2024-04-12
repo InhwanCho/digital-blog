@@ -1,0 +1,98 @@
+---
+title: 'Javascript에서 URL 객체 및 URLSearchParams 사용 방법'
+
+tags:
+  - url
+  - urlsearchparams
+  - javascript
+
+summary: '자바스크립트에서 URL 객체를 통해 URL을 조작하고 정보를 추출하는 방법과 URLSearchParams의 사용 방법을 알아보겠습니다.'
+date: 2024-03-11
+---
+
+URL은 여러 구성 요소로 나뉘며, 이들 각각은 자원에 접근하는 데 필요한 정보를 제공합니다.
+
+또한, 현대의 웹 개발에서는 JavaScript의 URL 객체를 통해 URL을 조작하고 정보를 추출하는 방법이 자주 사용됩니다.
+
+## URL 구성 요소
+
+| 구성 요소   | 예시            | 설명                                                    |
+| ----------- | --------------- | ------------------------------------------------------- |
+| 프로토콜    | https:          | 리소스에 접근하기 위한 프로토콜 (예: http, https, ftp)  |
+| 호스트 이름 | www.example.com | 서버의 도메인 이름 또는 IP 주소                         |
+| 포트 번호   | :8080           | 서버의 포트 번호 (생략 가능, 예: http의 기본 포트는 80) |
+| 경로        | /path           | 리소스의 경로                                           |
+| 쿼리 스트링 | ?key=value      | 리소스에 전달할 추가 파라미터                           |
+| 프래그먼트  | #section1       | 페이지 내의 특정 부분을 가리키는 앵커                   |
+
+## JavaScript URL 객체 사용 방법 및 속성
+
+위의 URL의 구성 요소를 기반으로 URL 객체 속성 조작은 아래와 같이 가능합니다.
+
+```javascript
+const myUrl = new URL('https://www.example.com/path')
+
+// 경로 변경
+myUrl.pathname = '/new/path'
+
+// 쿼리 스트링 추가
+myUrl.searchParams.append('key', 'value')
+
+// 프래그먼트 추가
+myUrl.hash = 'newSection'
+
+console.log(myUrl.href)
+// "https://www.example.com/new/path?key=value#newSection"
+```
+
+---
+
+## URLSearchParams
+
+URLSearchParams 객체는 쿼리 문자열을 인자로 받아 생성할 수 있습니다. 
+
+문자열은 ?로 시작할 수도 있고, 그렇지 않을 수도 있습니다.
+
+```javascript
+const params = new URLSearchParams('key1=value1&key2=value2')
+// 또는
+const url = new URL('https://example.com?name=value')
+const params = new URLSearchParams(url.search)
+```
+
+## 주요 메서드 및 속성
+
+| 메서드 / 속성        | 설명                                                                                          |
+| -------------------- | --------------------------------------------------------------------------------------------- |
+| .append(name, value) | 주어진 키와 값을 쿼리 문자열에 추가합니다. 동일한 키가 존재해도 새로운 값이 추가됩니다.       |
+| .delete(name)        | 주어진 키에 해당하는 모든 쌍을 쿼리 문자열에서 삭제합니다.                                    |
+| .get(name)           | 주어진 키에 해당하는 첫 번째 값을 반환합니다. 키가 존재하지 않으면 null을 반환합니다.         |
+| .getAll(name)        | 주어진 키에 해당하는 모든 값을 배열로 반환합니다.                                             |
+| .has(name)           | 쿼리 문자열에 주어진 키가 존재하면 true, 그렇지 않으면 false를 반환합니다.                    |
+| .set(name, value)    | 주어진 키의 값을 새 값으로 설정합니다. 기존에 키가 존재한다면 해당 값은 대체됩니다.           |
+| .toString()          | 쿼리 문자열의 직렬화된 형태를 문자열로 반환합니다. 이 문자열은 URL에 직접 사용할 수 있습니다. |
+
+```javascript
+// 빈 URLSearchParams 생성
+const params = new URLSearchParams();
+
+// 쿼리에 키-값 쌍 추가
+params.append("key1", "value1");
+params.append("key2", "value2");
+
+console.log(params.toString()); // "key1=value1&key2=value2"
+
+// 특정 키의 값 가져오기
+console.log(params.get("key1")); // "value1"
+
+// 특정 키가 존재하는지 확인
+console.log(params.has("key2")); // true
+
+// 특정 키의 값을 설정 (기존 값이 있다면 대체됨)
+params.set("key2", "newValue");
+
+// 특정 키 삭제
+params.delete("key1");
+
+console.log(params.toString()); // "key2=newValue"
+```

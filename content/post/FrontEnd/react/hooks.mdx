@@ -1,0 +1,125 @@
+---
+title: 'React Hooks'
+
+tags:
+  - react
+
+date: 2023-12-30
+---
+
+## 참조
+
+[리엑트 공식문서 - 한국어](https://ko.legacy.reactjs.org/docs/getting-started.html '리엑트공홈')<br/>
+[유튜브 별코딩](https://www.youtube.com/watch?v=oqUgcxwrnSY&ab_channel=%EB%B3%84%EC%BD%94%EB%94%A9 '유튜브')
+
+## useRef
+
+useState는 값이 변경 될 시 해당 Component가 Rendering이 됩니다.
+
+하지만, useRef로 사용 시, 랜더링이 되지 않습니다.
+즉 useRef의 값이 실제로는 변경이 되도 랜더링이 되지 않기에 화면에서는 변화가 없으나,
+state가 변경하거나 랜더링이 일어나면 useRef의 변화를 확인 할 수 있습니다.
+
+일반적인 변수는 변수값의 변화되어도 재랜더링이 되면 값이 초기화되는 반면, ref의 값는 초기화되지 않습니다.
+
+```js
+const testRef = useRef(22);
+console.log(testRef.current)
+// 22의 값을 가지고 있습니다
+// 초기값은 key - current에 있습니다.
+```
+
+이를 활용하여 input tag에 focus 설정을 하고 저장할 수 있습니다.
+
+```
+const inputRef = useRef();
+
+useEffect(()=>{
+  inputRef.current.focus(); //첫 랜더링 시 포커스
+},[])
+
+const login=()=>{
+  console.log(inputRef.current.value) 
+  inputRef.current.focus() // 버튼 누른 후 다시 포커스
+}
+
+<div>
+  <input ref={inputRef} />
+  <button onClick={login}>button</button>
+</div>
+```
+
+## useContext
+
+React는 여러개의 Component로 이루어져있는데, Props를 이용하여 부모에서 자식으로 데이터를 전송이 가능합니다.
+
+하지만, 앱 사이즈가 커지면 전달해야할 데이터가 많고 복잡해지기 때문에, context를 이용해서 보다 쉽게 전달이 가능합니다.
+외부 라이브러리로는 Redux, Zustand 등이 있습니다.
+
+> 주의 - 컴포넌트를 재사용하기 어려워 질 수 있습니다. 
+
+```js:Context.js
+import { createContext } from 'react';
+
+export const TestContext = createContext(null);
+```
+
+```js:App.js
+import { TestContext } from '../Context.js';
+import Test from '../Test.js'
+const [isDark, setIsDark] = uesState(false);
+
+return (
+  <TestContext.Provider value={{isDark, setIsDark}}>
+    <Test />
+  </TestContext.Provider>
+)
+```
+
+```js:Test.js
+const data = useContext(TestContext);
+
+return (
+  <div>
+    <Page />
+  </div>
+)
+```
+
+```js:Page.js
+const { isDark } = useContext(TestContext);
+
+console.log(isDark) // false
+```
+
+## useMemo
+
+Memo = Memoization
+
+랜더링 -> Component 호출 -> 모든 내부 변수 초기화
+
+랜더링 -> Component 호출+(Memoization) -> 랜더링 Component 호출+(Memoization 재사용)
+
+useMemo는 첫 번째 인자로는 callback function, 두 번째 인자로는 배열(Array)을 받습니다.
+
+```js
+const value = useMemo(()=> {
+  return test();//반복 되는 함수를 저장
+}, []); //의존성 배열 지정
+```
+
+`useEffect에서는 객체(Object, function) 타입인 경우`, 
+랜더링 시 value 값이 아닌 `주소 값이 변하기 때문에 계속 실행`이 될 수 있는데, Object 타입을 useEffect를 사용할 경우 useMemo를 사용.
+
+단, 메모리에 값을 추가로 저장 하기때문에, 무분별하게 저장하면 비효율적입니다.
+
+## useCallback
+
+function 타입 또한 주소를 저장하기 때문에 function을 useEffect를 사용하는 경우,
+해당 function에 useCallback을 사용.
+
+```js
+const test = useCallback((num)=> {
+  return num + 1; 
+}, []); //의존성 배열 지정
+```

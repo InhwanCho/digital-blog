@@ -1,0 +1,152 @@
+---
+title:  '파이썬 에러 생성 및 처리 방법(assert, raise, try)'
+
+
+tags:
+  - python
+  - assert
+  - error
+  - raise
+  - try
+
+date: 2023-01-05
+lastmod: 2023-01-05
+ 
+---
+
+
+## Assert 사용 방법
+
+- 예외 처리(try, raise)함수와 달리 `assert`는 `가정 설명문` 입니다.
+- 즉, 어떤 조건이 True면 pass되고, 아니면 Error(오류)를 생성합니다.
+- 방법은 간단합니다. 
+- `assert (가정법), '에러 메시지 작성'`이렇게 작성하기면 됩니다.
+
+```python
+emd = 256
+heads =8
+head_dim = emd // heads
+
+assert (head_dim * heads == emd), 'embed size needs to be div by heads'
+print('hello')
+# 실행하면 (head_dim * heads == emd)이 True 때문에 아무 출력 결과가 없다.
+hello
+```
+
+```python
+# 앞의 값이 False라면
+assert (head_dim * heads == emd + 1), 'embed size needs to be div by heads'
+print('hello')
+
+      3 head_dim = emd // heads
+      4 
+----  5 assert (head_dim * heads == emd + 1), 'embed size needs to be div by heads'
+      6 
+
+AssertionError: embed size needs to be div by heads
+# 위와 같은 AssertionError가 생성된다.
+```
+
+## Raise 사용 방법
+
+- 일부러 에러를 발생시켜야 되는 경우가 있는데, 이때 사용하는게 assert와 raise
+- raise는 assert와 달리 실행만 되면 에러가 생성됩니다.
+
+```python
+# Exception으로 문구를 작성해도 되고 안해도 됩니다(옵션)
+raise Exception('hi')
+
+print('hello')
+# 결과-에러
+----  1 raise Exception('아무 에러 문구')
+      2 
+      3 print('hello')
+
+Exception: 아무 에러 문구
+
+```
+
+```python
+# 보통 이런식으로 조건문과 같이 사용합니다
+b = 1
+a = [1,2,3]
+
+if b not in a:
+    raise Exception('a에 없는 값이라서 에러 발생 시킬게요.')
+
+print('hello')
+# 출력 결과
+hello
+```
+
+```python
+b = 5
+a = [1,2,3]
+
+if b not in a:
+    raise Exception('a에 없는 값이라서 에러 발생 시킬게요.')
+
+print('hello')
+
+# 출력 결과
+      4 if b not in a:
+----  5     raise Exception('a에 없는 값이라서 에러 발생 시킬게요.')
+      6 
+      7 print('hello')
+
+Exception: a에 없는 값이라서 에러 발생 시킬게요.
+```
+
+## Try, Except 사용 방법
+
+- try는 에러가 발생하더라도 그냥 작업을 진행하게 만들고 싶을 때 많이 사용됩니다.
+- except뒤 에 발생되는 `[에러 이름]` 그 뒤에 처리를 어떻게 할지 사용
+- 에러가 나와도 그냥 pass를 원하면 `pass` 입력
+- 예시를 보면 바로 이해되실 겁니다.
+
+```python
+# 숫자 2개를 나눌때 나오는 에러 테스트입니다.
+try:
+    a, b = map(int,input('숫자 2개를 띄어쓰기를 사용해서 입력해주세요 : ').split())
+    print(a / b)
+
+except ZeroDivisionError:    # 숫자를 0으로 나눠서 에러가 발생했을 때 실행됨
+    print('숫자를 0으로 나눌 수 없습니다.')
+except ValueError as a:      # input값을 제대로 입력하지 않으면 실행
+    print('잘못된 입력입니다', a)
+    pass
+print('hi')
+# 결과
+숫자 2개를 띄어쓰기를 사용해서 입력해주세요 : 3 1
+3.0
+hi
+
+# 결과(zerodivision)
+숫자 2개를 띄어쓰기를 사용해서 입력해주세요 : 3 0
+숫자를 0으로 나눌 수 없습니다.
+
+# 결과(valueeroor)
+숫자 2개를 띄어쓰기를 사용해서 입력해주세요 : 3abd
+잘못된 입력입니다 invalid literal for int() with base 10: '3abd'
+hi
+```
+
+- 만약 어떤 에러인지 모르는 경우 테스트를하여 에러를 확인한다.
+  
+```python
+a, b = map(int,input('숫자 2개를 띄어쓰기를 사용해서 입력해주세요 : ').split())
+print(a / b)
+
+# '3 0'을 입력할 경우 'ZeroDivisionError'
+<ipython-input-65-a03c397788a2> in <module>
+      1 a, b = map(int,input('숫자 2개를 띄어쓰기를 사용해서 입력해주세요 : ').split())
+----  2 print(a / b)
+
+ZeroDivisionError: division by zero
+
+# '3abd'을 입력할 경우 'ValueError'
+----  1 a, b = map(int,input('숫자 2개를 띄어쓰기를 사용해서 입력해주세요 : ').split())
+      2 print(a / b)
+
+ValueError: invalid literal for int() with base 10: '3abd'
+```

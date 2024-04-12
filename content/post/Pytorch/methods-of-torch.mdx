@@ -1,0 +1,145 @@
+---
+title:  '파이토치 함수'
+
+
+tags:
+- torch
+- pytorch
+ 
+date: 2022-12-19
+lastmod: 2022-12-19
+ 
+---
+
+## ones(),zeros()
+
+```python
+import torch
+torch.zeros(4,4)
+# tensor([[0., 0., 0., 0.],
+#         [0., 0., 0., 0.],
+#         [0., 0., 0., 0.],
+#         [0., 0., 0., 0.]])
+tensor = torch.ones(4, 4)
+# tensor([[1., 1., 1., 1.],
+#         [1., 1., 1., 1.],
+#         [1., 1., 1., 1.],
+#         [1., 1., 1., 1.]])
+#슬라이싱도 가능
+tensor[:,1] = 0
+print(tensor)
+tensor([[1., 0., 1., 1.],
+        [1., 0., 1., 1.],
+        [1., 0., 1., 1.],
+        [1., 0., 1., 1.]])
+```
+
+## cat()
+
+- 판다스의 concat()함수와 마찬가지로 리스트로 만들어줘야한다.
+
+```python
+tensor = torch.ones(4, 4)
+tensor[:,1] = 0
+
+con_tensor = torch.cat([tensor, tensor, tensor], dim=1)
+print(con_tensor)
+# tensor([[1., 0., 1., 1., 1., 0., 1., 1., 1., 0., 1., 1.],
+#         [1., 0., 1., 1., 1., 0., 1., 1., 1., 0., 1., 1.],
+#         [1., 0., 1., 1., 1., 0., 1., 1., 1., 0., 1., 1.],
+#         [1., 0., 1., 1., 1., 0., 1., 1., 1., 0., 1., 1.]])
+```
+
+## argmax()
+
+- 최대값의 index를 찾아주는 함수
+
+```python
+import torch
+
+# dim 옵션이 없을 경우(default)
+a = torch.randn(3,3)
+argmax = torch.argmax(a)
+print(a)
+print(argmax)
+# tensor([[-0.0626, -1.4816, -0.6745],
+#         [-0.8330,  0.2181,  0.5294],
+#         [ 0.3596, -0.5217,  0.0292]])
+# tensor(5)
+
+#dim option을 줄 경우
+
+a = torch.randn(3, 3)
+argmax_dim_0 = torch.argmax(a, dim = 0)
+print(a)
+print(argmax_dim_0)
+# tensor([[ 2.1830,  0.1679, -0.7654],
+#         [-0.4077,  0.1342, -0.3766],
+#         [-0.9798,  1.2932, -0.4124]])
+# tensor([0, 2, 1])
+```
+
+
+## max()
+
+- 최대값을 출력해주는 함수
+
+```python
+a = torch.randn(3,3)
+justmax = torch.max(a)
+print(a)
+print(argmax)
+# tensor([[ 2.1830,  0.1679, -0.7654],
+#         [-0.4077,  0.1342, -0.3766],
+#         [-0.9798,  1.2932, -0.4124]])
+# tensor(2.1830)
+```
+
+
+## item()
+
+- item()은 값만을 가져오고 싶을 경우 사용한다.(scalars에서만 사용 가능)
+  
+```python
+tensor = torch.ones(4, 4)
+
+agg = tensor.sum()
+agg_item = agg.item()
+print(agg,agg_item, type(agg_item))
+# tensor(16.) 
+# 16.0 
+# <class 'float'>
+```
+
+
+
+## eval()
+
+- eval()은 보통 evaluation 과정 전에 사용되는 함수이다.
+- eval() 함수는 evaluation 과정에서 사용하지 않아야 하는 layer들을 알아서 off 시키도록 하는 함수이다.
+- evaluation/validation 과정에선 보통 model.eval()과 torch.no_grad()를 함께 사용한다고 한다.
+  
+```python
+model.eval()
+score = 0
+for i, (images, labels) in enumerate(val_loader):
+    images = images.to(device)
+    labels = labels.to(device)
+
+    g_labels = model(images)
+
+    score += int(torch.max(g_labels, 1)[1][0] == labels[0])
+
+```
+
+## numpy.clip() -CV에서 자주 사용됨
+
+```python
+numpy.clip(array, min, max)
+
+    array 내의 값들에 대해서
+
+    min 값 보다 작은 값들을 min값으로 바꿔주고
+
+    max 값 보다 큰 값들을 max값으로 바꿔주는 함수.
+```

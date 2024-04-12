@@ -1,0 +1,95 @@
+---
+title: 'Z-Index의 동작방식'
+
+tags:
+  - z-index
+  - must-know
+
+summary: css z-index 속성의 기본 원리와 사용 방법을 실제 예시와 함께 알아봅니다.
+date: 2024-03-09
+---
+
+`z-index`는 웹 페이지에서 요소의 쌓임 순서를 결정하는 CSS 속성입니다. 
+이 속성을 이해하는 것은 복잡한 레이아웃의 시각적 표현을 제어하는 데 매우 중요합니다.
+
+## z-index 기본 원리
+
+`z-index` 속성은 요소가 존재하는 3차원 공간에서의 z축(깊이) 위치를 결정합니다. 
+
+이 값은 정수로 표현되며, 값이 클수록 사용자에게 더 가까이 보입니다. 
+
+하지만, `z-index`는 `position` 속성이 `static`이 아닌 요소에만 적용됩니다. 
+
+즉, `relative`, `absolute`, `fixed`, 또는 `sticky` 위치를 가진 요소들입니다.
+
+- position이 relative/absolute이면서 z-index가 auto가 아닌 요소
+- position이 fixed/sticky인 요소
+- opacity가 1보다 작은 요소
+- transform이 none이 아닌 요소
+
+가장 간단한 예로, 두 요소가 겹쳤을 때 `z-index`를 어떻게 사용하는지 살펴보겠습니다.
+
+```html:html
+<div class="behind">I am behind</div>
+<div class="front">I am in front</div>
+```
+
+```css:style.css
+.behind {
+  position: absolute;
+  z-index: 1;
+}
+
+.front {
+  position: absolute;
+  z-index: 2;
+}
+```
+
+위 예제에서 `.front` 클래스를 가진 요소는 `.behind` 클래스를 가진 요소 위에 표시됩니다. 
+
+왜냐하면 `.front`의 `z-index` 값이 더 크기 때문입니다.
+
+## 쌓임 맥락(Stacking Context)
+
+`z-index`를 논할 때, 이해해야 할 중요한 개념이 하나 있습니다. 
+
+바로 쌓임 맥락(Stacking Context)입니다. 쌓임 맥락은 요소의 `z-index` 값이 적용되는 범위를 결정합니다. 
+
+새로운 쌓임 맥락은 다음과 같은 경우에 형성됩니다.
+
+- `position` 속성이 `static`이 아니고 `z-index` 값이 `auto`가 아닐 때
+- `position: fixed` 또는 `position: sticky`인 요소
+- 일부 CSS 속성(`opacity`, `transform`, `filter` 등)에 특정 값이 적용될 때
+
+새로운 쌓임 맥락이 형성되면, 그 내부에서의 `z-index` 값들은 외부 맥락과 독립적으로 평가됩니다. 
+
+따라서 부모 요소가 자식 요소보다 낮은 `z-index` 값을 가지더라도, 자식 요소들 사이의 `z-index` 값은 부모 요소와 관계없이 자식 요소들 사이에서만 평가됩니다.
+
+예를 들어봅시다.
+
+```html:html
+<div class="parent">
+  <div class="child1">I am the first child</div>
+  <div class="child2">I am the second child</div>
+</div>
+```
+
+```css:style.css
+.parent {
+  position: relative;
+  z-index: 1;
+}
+
+.child1 {
+  position: absolute;
+  z-index: 2;
+}
+
+.child2 {
+  position: absolute;
+  z-index: 3;
+}
+```
+
+여기서 `.child2`는 `.child1` 위에 표시됩니다. 모두 같은 쌓임 맥락(`.parent`) 내에서 `z-index` 값이 평가되기 때문입니다.

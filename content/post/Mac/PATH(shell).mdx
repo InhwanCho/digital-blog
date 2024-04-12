@@ -1,0 +1,67 @@
+---
+title:  '터미널에서 pip으로 설치한 파일이 열리지 않는 경우'
+
+
+tags:
+  - 터미널
+  - shell
+  - path
+  - 경로
+  - 수정
+  - pip
+  - install
+
+date: 2022-12-07
+lastmod: 2022-12-10
+ 
+---
+
+## Shell(터미널)에서 pip으로 설치한 파일이 열리지 않는 경우
+
+- 리눅스와 맥에서만 사용 가능합니다.
+
+1.주피터 노트북(랩)에서 해당 명령어를 실행 합니다.
+
+```python
+import sys
+
+sys.executable
+
+# 출력 결과 예시
+'/opt/homebrew/Cellar/jupyterlab/3.4.8/libexec/bin/python3.10'
+```
+
+> 이 결과가 `pip` 명령어로 설치(실행) 시의 경로입니다.
+
+2.터미널을 실행합니다.
+
+3.해당 명령어를 추가합니다.
+
+```shell
+bash사용자면     vim ~/.bashrc 
+zsh라면 zshrc   vim ~/.zshrc 
+```
+
+4.키보드 화살표 아래 버튼을 맨 아래 화면이 나올때까지 내린 후 `i`를 누르고 해당 명령어를 붙여줍니다.
+
+- 아래의 명령어는 주피터 노트북에서 나온 경로를 PATH로 설정하는겁니다.
+  
+```shell
+export PATH='/opt/homebrew/Cellar/jupyterlab/3.4.8/libexec/bin/python3.10:PATH'
+
+또는
+
+export PATH=/opt/homebrew/Cellar/jupyterlab/3.4.8/libexec/bin/python3.10:$PATH
+```
+
+5.작성 후`:`를 입력 후 `wq`를 입력하면 됩니다.
+
+- vim명령어를 통해 vim text editor를 사용하여 경로 설정을 해준겁니다. vim 에디터가 아닌 다른 에디터로(nano, code 등) 수정해주셔도 무방합니다.
+
+### 중복 경로를 제거하고 싶다면
+
+- 아래 명령어 실행
+  
+```shell
+PATH=$(echo -n $PATH | awk -v RS=: '!($0 in a) {a[$0]; printf("%s%s", length(a) > 1 ? ":" : "", $0)}')
+```

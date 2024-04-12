@@ -1,0 +1,129 @@
+---
+title: 'CSS에서 img 태그'
+
+tags:
+  - img
+  - must-know
+summary: 'img 태그 아래의 공백 제거 및 HTML img 태그를 활용하여 이미지의 위치와 크기를 조절하는 방법'
+date: 2024-03-09
+---
+
+## img 태그 아래의 공백 제거
+
+웹 페이지를 디자인 할 때 이미지 아래에 원치 않는 공백이 생기는 경우가 있습니다.
+
+이러한 문제는 보통 `img` 태그가 인라인 요소로 처리되기 때문에 발생합니다.
+
+즉, img 태그는 인라인-레벨 요소이기 때문에 기본적으로 일반 텍스트와 동일하게 baseline 기준으로 정렬이 되어 `vertical-align: baseline` 이 기본값입니다.
+
+이러한 공백을 제거하는 몇 가지 방법에 대해 알아보겠습니다.
+
+### 1. `display: block` 이용하기
+
+가장 간단하고 일반적인 방법은 `img` 태그에 `display: block` 스타일을 적용하는 것입니다.
+
+인라인 요소인 `img` 태그를 블록 레벨 요소로 변경함으로써 아래쪽 공백이 사라지게 됩니다.
+
+```css:styles.css
+img {
+  display: block;
+}
+```
+
+### 2. `font-size: 0`를 부모 요소에 적용하기
+
+만약 여러 개의 이미지가 부모 요소 안에 인라인으로 배치되어 있고 이 부모 요소의 `font-size` 때문에 공백이 발생하는 경우, 부모 요소에 `font-size: 0`을 적용하면 공백을 제거할 수 있습니다.
+
+```html:html
+<div class="image-wrapper">
+  <img src="example.jpg" alt="예시 이미지">
+</div>
+```
+
+```css:styles.css
+.image-wrapper {
+  font-size: 0;
+}
+```
+
+### 3. `vertical-align`을 이용한 방법
+
+`img` 태그에 `vertical-align: bottom` 또는 `vertical-align: middle`과 같은 스타일을 적용하면, 이미지와 텍스트 기준선 사이의 공간을 조정함으로써 아래쪽 공백을 제거할 수도 있습니다.
+
+```css:styles.css
+img {
+  vertical-align: bottom;
+}
+```
+
+### 비교 표
+
+| 방법                  | 설명                                                                            |
+| --------------------- | ------------------------------------------------------------------------------- |
+| `display: block` 적용 | `img` 태그를 블록 레벨 요소로 변경하여 아래쪽 공백 제거                         |
+| `font-size: 0` 적용   | 부모 요소의 `font-size`를 0으로 설정하여 자식 요소인 `img`태그의 아래 공백 제거 |
+| `vertical-align` 적용 | `img` 태그에 `vertical-align` 속성 적용으로 공백 제거                           |
+
+---
+
+## img 태그의 위치 및 사이즈 설정
+
+또한, `img` 태그를 사용하여 이미지의 위치와 크기를 조정하는 방법에 대해 알아보겠습니다.
+
+### 이미지 사이즈 조절
+
+먼저, `width`와 `height` 속성을 이용해 크기를 조절할 수 있습니다.
+
+```html:html
+<img src="beautiful-landscape.jpg" alt="멋진 풍경" width="500" height="300">
+```
+
+위 예시는 이미지의 너비를 500px, 높이를 300px로 설정한 것입니다. 
+
+이렇게 직접 값을 지정할 수도 있지만, CSS를 통해 조정하는 방법도 많이 사용됩니다.
+
+### CSS를 이용한 방법
+
+CSS를 활용하면 더 다양하고 세밀한 이미지 조절이 가능합니다.
+
+```css:styles.css
+.image-size {
+  width: 100%;
+  height: auto;
+}
+```
+
+```html:html
+<img src="beautiful-landscape.jpg" alt="멋진 풍경" class="image-size">
+```
+
+CSS에서 `width`를 100%로, `height`를 auto로 설정함으로써, 이미지가 부모 요소의 너비에 맞게 조절되면서 원본 비율을 유지할 수 있게 됩니다.
+
+### 이미지 위치 조정
+
+이미지의 위치를 조정할 때는 주로 CSS의 `position`, `top`, `right`, `bottom`, `left` 속성을 사용합니다. 
+
+예를 들어, 이미지를 화면 우측 하단에 배치하고 싶다면 다음과 같이 코드를 작성할 수 있습니다.
+
+```css:styles.css
+.image-position {
+  position: fixed;
+  bottom: 0;
+  right: 0;
+}
+```
+
+```html:html
+<img src="beautiful-landscape.jpg" alt="멋진 풍경" class="image-position">
+```
+
+이렇게 설정하면 이미지가 화면의 우측 하단에 고정되어 나타나게 됩니다. 
+
+## 정리
+
+| 속성        | 기능                                     |
+| ----------- | ---------------------------------------- |
+| width, height (HTML) | 이미지의 너비와 높이를 직접 지정합니다.       |
+| width, height (CSS)  | 이미지의 너비와 높이를 유동적으로 조절할 수 있습니다. 유지하면서 조절하려면 `height: auto;`를 사용합니다. |
+| position    | 이미지의 위치를 지정합니다. `fixed`, `absolute`, `relative`등을 사용할 수 있습니다. |
+

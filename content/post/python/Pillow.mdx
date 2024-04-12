@@ -1,0 +1,141 @@
+---
+title:  'Pillow(from PIL import Image)'
+
+
+tags:
+  - pillow
+  - pil
+  - image
+  - 이미지
+  - python
+
+date: 2022-12-18
+lastmod: 2022-12-18
+ 
+---
+
+## PIL 이미지 기본적 사용법
+
+```python
+#열기 방법1
+img = Image.open('test_file.jpg') 
+img.show()
+#열기 방법2
+from PIL import Image
+with Image.open("test_file.jpg") as im:
+    im.show()
+#정보 확인(가로, 세로, 사이즈)
+img.width, img.height, img.size
+
+#사이즈 변경
+image.resize((w, h))
+```
+
+## Thumbnail 파일 생성하기
+
+```python
+from PIL import Image
+import glob, os
+
+size = 128, 128
+#현재 폴더에서 jpg파일들을 썸네일로 만듬
+for infile in glob.glob("*.jpg"): 
+    file, ext = os.path.splitext(infile)
+    im = Image.open(infile)
+    im.thumbnail(size)
+    im.save(file + ".thumbnail", "JPEG")
+
+#이미지 열기 
+img = Image.open('test_file.thumbnail') 
+img.show()
+
+```
+
+## 이미지 겹치기(사이즈가 같아야함)
+
+```python
+# 이미지 합성1(겹치기)
+Image.alpha_composite(img_1, img_2)
+
+# 이미지 합성2(희미하게 만들어서 겹치기 - 새로운 이미지 생성)
+Image.blend(img_1, img_2, .1)
+```
+
+## 이미지 증식
+
+```python
+# 이미지 자르기 : 특정 영역을 오려낸 사본을 만든다. box는 (left, upper, right, lower)로 구성된 튜플이다.
+Image.crop(box=None)
+# ex) Image.crop((x, y, x+64, y+64)) #튜플형식으로 입력해야됨!
+
+# 이미지 붙여넣기
+# 다른 이미지를 이미지 내 특정 영역이나 위치에 붙여넣는다. mask를 써서 붙이는 이미지에 마스크를 적용할 수 있다. 마스크는 이미지 외에 투명도값을 줄 수 있다.
+image.paste(im, box=None, mask=None) 
+
+# 이미지 회전하기
+# 주어진 각도만큼 이미지를 회전한다. 각도는 도(degree)로 주어진다.
+image.rorate(angle, resample=0, expand=0, center=None, translate=None) 
+
+#이미지 회전
+image.transpose(Image.FL) #좌우 반전
+image.transpose(Image.FLIP_TOP_BOTTOM) #상하 반전
+image.transpose(Image.ROTATE_90) #90도 회전
+
+# 이미지 변형하기
+image.transform(size, method, data=None, resample=0, fill=1, fillcolor=None)
+
+# 이미지 필터(필터는 ImageFilter 모듈에 정의되어 있다.)
+from PIL import Image, ImageDraw, ImageFont, ImageFilter
+
+img = Image.open('cat_img.jpg').resize((300,300))
+d = ImageDraw.Draw(img)
+d.text((40, 10), 'this is BLUR', fill="Red") #위치 좌표는 튜플 타입으로 입력
+img = img.filter(ImageFilter.BLUR)
+img.save('BLUR.jpg','jpeg')
+img.show()
+```
+
+- 이미지 필터 종류
+
+|ImageFilter|사진|
+|:---:|:---:|
+|BLUR|![BLUR](https://user-images.githubusercontent.com/111936229/208271779-48e0a90e-2c93-47d9-97ea-5120bf5a075e.jpg)|
+|CONTOUR|![CONTOUR](https://user-images.githubusercontent.com/111936229/208271786-cdb09c15-8271-48d0-b832-78a41733bae7.jpg)|
+| DETAIL|![DETAIL](https://user-images.githubusercontent.com/111936229/208271795-fe43c4c6-c6a3-4ec5-877f-fad93a902cfe.jpg)|
+| EDGE_ENHANCE |![EDGE_ENHANCE](https://user-images.githubusercontent.com/111936229/208271797-992ebed3-a423-4b60-aefa-f3d680006dcc.jpg)|
+| EMBOSS|![EMBOSS](https://user-images.githubusercontent.com/111936229/208271821-aa74874b-c2c6-40b0-89b4-a0198628935e.jpg)|
+| FIND_EDGES|![FIND_EDGES](https://user-images.githubusercontent.com/111936229/208271814-ea6c1403-8e55-4bf8-8404-219983c4fe60.jpg)|
+| SHARPEN|![SHARPEN](https://user-images.githubusercontent.com/111936229/208271800-172cfa3d-67b9-4f00-9478-3b88536651b2.jpg)|
+| SMOOTH|![SMOOTH](https://user-images.githubusercontent.com/111936229/208271836-69cf97db-32e6-4b64-98ad-13c46660cfa7.jpg)|
+
+## 이미지 편집 시 필요한 함수들
+
+``` python
+# 밴드 얻기
+from PIL import Image
+im = Image.open("hopper.jpg")
+print(im.getbands())  # Returns ('R', 'G', 'B')
+
+# 바운딩 박스 얻기
+# 이미지에서 0이아닌 영역의 범위를 구함
+im = Image.open("hopper.jpg")
+print(im.getbbox())
+# Returns four coordinates in the format (left, upper, right, lower)
+
+# 채널 얻기
+Image.getchannel(channel)
+```
+
+
+## 이미지에 텍스트 삽입
+
+```python
+from PIL import Image, ImageDraw, ImageFont
+im = Image.open('cat_img.jpg').resize((150,150))
+ft = ImageFont.truetype('Pantherdam Signature Italic.ttf', size=20) #폰트 사용시 파일 지정
+d = ImageDraw.Draw(im)
+d.text((10, 10), 'text any text', font=ft, fill="#ff3") #위치 좌표는 튜플 타입으로 입력
+
+im.show()
+```
+

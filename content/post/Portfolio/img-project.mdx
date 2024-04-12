@@ -1,0 +1,630 @@
+---
+title:  '파이썬 이미지 분류 프로젝트(통합)'
+
+
+
+tags:
+  - project
+  - portfolio
+
+date: 2022-12-23
+lastmod: 2023-01-10
+ 
+---
+
+
+## 이미지 프로젝트
+
+- 프로젝트 기간 : 2022.12.09 ~ 2022.12.23
+  
+- `작성자, 발표자 : 조인환`
+
+- 이미지 분류를 통해 무엇인가 활용하고 싶어서 시작한 주제입니다.
+  
+- 이번 프로젝트는 총 3개의 파일로 구성되어 있습니다.
+
+<br/>
+
+- Part 1. 구글 이미지를 웹크롤링을 이용하여 이미지 저장
+
+- Part 2. 이미지 분류 모델(Swin Transformer)을 이용한 파인 튜닝
+
+- Part 3. 모델 불러오기 + 구글 이미지를 분류 => 삭제 & 리네임하고 재정렬
+
+### Part 1. `구글 이미지 웹크롤링 -> 이미지 저장하는 코드`
+
+```python
+import time
+import urllib.request
+from urllib.request import urlopen, urlparse, urlunparse, urlretrieve
+from selenium import webdriver
+from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.common.by import By
+import os
+import pandas as pd
+from tqdm.notebook import tqdm
+
+chrome_path ='../Desktop/chromedriver'      #크롬드라이버 경로(각자 환경에 맞춰 수정)
+
+chrome_options = webdriver.ChromeOptions()
+chrome_options.add_argument("lang=ko_KR") # 구글.kr이기때문에 한국어로 설정
+chrome_options.add_argument('window-size=1920x1080') #윈도우 창크기를 키움
+
+
+def selenium_scroll_option():
+    # 스크롤 높이 가져옴
+    last_height = driver.execute_script('return document.body.scrollHeight')
+    while True:
+        # 끝까지 스크롤 다운
+        driver.execute_script('window.scrollTo(0, document.body.scrollHeight);')
+        time.sleep(3)
+        # 스크롤 다운 후 스크롤 높이 다시 가져옴
+        new_height = driver.execute_script('return document.body.scrollHeight')
+
+        if new_height == last_height:
+            break
+        last_height = new_height
+```
+
+
+```python
+# 키워드 검색하기
+keyword = input("검색할 키워드를 입력 : ")
+image_name = input("저장할 이미지(+폴더) 이름 : ")
+#폴더가 없으면 폴더 생성
+if not os.path.exists(f'./{image_name}'):
+    print(f'create directory ... {image_name}')
+    os.mkdir(f'./{image_name}')
+driver = webdriver.Chrome(chrome_path)
+driver.get('http://www.google.co.kr/imghp?hl=ko')
+browser = driver.find_element(By.CSS_SELECTOR, 'body > div.L3eUgb > 
+                                div.o3j99.ikrT4e.om7nvf > form > div:nth-child(1) 
+                              > div.A8SBwf > div.RNNXgb > div > div.a4bIc > input' )
+browser.click()
+browser.send_keys(keyword)
+browser.send_keys(Keys.RETURN)
+
+
+
+# 이 부분의 bb함수 부분은 '검색 결과 더보기'버튼을 누르는 함수인데,
+# 버전마다 차이가 있으니 수정해서 사용해야됩니다. 본인은 mac/ 4.6.0 사용
+selenium_scroll_option() # 스크롤하여 이미지를 많이 확보
+bb = driver.find_element(By.CSS_SELECTOR, '#islmp > div > div > div > div 
+                            > div.gBPM8 > div.qvfT1 > div.YstHxe > input')
+bb.click() # 이미지 더보기 클릭
+selenium_scroll_option()
+
+
+
+#이미지 src요소를 리스트업해서 이미지 url 저장
+images = driver.find_elements(By.CSS_SELECTOR, ".rg_i.Q4LuWd") # 클래스 네임에서 공백은 .을 찍어줌
+
+images_url = []
+for i in images: 
+
+    if i.get_attribute('src')!= None :
+        images_url.append(i.get_attribute('src'))
+    else :
+        images_url.append(i.get_attribute('data-src'))
+
+# 겹치는 이미지 url 제거
+images_url=pd.DataFrame(images_url)[0].unique()
+
+
+# 이미지 저장. 700장 기준 약 3~5분 소요
+# 저장되는 규칙은 folder_name(경로)/이미지 이름(크롤링 시 폴더 생성 input 이름)_번호.jpg
+print(f'전체 다운로드한 이미지 개수: {len(images_url)}\n
+        동일한 이미지를 제거한 이미지 개수: {len(pd.DataFrame(images_url)[0].unique())}\n
+        *다운로드 중입니다.(약 3 ~ 5분 소요)')
+folder_name = (f'./{image_name}/')
+for i, url in enumerate(tqdm(images_url),0): 
+    urlretrieve(url, folder_name + image_name + '_' + str(i) + '.jpg')
+print('Done')
+driver.close()
+```
+
+### Part 2. `이미지 분류 모델(Swin Transformer)을 이용한 파인 튜닝`
+
+Swin Transformer란 ?
+<br/>
+
+<img width="785" alt="Swin Transformer" src="https://user-images.githubusercontent.com/111936229/216252251-0ce58ff5-05f5-4bb7-b74c-897dde3316b3.png"/>
+
+- Swin Transformer는 2021년 3월에 마이크로소프트(아시아)에서 발표한 Transformer이다.<br/>
+- 해당 논문에서는 ViT에서 모든 patch가 self attention을 하는 것에 대한 단점을 지적하면서<br/>
+각 patch를 window로 나누어 해당 윈도우 안에서만 self attention을 수행하고 그 윈도우를 한번 shift하고,<br/>
+ 다시 self attention을 하는 구조<br/>
+- 일반적인 Transformer와 달리 마치 Feature Pyramid Network같은 Hierarchical 구조를 제시하면서<br/>
+classification은 물론 Object Detection, Segmentation에서 backbone으로 사용되어 좋은 성능을 내게 된다.
+
+**Swin Transformer == `(shifted windows) Transformer`**
+
+```python
+!pip install pillow==9.1.0 
+
+import torchvision
+import torch
+from PIL import Image, ImageFilter #버전 맞춰주세요 9.1.0 이상
+import os
+import numpy as np
+import matplotlib.pyplot as plt
+import random
+from torch.utils.data import Dataset, DataLoader
+import torch.nn as nn
+import torchvision.transforms as transforms
+import cv2
+import glob
+import math
+import timm # 파인튜닝모듈
+from timm.loss import LabelSmoothingCrossEntropy
+from tqdm.notebook import tqdm
+```
+
+```python
+# configuration
+device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
+num_epochs = 10
+lr = 0.001
+batch_size = 32
+num_workers = 2 # ipykenel에서는 주석처리를 해야됩니다(멀티프로세싱 오류)
+
+
+# 클래스(타겟) 리스트 만들기
+class_names = os.listdir('./data/train/') #폴더 이름 == 클래스(target) 네임
+class_names.sort()
+class_len = len(class_names) 
+```
+
+```python
+# Dataset 클래스 만들기
+class Sports_Dataset(Dataset):
+    def __init__(self, data_name):
+        #data_name(폴더 이름)
+        self.dataname = data_name
+        #train파일 경로리스트 생성     
+        self.img_path = []
+        #경로가 .jpg 확장자인 파일들을 img_path에 리스트화 시켜줌 
+        for name in class_names:
+            self.img_path.append(glob.glob(f'./data/{data_name}/{name}/*jpg'))
+        #2차원 리스트 -> 1차원 리스트
+        self.img_path = sum(self.img_path, [])
+        #train파일의 labels 생성
+        self.labels = []
+        for path in self.img_path:
+            self.labels.append(class_names.index(path.split('/')[3]))
+        
+        #텐서타입으로 변경하는 변수 생성
+        self.img_transpose = transforms.Compose([transforms.ToTensor()])
+
+        
+    def __getitem__(self, index):
+        img = Image.open(self.img_path[index])
+
+        # swin_base_patch4_window7_224모델이 224,224로 트레이닝 된 모델이라서
+        # 이미지 보간법을 이용하여 (224,224)사이즈로 변경
+        if img.size != (224,224):
+            img = img.resize((224,224),Image.Resampling.BILINEAR)
+        
+        # Data augmentation with PIL when only 'train set'
+        if self.dataname == 'train':
+            if random.uniform(0,1) < 0.3 or img.getbands() == 'L':
+                img = img.convert('L').convert('RGB')
+            
+            # Random crop with size (64,64) from 30%
+            if random.uniform(0,1) < 0.3 :
+                img = img.resize((224+64,224+64), Image.Resampling.BILINEAR)
+                x = random.randrange(0,64)
+                y = random.randrange(0,64)
+                img = img.crop((x,y,x+224, y+224))
+                
+                
+            # Random Gaussian blur from 20%
+            if random.uniform(0,1) < 0.2:
+                img = img.filter(ImageFilter.GaussianBlur(random.uniform(0.5,1.2)))
+            
+            # Random flip from 30%
+            if random.uniform(0,1) < 0.3:
+                img = img.transpose(Image.Transpose.FLIP_LEFT_RIGHT)
+        
+        # 왜인지 모르겠지만 구글이미지 중 컬러인데 1채널이 존재해서 무조건 3채널로 바꿔줘야합니다.
+        else :    
+            img = img.convert('RGB')
+        
+        lbl = self.labels[index]
+        lbl = torch.tensor(lbl)
+        img = self.img_transpose(img)
+        
+        return img, lbl
+        #Sports_Dataset[0] == img, Sports_Dataset[1] == lbl(데이터 사용 방식)
+
+    def __len__(self):
+        return len(self.img_path)
+```
+
+```python
+# 이미지 8개 확인 및 데이터셋 클래스 작동 유무 확인(실행하지 않아도 모델링에는 지장은 없음)
+train_dataset = Sports_Dataset('train')
+print(train_dataset.__len__())
+_, ax = plt.subplots(2, 4, figsize=(16,10))
+
+for i in range(8):
+    data = train_dataset.__getitem__(random.choice(range(train_dataset.__len__())))
+
+    image = data[0].cpu().detach().numpy().transpose(1, 2, 0) * 255
+    # .cpu() == GPU 메모리에 올려져 있는 tensor를 cpu 메모리로 복사하는 method
+    # .detach() == Returns a new Tensor
+    # detach,cpu 순서는 별로 상관 없다.
+
+    image = image.astype(np.uint32)
+    #uint는 0을포함한 양수로된 정수타입
+
+    label = data[1]
+
+    ax[i//4][i-(i//4)*4].imshow(image)
+    ax[i//4][i-(i//4)*4].set_title(class_names[label])
+```
+
+![output_12_1](https://user-images.githubusercontent.com/111936229/209303636-9636f0b7-ef7d-41b2-ad4c-4c3f78ce7511.png)
+
+```python
+# 학습된 모델 중 swin_base_patch4_window7_224를 사용(파인튜닝)
+model = timm.create_model('swin_base_patch4_window7_224', pretrained=True)
+model.head = nn.Sequential(nn.Linear(1024, 512),
+            nn.ReLU(),
+            nn.Dropout(0.3),
+            nn.Linear(512, class_len)) 
+
+model = model.to(device)
+
+criterion = timm.loss.LabelSmoothingCrossEntropy() # this is better than nn.CrossEntropyLoss
+criterion = criterion.to(device)
+
+optimizer = torch.optim.AdamW(model.head.parameters(), lr=lr) # Setting for transfer learning
+
+#데이터 정제
+train_loader = DataLoader(dataset=train_dataset, batch_size=batch_size, shuffle=True, num_workers=num_workers)
+
+val_dataset = Sports_Dataset('valid')
+val_loader = DataLoader(dataset=val_dataset, batch_size=1, shuffle=False)
+
+
+#training 
+def update_lr(optimizer, lr):
+    for param_group in optimizer.param_groups:
+        param_group['lr'] = lr
+
+model.train()
+
+total_step = len(train_loader)
+curr_lr = lr
+best_score = 0
+for epoch in range(2):
+    total_loss = 0
+    for i, (images,labels) in enumerate(tqdm(train_loader)):
+        images = images.to(device)
+        labels = labels.to(device)
+        
+        g_labels = model(images)
+        loss = criterion(g_labels,labels)
+        
+        optimizer.zero_grad()
+        loss.backward()
+        optimizer.step()
+        
+        total_loss += loss.item()
+        
+        if (i+1) % 100 == 0:
+            print(f'{batch_size*(i+1)} / {train_dataset.__len__()}')
+    
+    model.eval()
+    score = 0
+    for i, (images, labels) in enumerate(valid_loader):
+        images = images.to(device)
+        labels = labels.to(device)
+        
+        g_labels = model(images)
+        score += int(torch.max(g_labels, 1)[1][0] == labels[0])
+        
+    print(f'Epoch : {epoch+1}, Loss : {total_loss/total_step}')
+    avg = score / len(val_dataset)
+    print(f'Accuracy : {avg :.2f}\n')
+    model.train()
+    
+    if best_score < avg:
+        best_score = avg
+        if not os.path.exists('./nets'):
+            os.mkdir('./nets')
+        torch.save(model.state_dict(), 'nets/SwinTransformer.ckpt')
+    
+    if (epoch+1) %2 == 0:
+        curr_lr = lr * 0.8
+        update_lr(optimizer, curr_lr)
+
+#모델 불러오기
+model.eval()
+model.load_state_dict(torch.load('nets/SwinTransformer.ckpt', map_location=device))
+
+test_dataset = Sports_Dataset('test')
+test_loader = torch.utils.data.DataLoader(dataset=test_dataset,
+                                           batch_size=1,
+                                           shuffle=False)
+
+# accuracy 확인 하기
+preds = []
+gts = []
+
+score = 0
+for i, (images, labels) in enumerate(test_loader):
+    images = images.to(device)
+    labels = labels.to(device)
+
+    g_labels = model(images)
+    
+    pred = torch.max(g_labels, 1)[1][0].item()
+    preds.append(pred)
+    gt = labels[0].item()
+    gts.append(gt)
+    
+    score += int(pred == gt)
+
+avg = score / len(val_dataset)
+print('Accuracy: {:.4f}\n'.format(avg))
+```
+
+```python
+#테스트 데이터 평가(랜덤 8개)
+test_dataset = Sports_Dataset('test')
+test_loader = torch.utils.data.DataLoader(dataset=test_dataset,
+                                           batch_size=1,
+                                           shuffle=False)
+_, ax = plt.subplots(2, 4, figsize=(16,10))
+
+for i in range(8):
+    data = test_dataset.__getitem__(np.random.choice(range(test_dataset.__len__())))
+    
+    image = data[0].cpu().detach().numpy().transpose(1, 2, 0) * 255
+    image = image.astype(np.uint32)
+    
+    label = data[1]
+    
+    idx = torch.max(model(data[0].unsqueeze(0).to(device)), 1)[1][0].item()
+    
+    ax[i//4][i-(i//4)*4].imshow(image)
+    ax[i//4][i-(i//4)*4].set_title('Predict: {}\nGT: {}'.format(class_names[idx], class_names[label]))
+```
+
+![output_14_0](https://user-images.githubusercontent.com/111936229/209303657-3c5d564b-7285-4f77-9497-c4cbc97a6b52.png)
+
+```python
+# 녹색: perfect score / 빨간색: imperfect score(어떤 종목을 못맞추었는지 확인하기)
+for i in range(class_len):
+    score_sum = 0
+    for j in range(5):
+        score_sum += int(gts[i*5+j] == preds[i*5+j])
+    if score_sum == 5:
+        print('\033[92m' + '{}: {} / 5'.format(class_names[i], score_sum))
+    else:
+        print('\033[91m' + '{}: {} / 5'.format(class_names[i], score_sum))
+```
+
+### Part 3. `모델 불러오기 + 구글 이미지를 분류 & 삭제 & 리네임`
+
+```python
+import torchvision
+import torch
+from PIL import Image, ImageFilter
+import os
+import numpy as np
+import matplotlib.pyplot as plt
+import random
+from torch.utils.data import Dataset, DataLoader
+import torch.nn as nn
+import torchvision.transforms as transforms
+import cv2
+import glob
+import math
+from einops import rearrange #차원 관리 모듈
+import timm # 파인튜닝모듈
+from tqdm.notebook import tqdm
+
+# configuration
+device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
+num_epochs = 10
+lr = 0.001
+batch_size = 32
+num_workers = 4 # ipykenel에서는 주석처리를 해야됩니다(멀티프로세싱 오류)
+
+# 로컬 환경
+class_names = os.listdir('./data/train/')
+class_names = sorted(class_names)
+class_len = len(class_names)
+
+# Dataset 클래스 만들기
+class Sports_Dataset(Dataset):
+    def __init__(self, data_name):
+    #data_name will be set 'train' or 'valid'(the folder names)
+        self.dataname = data_name
+        #train파일 경로리스트 생성     
+        self.img_path = []
+        #경로가 .jpg 확장자인 파일들을 img_path에 리스트화 시켜줌 
+        for name in class_names:
+            self.img_path.append(glob.glob(f'./data/{data_name}/{name}/*jpg'))
+        #2차원 리스트 -> 1차원 리스트
+        self.img_path = sum(self.img_path, [])
+        #train파일의 labels 생성
+        self.labels = []
+        for path in self.img_path:
+            self.labels.append(class_names.index(path.split('/')[3]))
+        
+        #텐서타입으로 변경하는 변수 생성
+        self.img_transpose = transforms.Compose([transforms.ToTensor()])
+
+    def __getitem__(self, index):
+        img = Image.open(self.img_path[index])
+
+        # swin_base_patch4_window7_224모델이 224,224로 트레이닝 된 모델이라서
+        # 이미지 보간법을 이용하여 (224,224)사이즈로 변경
+        if img.size != (224,224):
+            img = img.resize((224,224),Image.Resampling.BILINEAR)
+        
+        # Data augmentation with PIL when only 'train set'
+        if self.dataname == 'train':
+            if random.uniform(0,1) < 0.3 or img.getbands() == 'L':
+                img = img.convert('L').convert('RGB')
+            
+            # Random crop with size (64,64) from 30%
+            if random.uniform(0,1) < 0.3 :
+                img = img.resize((224+64,224+64), Image.Resampling.BILINEAR)
+                x = random.randrange(0,64)
+                y = random.randrange(0,64)
+                img = img.crop((x,y,x+224, y+224))
+                
+                
+            # Random Gaussian blur from 20%
+            if random.uniform(0,1) < 0.2:
+                img = img.filter(ImageFilter.GaussianBlur(random.uniform(0.5,1.2)))
+            
+            # Random flip from 30%
+            if random.uniform(0,1) < 0.3:
+                img = img.transpose(Image.Transpose.FLIP_LEFT_RIGHT)
+        
+        # 왜인지 모르겠지만 구글이미지 중 컬러인데 1채널이 존재해서 무조건 3채널로 바꿔줘야합니다.
+        else :    
+            img = img.convert('RGB')
+        
+        lbl = self.labels[index]
+        lbl = torch.tensor(lbl)
+        img = self.img_transpose(img)
+        
+        return img, lbl
+        #Sports_Dataset[0] == img, Sports_Dataset[1] == lbl(데이터 사용 방식)
+
+    def __len__(self):
+        return len(self.img_path)
+    
+```
+
+```python
+# 모델 로드
+
+model = timm.create_model('swin_base_patch4_window7_224',pretrained=True)
+model.head = nn.Sequential(
+    nn.Linear(1024,512),
+    nn.ReLU(),
+    nn.Dropout(0.3),
+    nn.Linear(512,class_len)
+)
+model = model.to(device)
+```
+
+```python
+model.eval()
+model.load_state_dict(torch.load('./nets/SwinTransformer (1).ckpt', map_location=device))
+
+test_dataset = Sports_Dataset('test')
+test_loader = DataLoader(dataset=test_dataset, batch_size=1, shuffle=False)
+```
+
+```python
+#불러온 모델(.ckpt파일)의 성능 검사
+preds = []
+gts = []
+
+score = 0
+for i, (images, labels) in enumerate(test_loader):
+    images = images.to(device)
+    labels = labels.to(device)
+
+    g_labels = model(images)
+    
+    pred = torch.max(g_labels, 1)[1][0].item()
+    a = torch.max(g_labels, 1)
+    preds.append(pred)
+    gt = labels[0].item()
+    gts.append(gt)
+    
+    score += int(pred == gt)
+
+avg = score / len(test_dataset)
+print('Accuracy: {:.4f}\n'.format(avg))
+```
+
+    Accuracy: 0.9840
+
+```python
+test_dataset = Sports_Dataset('base_test')
+test_loader = torch.utils.data.DataLoader(dataset=test_dataset,
+                                           batch_size=1,
+                                           shuffle=False)
+len(test_loader) 
+```
+
+```python
+ori_len = len(test_dataset)
+_, ax = plt.subplots(2, 4, figsize=(16,10))
+
+for i in range(8):
+    data = test_dataset.__getitem__(np.random.choice(range(test_dataset.__len__())))
+    label = data[1]
+    
+    image = data[0].cpu().detach().numpy().transpose(1, 2, 0) * 255
+    image = image.astype(np.uint32)
+    
+    label = data[1]
+    
+    idx = torch.max(model(data[0].unsqueeze(0).to(device)), 1)[1][0].item()
+    
+    ax[i//4][i-(i//4)*4].imshow(image)
+    ax[i//4][i-(i//4)*4].set_title('Predict: {}\nGT: {}'.format(class_names[idx], class_names[label]))
+```
+
+- 여기서 원본과 예상이 다른 파일들을 삭제할 겁니다.
+
+![output_24_0](https://user-images.githubusercontent.com/111936229/209303663-07c51dec-5a2a-4fc9-8f0b-fc4a04e212e7.png)
+
+```python
+folder_name = 'base_test'
+target_folder = 'baseball'
+test_dataset = Sports_Dataset(folder_name)
+test_loader = torch.utils.data.DataLoader(dataset=test_dataset,
+                                           batch_size=1,
+                                           shuffle=False)
+# 원래 : baseball, 예측 : chuckwagon racing 13
+ori_len = len(test_dataset)
+
+for i in range(ori_len):
+    try:
+        data = test_dataset.__getitem__(i)
+        label = data[1]
+        
+        idx = torch.max(model(data[0].unsqueeze(0).to(device)), 1)[1][0].item()
+        print(f'원래 사진 : {class_names[label]}, 예측 : {class_names[idx]}', i)
+        if class_names[label] != class_names[idx]:
+            path = f'data/{folder_name}/{target_folder}/{class_names[label]}_{i}.jpg'
+            os.remove(path)
+            print('\033[31m'+f'removed file {path}'+'\033[30m')
+        # if i = :
+            # break
+    except:
+        print('\033[31m'+f'경로 {path}에 {class_names[label]}_{i}.jpg 사진이 없습니다'+'\033[30m')
+```
+
+```python
+#파일 이름 초기화 및 정렬 !!!!!!!(1회만 실행)!!!!!!!!
+folder_name = 'base_test'
+target_folder = 'baseball'
+
+#폴더 경로
+folder_path = 'data/base_test/baseball'
+file_names = os.listdir(folder_path)
+
+#파일 이름 초기화 후 재정렬(1회만 실행해야함 여러번 실행 시 중복된 이름이 삭제됨)
+for i, name in enumerate(file_names):
+    newname = f'{folder_path}/{target_folder}_{i}.jpg'
+    print(newname)
+    src = os.path.join(folder_path, name)
+    os.rename(src, newname)
+```
+
+- 그동안 이미지를 분류만 해보고 이를 이용해서 다른 것을 하는 작업은 한 적이 없었는데, 이번 프로젝트 때 다양한 방법을 시도해 보며 파이토치를 다루는 부분, OS를 사용하는 부분 등 다양한 사용 방법을 배웠습니다.
+- 이번 프로젝트를 하면서 가장 난도가 높았던 작업은 구글에서 다운받은 이미지들을 예측값에 맞게 다시 형식을 맞추고 다루는 부분이었습니다.

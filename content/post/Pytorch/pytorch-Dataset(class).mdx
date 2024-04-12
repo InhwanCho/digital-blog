@@ -1,0 +1,125 @@
+---
+title:  'Pytorch Dataset 클래스(상속) 파악하기!!'
+
+tags:
+
+- class
+- torch
+- pytorch
+
+date: 2022-12-02
+lastmod: 2022-12-05
+ 
+---
+
+## BERT_Dataset
+
+- 데이터를 정제하였다면, 각 데이터가 KoBERT 모델의 입력으로 들어갈 수 있는 형태가 되도록 토큰화, 정수 인코딩, 패딩 등을 해주어야 한다. 아래는 그를 수행할 클래스이다.
+- Dataset을 상속 받는 클래스의 구성
+- 사용자 정의 Dataset 클래스는 반드시 3개 함수를 구현해야 합니다: <br/>
+  1.`__init__`,  
+  2.`__len__`,  
+  3.`__getitem__`
+- `__init__` 함수는 Dataset 객체가 생성(instantiate)될 때 한 번만 실행됩니다. 
+- `__len__` 함수는 데이터셋의 샘플 개수를 반환합니다.<br/>len()함수를 사용 시 반환값이라고 생각하시면 됩니다.
+- `__getitem__` 함수는 클래스의 인덱스에 접근할 때 자동으로 호출되는 메서드(함수)이다.<br/>쉽게 표현하면 슬라이싱을 구현하려면 필요한 것은 `__getitem__`라는 메소드!
+
+
+
+```python
+
+from torch.utils.data import Dataset
+import gluonnlp as nlp
+
+class BERT_Dataset(Dataset):
+
+
+    # __init__ 함수는 Dataset 객체가 생성(instantiate)될 때 한 번만 실행됩니다. 
+    # 여기서는 dataset, sent_idx, label_idx, bert_tokenizer, max_len, pad, pair)를 불러옵니다.
+    # 함수를 호출하게되면 nlp.data.BERTSentenceTransform을 하고, sentences와 labels의 리스트를 만들게 됩니다.
+    def __init__(self, dataset, sent_idx, label_idx, bert_tokenizer, max_len,
+                 pad, pair):
+        transform = nlp.data.BERTSentenceTransform(
+            bert_tokenizer, max_seq_length = max_len, pad = pad, pair = pair)
+
+        self.sentences = [transform([i[sent_idx]]) for i in dataset]
+        self.labels = [np.int32(i[label_idx]) for i in dataset]
+
+
+    # 인덱스를 기반으로 문장과 라벨을 반환합니다. return에 슬라이싱 "[]"이 필요함.
+    def __getitem__(self, i):
+        return (self.sentences[i] + (self.labels[i], ))
+
+
+    # __len__ 함수는 데이터셋의 레이블 개수를 반환합니다.
+    def __len__(self):
+        return (len(self.labels))
+
+######################################################################
+
+#사용하기
+tokenizer = get_tokenizer()
+token = nlp.data.BERTSPTokenizer(tokenizer, vocab, lower=False)
+
+# 이런식으로 만든 함수를 사용합니다.
+data_train = BERTDataset(dataset = train_set_data, sent_idx = 0, label_idx = 1, bert_tokenizer = token, max_len = 64, pad = True, pair = False)
+# 아니면 아래와 같은 형식으로 '=' 기호를 빼고 사용하셔도 결과는 같습니다.
+data_train = BERTDataset(train_set_data, 0, 1, token, max_len, True, False)
+```
+
+## 코드 분해하여 원리 파악하기
+
+```python
+from kobert.utils import get_tokenizer
+import gluonnlp as nlp
+tokenizer = get_tokenizer()
+
+
+bertmodel, vocab = get_pytorch_kobert_model()
+token = nlp.data.BERTSPTokenizer(tokenizer, vocab, lower=False)
+
+data_train = BERTDataset(dataset = train_set_data, sent_idx = 0, label_idx = 1, bert_tokenizer = token, max_len = 64, pad = True, pair = False)
+
+# data를 리스트[0]에는 문장을 넣고, 리스트[1]에는 감정(labels)으로 넣어서 리스트로 만들어줌.
+train_set_data = [[i, str(j)] for i, j in zip(train_set['data'], train_set['label'])]
+
+
+print(train_set_data[0])
+# 출력 결과 => ['큰아들이 결혼하는데 집을 사달라고 해서 화가 나.', '4']
+
+print(data_train[0])
+# 출력 결과 =>
+(array([   2, 4688, 6797, 5940,  950, 7795, 4384, 7088, 2573, 5794, 5439,
+        5007, 5112, 5330, 1370,  517,   54,    3,    1,    1,    1,    1,
+           1,    1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
+           1,    1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
+           1,    1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
+           1,    1,    1,    1,    1,    1,    1,    1,    1], dtype=int32),
+ array(18, dtype=int32),
+ array([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+       dtype=int32),
+ 4)
+# array의 첫 번째는 패딩된 시퀀스, 두 번째는 길이와 타입에 대한 내용, 세 번재는 어텐션 마스크 시퀀스이다.
+```
+
+- 아래는 `from kobert.pytorch_kobert import get_pytorch_kobert_model`의 `get_kobert_model`함수 형식입니다.
+- >`bertmodel, vocab = get_pytorch_kobert_model()`을
+ 실행 시 에러가 나온다면 <br/>`!pip install sentencepiece==0.1.91`<br/> `!pip install transformers==4.8.2`<br/>버전을 맞춰주면 해결이 될 수도 있습니다.
+
+```python
+def get_kobert_model(model_path, vocab_file, ctx="cpu"):
+    bertmodel = BertModel.from_pretrained(model_path)
+    device = torch.device(ctx)
+    bertmodel.to(device)
+    bertmodel.eval()
+    vocab_b_obj = nlp.vocab.BERTVocab.from_sentencepiece(vocab_file,
+                                                         padding_token='[PAD]')
+    return bertmodel, vocab_b_obj
+
+```
+
+- KoBERT 함수 출처
+
+[KoBERT]: https://github.com/SKTBrain/KoBERT/blob/8df69ec6b588ae661bef98d28ec29448482bbe6e/kobert/pytorch_kobert.py#L5

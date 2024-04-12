@@ -1,0 +1,133 @@
+---
+title: GPT(Generative Pre-Training of Language Model)
+
+
+tags:
+- paper
+- NLP
+
+date: 2023-08-10
+lastmod: 2023-08-10
+ 
+---
+
+
+
+## GPT 개요
+
+- GPT : `Transformer`의 `디코더 아키텍쳐`를 활용(Masked Attention)
+- BERT : `Transformer`의 `인코더 아키텍쳐`를 활용
+
+일반적으로 우리는 레이블이 있는 데이터를 사용하여 지도 학습을 수행해왔습니다. 그러나 대부분의 데이터는 레이블이 없는 데이터입니다.
+
+실제로 레이블이 있는 데이터의 양은 제한적입니다.
+
+GPT는 이러한 상황에서 발전할 수 있는 방안을 모색하기 위해 제안되었습니다. 이는 주로 레이블이 없는 다양한 텍스트 말뭉치에서 사전 훈련을 수행하고, 각 작업에 특화된 파인튜닝을 통해 이점을 얻을 수 있는 접근 방식입니다.
+
+그러나 레이블이 없는 데이터를 다룰 때는 세 가지 주요 단점이 있습니다.
+
+`1. 단어 수준 이상의 정보를 추출하기 어렵습니다.`
+
+`2. 어떤 최적화 목표가 전이 학습을 위한 효과적인 텍스트 표현을 학습하는 데 가장 효율적인지 불분명합니다.`
+
+`3. 이러한 불확실성으로 인해 반지도 학습 접근 방식이 어려움을 겪습니다.`
+
+따라서 GPT에서는 다음과 같은 방식으로 이러한 문제를 해결하고자 합니다.
+
+`1. 비지도 사전 훈련과 지도 파인튜닝을 결합한 반지도 학습 접근 방식을 제안합니다. (ELMo와 유사하지만 ELMo는 양방향 LSTM을 사용합니다.)`
+
+`2. 다양한 작업에 적용할 수 있는 범용적인 표현을 학습하기 위해 작업에 약간의 조정만으로 전이 가능하도록 합니다.`
+
+    학습은 다음의 단계를 거쳐 이루어집니다. 
+    1.먼저 레이블이 없는 데이터에서 언어 모델 목표를 사용하여 사전 훈련을 수행한 후, 
+    2.레이블이 있는 목표 작업에 맞추어 지도 학습을 진행합니다.
+    (이를 위해 Transformer 디코더 블록을 활용합니다.)
+
+GPT는 기존 언어 모델의 트렌드를 이어가면서 유연한 전이(transfer)가 가능하며, 지도 학습 형태의 미세 조정(Fine-tuning) 없이도 제로샷(Zero-shot) 다운스트림 작업을 수행할 수 있는 일반화된 모델입니다.
+
+쉽게 풀어서 말하자면 GPT-2에서는 먼저 레이블이 없는 데이터셋(Unlabeled corpora)을 언어 모델에 학습시킵니다. 이 과정을 `Pre-training(사전 학습)`이라고 합니다. pre-training을 마친 모델에 추가로 태스크에 맞는 데이터셋(Labeled corpora)을 추가 학습시킵니다. 이를 `Fine-tuning`이라고 합니다. GPT는 이러한 “전이 학습(Transfer learning) 방법으로 이전의 모델보다 더 좋은 성능을 낼 수 있을 것이다”라는 아이디어에서 고안되었습니다.
+
+## GPT-2(pre-training -> fine-tuning)
+
+GPT-2는 4가지 크기의 모델이 있으며, 각각의 파라미터와 decoder의 수 및 input encoding dim의 차이는 아래의 그림들과 같습니다.
+
+<img width="700" alt="GPT-2의 모델 크기 비교" src="https://github.com/InhwanCho/InhwanCho.github.io/assets/111936229/adc5aa2d-d6f0-4f8a-b77f-910cf2947477"/>
+
+<img width="700" alt="GPT-2의 모델 크기 비교2" src="https://github.com/InhwanCho/InhwanCho.github.io/assets/111936229/13bf5a56-b10c-45c9-8f5d-5ab89e0cfdf6"/>
+
+<img width="500" alt="GPT의 input encoding" src="https://github.com/InhwanCho/InhwanCho.github.io/assets/111936229/b8069bb4-bf20-4d82-a42f-5c7fd128177b"/>
+
+위의 그림처럼 GPT는 모델별로 input encoding을 다르게 하였습니다.
+
+## GPT-2 Model Architecture
+
+<img width="200" alt="GPT의 decoder block" src="https://github.com/InhwanCho/InhwanCho.github.io/assets/111936229/f13f8a93-f1ae-48ff-bd98-f2b713b9d74f"/>
+
+위의 그림의 `블럭`이 부분이 GPT-2의 `Decoder Block`입니다.
+
+이러한 `Decoder Block`이 n 개로 구성된게 GPT-2입니다.(하이퍼 파라미터)
+
+여기서 attention을 `masked self-attention`을 사용하기 때문에 아래의 그림과 같이 output의 단어가 input의 단어로 와서 다음 output단어를 예측하게 됩니다.
+
+    (이를 Auto-regressive라 합니다)
+    예를 들어 단어 'A'가 output으로 나오면 그 단어가 input token으로 들어가고 
+    그 후 'robot'이라는 단어가 output으로 나오게 되고 ..(반복).. 이러한 과정이 반복됩니다.
+
+<img width="700" alt="output의 단어가 input의 끝 단어로 온다" src="https://github.com/InhwanCho/InhwanCho.github.io/assets/111936229/b92ed524-85c3-4e96-abe7-5c3bb46ea244"/>
+
+### 이제 어떻게 GPT-2가 학습되는지 자세히 살펴보겠습니다
+
+<img width="700" alt="gpt2 input" src="https://github.com/InhwanCho/InhwanCho.github.io/assets/111936229/128700a9-4ead-4b1b-a98e-b54c45b4f728"/>
+
+1. input으로는 `Transformer`의 decoder 방식과 동일하게 token embeddings + positional embeddings가 더한 백터값이 들어옵니다.
+
+<img width="700" alt="gpt2" src="https://github.com/InhwanCho/InhwanCho.github.io/assets/111936229/c20be424-7a76-4358-9afc-330a1448bf14"/>
+
+2. 첫 번째 블록은 이제 토큰을 처리할 수 있습니다.
+먼저, self-attention 과정을 통해 토큰을 전달한 다음 신경망 계층을 통과시킵니다.
+첫 번째 변환기 블록이 토큰을 처리하면 결과 벡터를 스택 상위 블록으로 보내 해당 블록에서 처리됩니다.
+각 블록에서의 과정은 동일하지만,
+각 블록은 self-attention과 신경망 서브레이어에서 고유한 가중치를 가지고 있습니다.
+
+3. pre-training을 먼저 하는데 이때의 모델의 목적 함수 $L_1$은 다음과 같습니다.
+
+$$ L_1(u) = \sum_{i} logP(u_i|u_{i-k}, ... , u_{i-1};\Theta) $$
+
+[여기서 input_tokens $u$는 unsupervised dataset에서의 input_tokens입니다.]
+[확률 P, input_tokens $u$, 파라미터 $\Theta$, 목적 함수 $L_1$]
+
+4. GPT : Supervised fine-tuning(3번의 pre-train과 달리 supervised dataset을 사용)
+
+- 레이블이 지정된 데이터셋 $C$는 각 인스턴스가 입력 토큰의 시퀀스 [$x^l, ... , x^m$]와 레이블 $y$로 구성됩니다.
+
+- 입력은 사전 훈련된 모델을 통해 최종 변환기 블록의 활성화 $h_{l}^{m}$를 얻습니다. 이 활성화는 추가된 선형 출력 계층에 공급되며, 여기에는 매개변수 $W_y$가 있어 $y$를 예측합니다.
+
+$$ P(y|x^1, ... , x^m) = softmax(h_l^m W_y) $$
+
+[확률 $P$, label $y$, input_tokens $x$, final_transformer_blokck's_activation $h_l^m$, 최종 목적함수 $L_2$, 데이터셋 $C$],
+[h_l^m W_y는 마지막 디코더 블럭의 아웃풋 값이Linear layer를 통과를 의미]
+
+- 위의 수식을 통해 아래의 목적 함수를 극대화할 수 있습니다.
+
+$$ L_2(C) = \sum_{(x,y)} logP(y|x^1, ... , x^m) $$
+
+4. 위의 목적 함수들을 합해서 GPT-2는 다음과 같은 목적 함수를 사용합니다.
+
+$$ L_3(C) = L_2(C) + \lambda \cdot L_1(C) $$
+
+- 논문에서는 이와 같은 방법이 모델의 일반화를 돕고 수렴 속도를 더 빠르게 하는 효과가 있다고 합니다.
+
+요약 하자면,
+
+    Unlabeled dataset에 대한 pre-training을 한 뒤,
+    Labeled dataset의 목적 함수와 같이 섞어 사용한 fine-tuning을 하고, 
+    그 두 가지를 조합하여 사용한 최종 목적 함수(objective function)를 사용하면,
+    더 나은 결과를 얻을 수 있다고 합니다.
+
+
+### 참고 자료
+
+[GPT-1 논문](https://www.cs.ubc.ca/~amuham01/LING530/papers/radford2018improving.pdf "GPT-1 논문")
+[GPT-2 논문](https://cdn.openai.com/better-language-models/language_models_are_unsupervised_multitask_learners.pdf "GPT-2 논문")
+[고려대 유튜브](https://www.youtube.com/watch?v=o_Wl29aW5XM&list=PLetSlH8YjIfVzHuSXtG4jAC2zbEAErXWm&index=19 "고려대 유튜브")  
+[Jay alammar 블로그](https://jalammar.github.io/illustrated-gpt2/ "Jay alammar blog")

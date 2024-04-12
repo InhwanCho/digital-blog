@@ -1,0 +1,87 @@
+---
+title: 'Nextjs - dynamic import'
+
+tags:
+  - nextjs
+  - dynamic
+
+date: 2024-02-07
+---
+
+Nextjs에서 아래와 같이 import를 하게 되는 경우,
+`import { component } from '@/somewhere';`
+
+당장 필요한 component가 아닌 경우에도 일단 파일을 다운로드받게 됩니다.
+
+당장 필요한 components가 아닌 경우, `dynamic import`를 하여 최적화 할 수 있습니다.
+
+```js:page.tsx
+'use client'
+import dynamic from "next/dynamic";
+
+// CSR으로 실행, loading message
+const nameOfComponent = dynamic(import("@/somewhere"), {
+  ssr: false, loading: ()=> (<span>Loading ...</span>)
+})
+
+export default function Com (){
+  const [show, setShow] = useState(false)
+  const showme=()=>{
+    setShow(!show)
+  }
+  return (
+    <>
+      <div>
+        content ...
+      </div>
+      <div onClick={showme}>
+        <nameOfComponent/>
+      </div>
+    </>
+  )
+}
+```
+
+```js:page.tsx
+//만약, Suspense를 사용하고 있다면 아래처럼 사용하면 됩니다.
+'use client'
+import dynamic from "next/dynamic";
+
+// CSR으로 실행, dynamic에 suspense 사용.
+const nameOfComponent = dynamic(import("@/somewhere"), {
+  ssr: false, suspense: true,
+})
+
+export default function Com (){
+  const [show, setShow] = useState(false)
+  const showme=()=>{
+    setShow(!show)
+  }
+  return (
+    <>
+      <div>
+        content ...
+      </div>
+      <div onClick={showme}>
+        <Suspense fallback="loading message ...">
+          <nameOfComponent/>
+        </Suspense>
+      </div>
+    </>
+  )
+}
+```
+
+## Script
+
+```js:_app.Or_document.tsx
+import Script from 'next/Script'
+
+<Script src="https://sdfsdfads" strategy="afterInteractive" />
+//beforeInteractive - 페이지가 전부 불러와지기 전에 script를 불러오는 전략
+//afterInteractive  - 페이지가 전부 불러와진 후 script를 불러오는 전략(보통 이 옵션을 사용 default)
+//lazyOnLoad        - 모든 데이터나 소스를 불러온 후 스크릷트를 불러옴
+
+<Script src="https://sdfsdfads" onLoad={()=>{ someFunction }}/>
+//onLoad는 스크립트가 실행된 후 실행되는 옵션입니다.
+```

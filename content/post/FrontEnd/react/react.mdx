@@ -1,0 +1,249 @@
+---
+title: 'React'
+
+tags:
+  - react
+
+date: 2023-11-20
+---
+
+## React
+
+### a태그 대신 Link from 'React-Router-Dom'을 사용하는 이유
+
+a태그 실행 시 새로고침을 하여 페이지를 재랜더링 하기 때문입니다.
+
+### 점 3개(...) 문법
+
+- ...aaa = aaa에 괄호가 있는 형태일 시 괄호를 제거해줌
+
+### useState 문법
+
+[useState] 변경 함수의 특징
+
+`if(기존 state === 신규 state){변경 안함}`
+즉, 기존 state가 변경된 state와 동일하면 setState가 작동하지 않습니다.
+그렇기 때문에 state가 array나 object type이면 아래와 같은 방법을 사용해야 합니다.
+
+```javascript
+let array = [1, 2, 3]
+//이렇게 array를 만들었을때,
+//js에서는 이 array의 값을 저장하는게 아닌 좌표 화살표를 저장(ref)하기때문에,
+//그렇기 때문에 array type의 state를 변경하려면,
+let [state, setState] = useState([1, 2, 3])
+;<del>let copy = state; //이렇게하면 동일한 좌표 화살표를 얻기때문에 사용x</del>
+let copy = [...state]
+copy[0] = 0
+setState(copy)
+```
+
+### React에서 component에 변수 넘기기
+
+- 부모 -> 자식(component)만 이동 가능.
+
+- \[자식 -> 자식 및 자식 -> 부모\]로 변수 이동은 `불가!!`
+
+```javaScript
+function App() {
+  let [state, setState] = useState([1,2,3]);
+
+  return (
+    <>
+      <Compo 작명1 = {state} 작명2 = {setState}/>
+    </>
+  )
+
+//방법 1 - prpos 사용
+function Compo(props){
+  props.작명2
+  return (props.작명1)
+}
+//방법 2 - 중괄호 사용
+function Compo({작명1, 작명2}){
+  작명2
+  return 작명1
+}
+
+```
+
+### 토글 버튼 처럼 온오프 기능 버튼 만들기
+
+```
+const [show, setShow] = useState(false);
+<button onClick={() => setShow(!show)> 버튼 </button>
+{show ? (
+        <Compo
+          작명={postName}
+          title={title}
+          post={post}
+          change={setPostName}
+        />
+        : null
+```
+
+## Router
+
+`npm i `
+
+```js
+import { Routes, Route, useNavigate, Outlet, useParams } from 'react-router-dom'
+;
+let navigate = useNavigate();
+
+---
+ // navigate(-1) = 1칸 뒤로가기, 1 = 1칸 앞으로 가기,
+ // navigate('/주소') = 주소로 이동
+ // navigate는 href와 달리 '새로고침'을 사용하지 않습니다.
+<ABC onClick=(()=> navigate(-1) )>
+<Routes>
+  // /detail페이지로 이동했을때 <Detail/> component를 보여줌
+  <Route path="/detail" element={<Detail />} />
+  // 404페이지 설정(라우트 path외의 주소 입력 시)
+  <Route path="*" element={<Empty />} />
+
+  // Nested Routes
+  <Route path="/detail" element={<Detail />}>//이것도 보여주고
+  // 아래 element도 보여줌
+  // 그러나 보여줄 위치를 설정 가능. `Outlet` 위치에 보여줌
+    <Route path="/1" element={<Detail1 />}>
+    <Route path="/2" element={<Detail2 />}>
+  </Route>
+    // Nested Routes
+  <Route path="/detail/:작명" element={<Detail />}>//작명 - url parameter
+
+  </Route>
+</Routes>
+
+
+function Detail(props){
+  // 위의 nested routes된 주소가 변수('작명')으로 들어온다.
+  const {작명} = useParams();
+  return (
+    <div>
+      <div>{props.state[작명]}</div>
+      <Outlet/>
+    </div>
+  )
+}
+```
+
+### Hook
+
+
+
+- 유용한 기능들을 가지고 있는 함수(function)
+
+### uesEffect()
+
+- return()의 html의 요소가 전부 랜더링 된 후 실행되는 함수.
+- 오래 걸리는 것들을 useEffect 내부에 넣으면 효율적으로 동작 가능.
+- 주로 서버 데이터작업, 타이머관련 동작을 여기에 넣음.
+
+`useEffect(()=>{ 코드 }, [])`로 작성 시 mount시 1회만 실행.
+`useEffect(()=>{ 코드 }, [state])`로 작성 시 `state` 변경 시에만 실행.
+
+### 서버와 통신
+
+```js
+import axios from 'axios'
+
+axios.get('https://dddddddd.json')
+axios.post('/post', { title: 'title' })
+```
+
+> 원래 서버와 통신은 문자만 주고 받을 수 있습니다.
+> object 데이터를 주고 받으려면 '\{'name':'abc'\}'
+> JSON 타입으로 작성해줘야 문자 타입으로 읽어들일 수 있음.
+
+- 단, axios는 array로 자동으로 바꿔줌
+- 그러나 fetch('https://dddddddd.json')인 경우,
+  `결과=>결과.json()`으로 해줘야합니다.
+
+## React 속도 높이는 방법 1
+
+- `lazy`, `Suspense` 사용하기
+
+React는 Single Page Application이라서 처음 실행 시 로딩 속도가 느린편입니다.
+이는 모든 html을 single page로 불러오려고 해서 그렇습니다.
+이를 해결하기 위해서는 lazy()함수로 불필요한 component들을 나중에 불러오는 식으로 해결 할 수 있습니다.
+그리고 나중에 lazy import가 실행 시의 로딩 UI를 채워주는 Component를 넣어줘야 합니다.
+
+```javascript
+import { lazy, Suspense } from "react";
+
+// lazy 사용하여 import
+const Cart = lazy(() => import("./Cart.js"));
+
+// 아래와 같이 로딩 중일 때의 UI를 넣어야 합니다.
+<Suspense fallback={<div>로딩 중 문구</div>}>
+  <Cart />
+</Suspense>
+```
+
+## React 속도 높이는 방법 2
+
+- `Memo`, `useMemo` 사용하기
+`Memo`는 props가 변경되지 않으면, 랜더링하지 않음(변경사항이 있는지 확인해야됨)
+`useMemo`는 컴포넌트 랜더링 시 1회만 실행해줌.
+
+```javascript
+import { memo, useMemo } from 'react';
+
+// memo 사용 방법
+const Child1 = memo(ff()=> <div>자식컴포넌트</div>)
+const Child2 = memo(ff()=> <div>자식컴포넌트</div>)
+
+// 버튼 클릭 시 
+// Child1은 랜더링 안됨. Child2는 재랜더링 됨
+<Child1 /> 
+<Child2 p={p} />
+<button onClick={()=> setP(p++)}> + </button>
+
+// useMemo(컴포넌트 실행 시 1회만 랜더링)
+const result = useMemo(()=> { 
+  return ff()} , [state])
+```
+
+## React 속도 높이는 방법 3
+
+- `useTransition` 사용하기
+
+기존의 브라우저는 동시 작업이 안되고 한 번에 1개씩 작업을 합니다.
+startTransition으로 감싸게 되면 그 작업을 늦게 실행해줘서 성능 향상되는 것처럼 보입니다.
+isPending은 startTransition이 실행 중 일때(로딩 중 일때) true가 됩니다.
+
+```javascript
+import { useTransition } from 'react';
+
+const [isPneding, startTransition] = useTransition();
+
+<input onChange((e)=> startTransition(
+  ()=> setCount(e.target.value)
+))
+{ isPneding ? <div>로딩 중</div> : <div>실행 중</div>}
+```
+
+- `useDeferredValue` 사용하기
+
+위의 startTransition과 유사합니다.
+늦게 처리되는 state를 useDeferredValue에 넣으면 됩니다.
+
+```javascript
+import { useDeferredValue } from 'react';
+
+const state = useDeferredValue(state);
+```
+
+### Redux
+
+Redux를 사용하면 모든 components들이 state를 공유 가능.
+<br/>
+[Redux](https://digital-blog-seven.vercel.app/blog/FrontEnd/react/redux 'redux')
+
+### React-Query
+
+- ajax 요청 `성공/실패/로딩중` 상태를 `계속해서` 파악할 수 있습니다. 
+- `요청 실패 시` 약 3~4회 재시도
+<br/>
+[React-Query](https://digital-blog-seven.vercel.app/blog/FrontEnd/react/react_query 'reactquery')
+

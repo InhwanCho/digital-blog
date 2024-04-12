@@ -1,0 +1,61 @@
+---
+title: 'Prisma Client'
+
+tags:
+  - prismaclient
+
+date: 2024-03-02
+---
+
+## Prisma Client
+
+`Prisma Client`는 스키마(prisma schema)에 맞춰서 db table에 쉽게 접근해줄 수 있게해주는 도구입니다.
+
+
+## Installation 
+
+```bash
+npm i prisma
+npm i @prisma/client
+```
+
+설치 후 스키마 작성 후(스키마 변경 마다), 아래의 명령어 실행이 필요.
+
+```bash
+npx prisma generate 
+npx prisma db push
+```
+
+```js
+import { PrismaClient } from '@prisma/client';
+
+const prisma = new PrismaClient();
+```
+
+## PrismaClient를 단 한 번만 인스턴스하기
+
+Next.js 개발 환경에서 흔히 마주치는 하나의 문제는 핫 리로딩 기능 때문에 아래와같은 작업이 필요합니다. <br/>
+코드를 변경하고 저장할 때마다 핫 리로딩이 작동하여 자바스크립트 파일들이 재실행되는데, <br/>
+이 과정에서 `PrismaClient` 인스턴스도 매번 새로 생성됩니다. <br/>
+결과적으로 데이터베이스에 너무 많은 연결이 생겨나게 되는데, <br/>
+이는 데이터베이스의 입출력 속도를 저하시키거나 심지어 오류를 발생시킬 수 있는 상황을 초래할 수 있습니다.<br/>
+
+이러한 문제를 해결하기 위한 한 가지 방법은 `PrismaClient`를 단 한 번만 인스턴스화하여 `globalThis` 객체에 저장하는 것입니다. <br/>
+이 접근법은 데이터베이스에 생성되는 연결 수를 제한하여 성능 저하나 오류 발생의 가능성을 크게 줄여줍니다. <br/>
+따라서 이 방식을 적용함으로써 Next.js 개발 환경에서의 데이터베이스 관리가 더욱 효율적이고 안정적이 될 것입니다.
+
+```js:lib/prisma.js
+import { PrismaClient } from '@prisma/client';
+
+// 버전에 따라 undefined 에러가 날 경우 작성.
+declare global {
+  var prisma : PrismaClient | undefined;
+}
+
+// PrismaClient가 global에 없는 경우에만 인스턴스화
+export const prisma = globalThis.prisma || new PrismaClient();
+
+// 프로덕션 상태가 아닐 때(즉, 개발 중 일때) globalThis 개체에 저장
+if (process.env.NODE_ENV !== "production") globalThis.prisma = prisma;
+```
+

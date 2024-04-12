@@ -1,0 +1,123 @@
+---
+title: Transformer(Attention is all you need)
+
+
+tags:
+- paper
+- NLP
+
+date: 2023-08-09
+lastmod: 2023-08-09
+ 
+---
+
+
+NLP분야에서, 기존의 RNN에서의 한계때문에
+\[Context vector의 크기가 제한적이기 때문에 문장의 모든 정보를 보낼 수 없음 ==long term dependency problem\]  
+seq2seq모델(문장을 입력받아 문장을 출력해주는)에서 RNN대신 제안된 모델이 Attention이라는 모델입니다.  
+이 Attention을 통해 만든 Transformer 분석해보겠습니다.
+
+
+<img width="700" alt="Transformer 구조" src="https://github.com/InhwanCho/InhwanCho.github.io/assets/111936229/3ced3af7-c1af-4dfc-9b1f-ca6fa3d4f67f"/>
+
+그림의 왼쪽 부분은 Encoder, 오른쪽 부분은 Decoder부분입니다.
+먼저, 왼쪽의 빨간색 박스의 inputs이 어떻게 들어가는지 확인해보겠습니다.
+
+<img width="700" alt="Transformer의 inputs" src="https://github.com/InhwanCho/InhwanCho.github.io/assets/111936229/71671c01-b56c-47f1-a2ae-55e02990c7b9"/>
+
+    1. input으로 문장이 들어오면 ("je suis etudiant")
+
+    2. 문장 -> 단어로 변경 ("je", "suis", "etudiant") 
+       
+    3. 토큰화 -> embedding[x1, x2, x3]해 줍니다.
+
+    4. 그 후 positional encoding 값[t1, t2, t3]을 더하여
+       최종 input값인 [x1, x2, x3]를 얻게 됩니다.
+
+포지셔널 인코딩의 코드가 궁금하시다면 아래 링크를 통해 확인 가능합니다.
+
+[positional encoding 코드](https://github.com/jalammar/jalammar.github.io/blob/master/notebookes/transformer/transformer_positional_encoding_graph.ipynb "positional encoding")  
+
+## Attention(self-attention)
+
+### Encoder
+
+위에서 구한 input값을 self_attention의 input값으로 넣어줍니다.
+그 후 이 input으로 3종류의 vector를 만들어 사용합니다.
+
+그 벡터들은 `Query`, `Key`, `Value`라 부르는데 각각의 의미는 다음과 같습니다.
+
+    Query : 현재 보고 있는 단어의 대표 값(기준점)
+    Key   : 단어의 label과 같은 역할을 하는 값
+    Value : 실제 단어의 값
+
+이 Q, K, V를 구하기 위해서는 앞에서 구한 `input vector`에 weight matrix를 곱하여 얻게 됩니다.
+
+<img width="700" alt="attention의 q,k,v를 얻는 과정" src="https://github.com/InhwanCho/InhwanCho.github.io/assets/111936229/8bdbc042-8820-471e-b412-be4838be19db"/>
+
+위의 사진을 통해 보면 $X_1$, $X_2$가 `input vector`고 $W^Q$, $W^K$, $W^V$ 가 weight matrix로 학습을 통해 구해야할 파라미터입니다.
+
+예를 들어 Query중 $q_1$을 구하기 위해서는 $X_1 \cdot W^Q$를 연산하여 구할 수 있습니다.
+
+일반적으로 Q,K,V의 dim을 적게 잡는 편입니다. 이유는 나중에 이 self-attention을 여러번 연산하는 Multi-headed attention의 관점에서 보면, 이 연산된 q,k,v 를 concat하기 때문입니다.(ex. 64(dim) * 8(heads) == 512dim)
+
+그렇다면, 여기서 attention이 진행되는 과정과 의미가 어떻게 되는지 알아보겠습니다.
+
+<img width="700" alt="어텐션의 메커니즘" src="https://github.com/InhwanCho/InhwanCho.github.io/assets/111936229/ecc392cb-17de-4e57-a3ea-33eae6610867"/>
+
+1. 위의 사진을 보면 먼저 score를 구합니다($q_1 \cdot k_1$)
+2. 그 후 $\sqrt {dim_k}$ 만큼 나눠줍니다. 여기서는 64차원이기 때문에 $\sqrt{64} = 8$ 으로 나눠줍니다.
+3. 나눠진 스코어값을 softmax를 취해 값을 얻습니다.
+4. 이렇게 나온 스코어값(0.88)이랑 $v_1$이랑 곱하여 $v_1$을 얻고, 두 번째 인풋 $x_2$값과 연산하여 나온 스코어값(0.12)랑 $v_2$랑 곱하여 $v_2$를 얻게되고(흐릿한 $v_2$)
+5. 최종적으로 인풋($x_1$)에 대한 output값인 $z_1$값을 두 개의 값을 더하여 얻게됩니다, ($v_1 + v_2 = z_1$)  
+
+여기까지는 단 1개의 self-attention을 기준으로 설명하였고, 실제로는 multi-headed attention이기 때문에 위의 self-attention이 여러개 연산됩니다.(아래 그림 참조)
+
+<img width="700" alt="멀티해드 어텐션" src="https://github.com/InhwanCho/InhwanCho.github.io/assets/111936229/dfeaeeda-4547-4c61-85c6-175ea9639eb9"/>
+
+아래 그림은 최종적으로 multi-headed attention의 값을 얻는 과정입니다.
+
+<img width="700" alt="멀티해드 어텐션의 최종 과정" src="https://github.com/InhwanCho/InhwanCho.github.io/assets/111936229/f67d6d08-e664-4ecd-a621-53f85507a7a3"/>
+
+6. $z_0, z_1, z_2, ... , z_7$의 값을 concat한 값과 $W^O$값을 연산하여 최종 $Z$값을 얻습니다. [여기서 W_O의 열은 concat한 z들의 차원과 동일하고 행은 input embedding($x$)값의 차원과 동일하기 때문에 $Z$의 차원은 input차원과 동일합니다.]($W^O$는 학습을 통해 구하는 파라미터)
+
+7. Add(`Residual`) & `Normalize`
+
+8. Position-wise Feed-forward Network 연산을 진행합니다.
+[$FFN(x) = max(0,x W_1 + b_1)W_2 +b_2$]
+
+<img width="700" alt="FFN" src="https://github.com/InhwanCho/InhwanCho.github.io/assets/111936229/173ed316-d309-4f03-8b41-b8e1ae0aac8e"/>
+
+FFN을 그림으로 살펴보면 다음과 같습니다.
+여기서는 `1x1 conv연산`을 통해 차원을 늘리고 Relu를 취한뒤 다시 `1x1 conv연산`를 통해 줄인다고 생각하면 편합니다.
+
+여기까지가 Transformer의 `Encoder` 부분이였습니다.
+
+### Decoder
+
+<img width = "700" alt ="decoder" src="https://github.com/InhwanCho/InhwanCho.github.io/assets/111936229/b4fdca5d-509f-45dc-81bd-284944319196"/>
+
+이제 `Decoder`에 대해 설명하겠습니다.
+
+1. 디코더에서는 Multi-head attention 대신 `Masked Multi-head attention`을 먼저 수행합니다.
+(이 self-attention은 연산을 수행 할 때, 앞에 있는 attention score만 볼 수 있습니다)
+
+<img width="700" alt="decoder의 masked attention" src="https://github.com/InhwanCho/InhwanCho.github.io/assets/111936229/c3964977-cebb-433e-9672-9f0f7d74d323"/>
+
+위의 그림을 보면, $z_1$의 연산을 수행 할 때, $x_2$의 값들은 `inf`로 가려있어서 연산에 포함되지 않습니다.
+
+<img width="700" alt="masked attention의 연산" src="https://github.com/InhwanCho/InhwanCho.github.io/assets/111936229/e340218f-8123-4b01-8b3b-e99918ab337f"/>
+
+하지만 실제로는 sequential하게 연산하지 않고 위의 그림과 같은 방식으로 softmax로 연산하기 전에 `-inf`로 처리하고 연산하게됩니다.
+
+2. 이 output값인 $Z$값을 decoder의 Multi-head attention에서 $Q$값으로 사용하고, encoder의 output값을 $K$, $V$로 사용하여 연산을 합니다.
+
+<img width="700" alt="Leaner & softmax & argmax" src="https://github.com/InhwanCho/InhwanCho.github.io/assets/111936229/771f7b11-8cc8-4eb5-a991-938b09249e7d"/>
+
+3. 마지막으로 위의 그림과 같이 Linear(vocab size) and softmax를 통하여 output 값을 얻고 거기에 `argmax`를 통해 최종적으로 우리가 얻고 싶은 단어를 얻습니다.
+
+### 참고 자료(Transformer에 관한 글)
+
+[Transformer 논문](https://arxiv.org/abs/1706.03762 "Transformer 논문")  
+[고려대 유튜브](https://www.youtube.com/watch?v=Yk1tV_cXMMU&list=PLetSlH8YjIfVzHuSXtG4jAC2zbEAErXWm&index=17 "고려대 유튜브")  
+[Jay alammar 블로그](https://jalammar.github.io/illustrated-transformer/ "Jay alammar blog")

@@ -1,0 +1,48 @@
+---
+title:  '이스케이프 시퀀스(escape sequence) 프린트문에 색상 입히기'
+
+
+tags:
+  - python
+  - 이스케이프
+  - 프린트
+  - 색상
+  - 색깔
+  - print
+
+date: 2022-12-18
+lastmod: 2022-12-18
+ 
+---
+
+
+## 파이썬 프린트문(print)에 색상 입히기
+
+- BRIGHT_BLACK   = '\033[90m'
+- BRIGHT_RED     = '\033[91m'
+- BRIGHT_GREEN   = '\033[92m'
+- BRIGHT_YELLOW  = '\033[93m'
+- BRIGHT_BLUE    = '\033[94m'
+- BRIGHT_MAGENTA = '\033[95m'
+- BRIGHT_CYAN    = '\033[96m'
+- BRIGHT_WHITE   = '\033[97m'
+- BRIGHT_END     = '\033[0m'
+
+- Black   = '\033[30m'
+- Red     = '\033[31m'
+- Green   = '\033[32m'
+- Yellow  = '\033[33m'
+- Blue    = '\033[34m'
+- Magenta = '\033[35m'
+- Cyan    = '\033[36m'
+- White   = '\033[37m'
+
+
+```python
+# 이런식으로 사용하면 됩니다.
+print('\033[93m' + '안녕하세요') # 노란색의 '안녕하세요' 글자가 출력
+
+print('\033[92m' + '안녕하세요') # 녹색의 '안녕하세요' 글자가 출력
+
+print('\033[31m' + '안녕' + '\033[95m' + '하세요') # 빨간색의 '안녕'과 '보라색'의 하세요 글자가 출력
+```

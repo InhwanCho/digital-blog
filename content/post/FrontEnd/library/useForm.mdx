@@ -1,0 +1,208 @@
+---
+title: 'useForm(react-hook-form)'
+
+tags:
+  - useform
+
+date: 2024-01-06
+---
+
+## useForm
+
+form 태그를 매우 쉽게 사용할 수 있게 해주는 library입니다.
+
+`npm install react-hook-form`으로 설치
+
+기존에는 value값 변경과 clickEvent, validation을 통해서 form을 관리했습니다.
+하지만 input의 수가 많아진다면, 코드가 복잡해지고 validation 해야 할 양이 많아지기때문에 비효율적인데,
+물론 직접 input태그 안에 required 같은 속성값으로 validation을 할 수는 있지만 inspect에 들어가서 수정이 가능하기 때문에 지양해야합니다.
+이 useForm을 사용하면 무척 편리하게 관리가 가능합니다.
+
+```js
+import { useForm } from 'react-hook-form'
+
+export default function Forms() {
+  const { register, watch } = useForm()
+
+  // 콘솔창에서 확인 가능 //
+  console.log(register('name123'))
+  console.log(watch())
+  return (
+    <div>
+      <input {...register('username')} type="text" placeholder="usename" />
+      <input {...register('email'),{required: true}} type="email" placeholder="email" />
+      <input type="submit" value={'submit'} />
+    </div>
+  )
+}
+```
+
+### 사용 방법
+
+```js
+// register는 state와 input를 연결해주는 함수입니다.
+// 사용하는 방법은 const { register } = useForm()로 호출 한 후,
+// input 태그 안에 <input {...register('NameOfRegister')}/>로 호출합니다.
+// 속성에는 onBlur, onChange, ref가 있습니다.
+const { register } = useForm()
+
+<input {...register('NameOfRegister1')}/>
+<input {...register('NameOfRegister2')}/>
+
+// 만약, register로 변경된 값을 확인하기 위해서
+// watch()를 호출해서 확인할 수 있습니다.
+const { watch } = useForm();
+console.log(watch());
+```
+
+### Validation 설정
+
+1. register를 설정할 때, 두번째 인자에 validation을 작성할 수 있습니다.
+2. handleSubmit은 onValid와 onInvalid를 설정할 수 있습니다.(onValid는 필수값이고 onInvalid는 선택값입니다.)
+3. input의 rule이 문제가 없으면 onValid가 실행되고, 문제가 있으면 onInvalid를 실행해줍니다.
+4. onInvalid를 설정할 때는 validation할 인자를 입력하고 message와 value를 설정하면 됩니다.
+5. customValidation을 설정할 때는 validate를 인자로 입력하고 에러 이름, 설정을 입력하면 됩니다.
+
+```js
+const { handleSubmit, reset } = useForm();
+
+const onValid = (data)=>{
+  //data는 register에 들어있는 value값 입니다.
+    console.log('im valid :', data)
+    reset()
+  }
+const onInvalid = (errors: FieldErrors)=>{
+  console.log('error :', errors)
+}
+<form onSubmit={handleSubmit(onValid, onInvalid)}>
+  <input {...register('NameOfRegister1'), {required: true, maxLength:25}}/>
+  <input {...register('NameOfRegister2'), {
+          required:'username을 입력해주세요(메시지 적기)',
+          maxLength: {
+          message: '8글자 이하로 설정해주세요',
+          value: 8,
+          }}
+  }/>
+
+  <input {...register("email", {
+            validate: {
+              notGamil: (value) =>
+                !value.includes("@gmail.com") || "error message here",
+            },
+          })}/>
+</form>
+
+// --------------
+
+// 만약 클릭하기 전에 에러메시지를 확인하고 싶으면 아래처럼 코드 작성
+const {formState: { errors }} = useForm();
+
+<input {...register("email", {
+          required: 'required message'
+          validate: {
+            notGamil: (value) =>
+              !value.includes("@gmail.com") || "error message here",
+          },
+        })}/>
+{errors.email?.message.toString()}
+```
+
+### pattern
+
+useForm에는 mode가 있는데, 기본값은 onSubmit 입니다.
+`onSubmit`는 form을 submit(클릭) 했을때, 에러를 처리합니다.
+`onBlur`는 focus가 input 밖으로 나갔을때, 에러를 처리합니다.
+`onChange`는 입력과 동시에 유효성 검사를 하여 에러를 처리합니다.
+
+```js
+const {
+  register,
+  handleSubmit,
+  formState: { errors },
+} = useForm({
+  mode: 'onBlur',
+})
+
+<input {...register("email",{ #...errors#})}
+className={`${errors.email ? 'bg-red-500' : ''} `} />
+{errors.email?.message.toString()}
+```
+
+- 참고로 register('name' ,{`valueAsNumber : true`})을 하면 자동으로 value가 number로 되기때문에 오류를 방지할 수 있습니다.
+
+### setError
+
+```ts:api/test.ts
+// 커스텀 메시지를 작성하고 setError를 설정하면 됩니다.
+function handler(req,res){
+  user = client.findUnique...
+  if (user) {
+        return res
+          .status(401)
+          .json({
+            ok: false,
+            errMsg: "이미 존재하는 이메일이 있습니다. 아이디 생성 실패",
+          });
+  }
+}
+```
+
+```js:useForm.tsx
+// 만약 로그인 실패 같은 커스텀 에러 메시지를 보여줄때는 setError를 사용하면 됩니다.
+
+const {
+  register,
+  handleSubmit,
+  setError,
+  formState: { errors },
+} = useForm()
+
+useEffect(()=>{
+  setError(
+    'email',
+    { type: "custom", message: data?.errMessage}
+    { shouldFocus: true }
+    )
+})
+
+  return(
+<input {...register("email")} />
+{errors.email?.message.toString()}
+)
+```
+
+### getValues
+
+```js:useForm.tsx
+const {
+  getValues,
+  watch,
+} = useForm()
+
+const onValid=()=>{
+  //만약 value 값을 얻으려면 getValues
+  getValues('comment')
+}
+
+//input 값의 변동에 따른 효과를 주려면 watch를 사용하면됩니다.
+  return(
+<input {...register("comment")} />
+{watch('comment') && (<p>게시</p>)}
+)
+```
+
+### setValue
+
+```js:useForm.tsx
+// defaultValues로 기본값을 설정해주는 방법도 있지만, 
+// 데이터가 undefined 였다가 불러와 지는 경우 value값에 보이지 않는 경우가 있는데,
+// setValue를 통해 value값을 지정해줄 수 있습니다.
+const { setValue } = useForm({defaultValues:{ avatar: user?.avatar || "dog" }})
+
+  useEffect(() => {
+    if (user?.name) setValue('name', user.name)
+    if (user?.password) setValue('password', user.password)
+  }, [setValue, user])
+
+...
+```

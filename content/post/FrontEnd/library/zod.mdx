@@ -1,0 +1,152 @@
+---
+title: 'Zod: TypeScript용 스키마 선언 및 검증 라이브러리'
+tags:
+  - zod
+
+summary: 'TypeScript 환경에서 데이터의 유효성 검사를 간소화하는 Zod 라이브러리에 대해 알아보겠습니다.'
+date: 2024-03-22
+---
+
+`Zod`는 TypeScript 환경에서 데이터의 스키마를 선언하고 검증할 수 있는 강력한 라이브러리입니다. 
+
+이를 통해, 데이터의 타입을 명확하게 정의하고 런타임에 해당 타입에 맞는지 검증할 수 있습니다. 
+
+`Zod`는 특히 API 응답이나 사용자 입력과 같이 외부로부터 들어오는 `데이터의 유효성을 검사`하는 데 유용하게 사용됩니다.
+
+## 기본 사용 방법
+
+### 1. 스키마 정의 
+
+검증하고자 하는 데이터의 형태를 정의하는 `스키마`를 먼저 만듭니다. 
+
+`스키마(schema)`는 데이터의 구조, 형식, 그리고 제약사항을 명시하는 설계도입니다.
+
+스키마 정의 예시 -
+
+```javascript
+const userSchema = z.string().min(5).max(10)
+```
+
+### 2. 데이터 검증 
+
+`.parse()` 또는 `.safeParse()` 메서드를 활용하여 데이터를 검증합니다. 
+
+이는 `if문`이나 `try/catch문법`을 사용하는 것보다 편리하고 강력합니다.
+
+#### parse()와 safeParse()의 차이
+
+- parse() : 데이터가 스키마와 일치하지 않으면 오류를 발생시킵니다.
+
+- safeParse() : 데이터가 스키마와 일치하지 않아도 오류를 발생시키지 않고, 성공 여부를 나타내는 객체(Object)를 반환합니다.
+
+데이터 검증 예시 -
+
+```javascript
+// 검증 실패 시 에러 발생
+const result = userSchema.parse('유저네임123') 
+// 검증 실패 시 객체 생성(오류는 발생하지 않음)
+const result = userSchema.safeParse('유저네임123') 
+```
+
+## 기본적인 사용 예시
+
+```javascript
+import { z } from 'zod'
+
+// 사용자 스키마 정의
+const UserSchema = z.object({
+  name: z.string(),
+  age: z.number(),
+  email: z.string().email(),
+})
+
+// 검증할 데이터
+const userData = {
+  name: 'John Doe',
+  age: 30,
+  email: 'john.doe@example.com',
+}
+
+try {
+  // 데이터 검증
+  const user = UserSchema.parse(userData)
+  console.log('Valid user data:', user)
+} catch (error) {
+  console.error('Invalid user data:', error)
+}
+```
+
+### Next.js에서 서버 액션을 통한 폼 데이터 검증 예시
+
+```javascript:app/somefoler/action.ts
+const checkUsername = (username) => !username.includes('something')
+const confirmPasswords = ({password, confirm_password}) => password === confirm_password
+// At least one uppercase letter, one lowercase letter, one number and one special character
+const passwordRegex = new RegExp(
+/^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).+$/
+);
+
+const formSchema = z.object({
+  usename:z.string({invalid_type_error:'타입 에러',required_error:'입력 안함'})
+  .min(4,'4개보다 더 입력해주세요').max(10,'더 짧게 입력해주세요')
+  .trim().toLowerCase()//trim을 사용하여 공백 제거, 
+  .refine(checkUsername, 'something이 들어가면 안됩니다'),
+  email:z.string().email(),
+  password:z.string().min(10).regex(passwordRegex,'
+  소문자, 대문자, 숫자, 특수문자가 1개 이상씩 필요합니다.'),
+  confirm_password:z.string().min(10).regex(passwordRegex),
+}).refine(confirmPasswords, {message:'비밀번호가 동일하지 않습니다', path:['confirm_password']})
+
+
+export async funtion createAccount(prevState, formData){
+  const data = {
+    usename:FormData.get('username'),
+    email:FormData.get('email'),
+    password:FormData.get('password'),
+    confirm_password:FormData.get('confirm_password'),
+  }
+  const result = formSchema.safeParse(data)
+  if (!result){
+    return result.error.flatten()
+  } else {
+    console.log(result.data)
+  }
+}
+```
+
+```javascript:app/create/page.tsx
+// 서버 액션을 사용한 예시
+const [state, dispatch] = useFormState(createAccount, null)
+...
+
+<Input ... name='username' errors={state?.fieldErrors.username}/>
+<Input ... name='email' errors={state?.fieldErrors.email}/>
+<Input ... name='password' errors={state?.fieldErrors.password}/>
+<Input ... name='confirm_password' errors={state?.fieldErrors.confirm_password}/>
+
+폼-에러 ex. 비밀번호가 동일하지 않은 경우 등은 formError로 출력 또는 path를 설정.
+// {state?.formErrors.map((error,index) => (<div key={index}>{error}</div>))}
+```
+
+## phoneNumber와 같은 특정 검증 로직이 필요할 경우
+
+```bash
+npm install validator
+npm install -D @types/validator
+```
+
+- form 태그로 넘어오는 데이터는 숫자로 입력해도 `string`으로 변환되어 옵니다.
+- 이를 숫자 타입으로 변경하기 위해서는 몇 가지 방법이 있지만 `z.coerce().number()`를 사용하면 편리합니다.
+
+```javascript:app/somefoler/action.ts
+import { z } from "zod";
+import validator from "validator";
+
+const phoneSchema = z.string().trim().refine(validator.isMobilePhone)
+// number로 변경할 경우 min, max를 잘 설정해야 합니다.
+const tokenSchema = z.coerce().number().min(100000).max(999999)
+```
+
+## 참고
+
+[zod 공식 문서](https://zod.dev/?id=basic-usage 'zod 공식 문서')

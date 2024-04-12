@@ -1,0 +1,77 @@
+---
+title: Seq2Seq
+
+
+tags:
+- seq2seq
+- NLP
+
+date: 2023-08-14
+lastmod: 2023-08-14
+ 
+---
+
+
+
+### 참고 자료
+
+
+[수원대 유튜브](https://www.youtube.com/watch?v=mFhiGKI3LZM&list=PLBiQZMT3oSxV3RxoFgNcUNV4R7AlvUMDx&index=7&t=2791s "수원대 유튜브")  
+
+[Jay Alammar 자료](http://jalammar.github.io/visualizing-neural-machine-translation-mechanics-of-seq2seq-models-with-attention/ "jay alammar blog")
+
+
+## Seq2Seq2(시퀀스 투 시퀀스)
+
+seq2seq는 이름 그대로 sequence(시계열 데이터)에서 sequence(시계열 데이터)로 보내는 방법입니다.
+
+    ex) 나는 학생이다 -> I am a student
+
+seq2seq의 `구조는 Encoder와 Decoder로 구성`되어있습니다.
+
+## Encoder
+
+Encoder에서는 문장을 입력 받아서 Context vector(=hidden state)를 생성합니다.
+
+그림으로 보면 다음과 같습니다.
+
+<img width="900" alt="seq2seq" src="https://github.com/InhwanCho/InhwanCho.github.io/assets/111936229/4641dd5c-1d1f-45a3-8c42-c6821102d860"/>
+
+Encoder는 Embedding층과 LSTM층으로 구성되있고, 보통의 신경망에서의 위로 올라가는 `Affine 층`은 여기서는 사용하지 않고, `Cell state`는 마지막 embedding까지 사용하고 `폐기`하며, `Hidden state만 최종적으로 출력`한다(이를 `context vecotr`라 부름)
+
+이 최종 Hidden state는 하이퍼 파라미터이며, 어찌되었건 이는 길이이며, 이 고정 길이 안에서 입력 문장을 번역하는데 필요한 정보를 인코딩하는게 encoder의 목적입니다.
+
+- `[인코더 - 컨텍스트백터(hidden state) - 디코더]`로 이루어져 있고
+- seq2seq는 인코더와 디코더 아키텍처의 내부는 사실 `두 개의 RNN 구조`로 이루어진 모델
+- 시퀀스-투-시퀀스(Sequence-to-Sequence, seq2seq)는 챗봇과 기계 번역에서 많이 사용됩니다.
+- 대략적인 구조는 `입력 시퀀스`(질문)와 `출력 시퀀스`(대답)으로 이루어져 있습니다.
+
+### Decoder
+
+<img width="700" alt="디코더" src="https://github.com/InhwanCho/InhwanCho.github.io/assets/111936229/0b62e21b-7fb8-4076-8401-3bda9dcc0677"/>
+
+디코더에서는 그림과 같이 진행됩니다.
+
+`embedding값`과 `hidden state인 context vector`가 LSTM으로 연산됩니다. 
+
+자세히 살펴보면 \<end of sentence>를 input data로 사용하여 hidden state와 연산한 값을 Affine과 softmax를 통해 `I` 인 출력값을 얻습니다. 그 `I`가 다음 input으로 들어와서 반복합니다
+
+
+
+- 아래 동영상을 보시면 쉽게 이해될 것입니다(10초)
+
+
+<video controls width="800">
+    <source src="/assets/videos/seq2seq.mp4" type="video/mp4"/>
+</video>
+
+
+   
+
+## seq2seq의 한계점
+
+- 항상 고정된 크기의 벡터에(컨텍스트 벡터) 모든 정보를 저장하기 때문에 bottle neck현상이 발생하여 정보 손실이 발생한다.
+- 입력의 길이가 길어지면 기울기 소실 문제가 발생한다.
+<br/>(context vector를 기준으로 Encoder, Decoder가 완전히 분리되어 있으므로 입출력의 연관 관계가 너무 떨어져 있어서 역전파 시 기울기 소실 발생)
+
+- 결국은 RNN계열 대신 Attention을 사용하게 됨

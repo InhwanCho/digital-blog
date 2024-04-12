@@ -1,0 +1,57 @@
+---
+title:  'Anaconda 가상 환경'
+
+
+tags:
+  - 콘다
+  - 아나콘다
+  - 환경설정
+  - conda
+
+date: 2022-12-10
+lastmod: 2022-12-10
+ 
+---
+
+## 터미널로 아나콘다 가상환경 설정하기
+
+- 가상환경 리스트 확인하기
+
+```shell
+conda env list
+```
+
+- 가상환경 이름 'name_of_conda_env' 실행
+
+```shell
+conda env activate name_of_conda_env
+```
+
+- 가상환경 종료(기본으로 돌아옴)
+
+```shell
+conda env deactivate
+```
+
+- 가상환경 name_of_conda_env에 설치된 목록 확인
+
+```shell
+conda list -n name_of_conda_env
+```
+
+- 가상환경 생성
+
+```shell
+conda create --name name_of_conda_env
+
+# 특정 버전의 환경 생성
+conda create -n name_of_conda_env_3.6 python=3.6
+```
+
+- 가상환경 제거
+
+```shell
+conda remove --name name_of_conda_env
+```
+
+- 만약 iterm2를 세팅해뒀으면 터미널 오른쪽에 가상환경이 어디로 셋되어 있는지 확인이 가능하다.

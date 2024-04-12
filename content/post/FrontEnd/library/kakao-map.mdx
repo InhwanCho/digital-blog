@@ -1,0 +1,104 @@
+---
+title: 'NextJs에서 Kakao Map API 실행하기'
+
+tags:
+  - nextjs
+  - kakao
+
+summary: 'NextJs 14버전의 앱라우터에서 Kakao map api를 환경 설정하는 방법을 알아보겠습니다.'
+date: 2024-03-18
+---
+
+## Nextjs 14버전 app-router(앱라우터) 에서 카카오맵 API를 실행하는 방법입니다.
+
+- 먼저, 카카오맵 API를 신청해야됩니다.
+
+실행 방법은 2가지가 있으며 1개를 선택하시면 됩니다.
+
+`<Script>`태그 이용하기 또는 `useKakaoLoader` 생성
+
+개인적으로, `app-router`에서는 `useKakaoLoader`를 추천드립니다.
+
+1. script태그 이용하기
+
+- 스크립트 태그의 `strategy='beforeInteractive'`를 해줘야됩니다.
+
+```javascript:app/map/layout.tsx
+import Script from 'next/script'
+import React from 'react'
+export const API = `//dapi.kakao.com/v2/maps/sdk.js?appkey=${process.env.KAKAOJSKEY}&libraries=services,clusterer&autoload=false`
+
+export default function layout({ children }: { children: React.ReactNode }) {
+  return (
+    <>
+      <Script
+        src={API}
+        strategy="beforeInteractive"
+      />
+      {children}
+    </>
+  )
+}
+```
+
+2. `useKakaoLoader` 컴포넌트 생성하기
+
+```javascript:components/use-kakao-loader.tsx
+import { useKakaoLoader as useKakaoLoaderOrigin } from "react-kakao-maps-sdk"
+// 참고 https://apis.map.kakao.com/web/guide/
+export default function useKakaoLoader() {
+  useKakaoLoaderOrigin({
+    appkey: process.env.KAKAOJSKEY,
+    libraries: ["clusterer", "drawing", "services"],
+  })
+}
+```
+
+- `page.tsx`에서 `Map` 실행하기
+
+`npm install react-kakao-maps-sdk`
+
+```javascript:app/map/page.tsx
+'use client'
+
+import { Map } from "react-kakao-maps-sdk"
+import useKakaoLoader from "./useKakaoLoader"
+export default function BasicMap() {
+  useKakaoLoader()
+
+  return (
+    <Map // 지도를 표시할 Container
+      id="map"
+      center={{
+        // 지도의 중심좌표
+        lat: 33.450701,
+        lng: 126.570667,
+      }}
+      style={{
+        // 지도의 크기
+        width: "100%",
+        height: "350px",
+      }}
+      level={3} // 지도의 확대 레벨
+    />
+  )
+}
+```
+
+## 참고
+
+[공식 kakao maps sdk 깃허브](https://github.com/JaeSeoKim/react-kakao-maps-sdk '공식 깃허브')
+
+[react kakao map sdk 공식 문서](https://react-kakao-maps-sdk.jaeseokim.dev/ 'nextjs kakao map sdk')
+
+## REST API를 사용하는 방법
+
+```javascript
+const url = `https://dapi.kakao.com/v2/local/geo/coord2regioncode.json?x=127.1086228&y=37.4012191`
+const data = fetch(url, {
+  headers: {
+    'Content-Type': 'application/json',
+    Authorization: 'KakaoAK ' + process.env.KAKAORESTKEY,
+  },
+}).then((res) => res.json())
+```

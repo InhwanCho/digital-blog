@@ -1,0 +1,104 @@
+---
+title:  '파이썬에서 ZipFile 열기'
+
+
+tags:
+  - zipfile
+  - unzip
+  - extractall
+  - path
+
+date: 2022-12-03
+lastmod: 2022-12-14
+ 
+---
+
+
+## from zipfile import ZipFile로 압축 해제하지 않고 사용하기
+
+```python
+from zipfile import ZipFile
+import pandas as pd
+# zip파일 열기(압축 해제하지않고 사용)
+z = ZipFile('sentiment labelled sentences.zip')
+
+# 어떤 리스트가 있는지 확인
+z.namelist()
+# 출력 결과
+# ['sentiment labelled sentences/amazon_cells_labelled.txt']
+
+# zip파일의 데이터를 불러 읽어옴.
+# 편집 작업 시 아래와 같이 `pd.read_csv` 같은 함수로 변경(옮겨)하여 사용
+data = z.open('sentiment labelled sentences/amazon_cells_labelled.txt')
+df = pd.read_csv(data, sep="\t", header=None)
+
+# 자세한 정보 확인
+zip_info = my_zip.getinfo('sentiment labelled sentences/amazon_cells_labelled.txt')  
+print(zip_info.filename) #파일 이름
+print(zip_info.file_size)#파일 사이즈
+print(zip_info.date_time)#작성일
+```
+
+## zip파일을 경로에 실제로 압축 해제하기
+
+```python
+!unzip test.zip
+
+# -d옵션으로 경로 지정 가능(폴더 자동 생성)
+!unzip test.zip -d test_folder/
+```
+
+```python
+from zipfile import ZipFile
+
+#특정 파일만 압축 해제할 경우 사용(리스트 for문이라 시간이 꽤 걸림)
+directory = './' #현재 경로
+with ZipFile('TeamA_name2.zip') as f :
+  x = [f.extract(file, directory) for file in f.namelist() if file.endswith('jpg')] #특정 확장자만 압축 해제하기(endwith('jpg'))
+#x는 아무 변수나 줘도 됩니다.
+
+# 전체 압축 해제를 원하는 경우(엄청 빠름)
+import zipfile
+
+zip_file=zipfile.ZipFile('TeamA_name2.zip')#파일 이름
+zip_file.extractall(path='/content/temtem')#압축 해제 경로, default(path=None)
+
+```
+
+## 외부 경로를 통해 zip파일을 다운 받고 압축 해제하기(케라스 데이터셋에 저장)
+
+```python
+## Download the movielens data from website url
+import tensorflow.keras as keras
+from zipfile import ZipFile
+from pathlib import Path
+
+import os
+
+#zip파일이 있는 url
+zipped_url = (
+    'http://files.grouplens.org/datasets/movielens/ml-latest-small.zip'
+)
+
+#zip_file
+zipped_file = keras.utils.get_file(
+    'zipped_dataset.zip', zipped_url, extract=True
+)
+
+
+keras_path = Path(zipped_file).parents[0] #전의 경로 설정
+print('datasets path:', keras_path)       #데이터들이 케라스 폴더에 저장됩니다.
+# datasets path: /root/.keras/datasets
+
+print(os.listdir(keras_path))
+#['ml-latest-small', 'zipped_dataset.zip']
+
+movielens_dir = keras_path / os.listdir(keras_path)[0] #keras_path의 파일 목록 중 첫번째 목록을 임의로 지정
+
+#런타임 1회만 사용 가능
+if not movielens_dir.exists(): 
+    with ZipFile(zipped_file, "r") as zip:
+        zip.extractall(path=keras_path) #압축 해제
+print(os.listdir(movielens_dir))
+#['tags.csv', 'movies.csv', 'README.txt', 'links.csv', 'ratings.csv']
+```

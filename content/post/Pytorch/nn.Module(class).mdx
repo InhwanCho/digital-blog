@@ -1,0 +1,100 @@
+---
+title:  'Pytorch nn.Module 클래스(상속) 파악하기!!'
+
+
+tags:
+- torch
+- pytorch
+- class
+- nn.module
+
+date: 2022-12-03
+lastmod: 2022-12-04
+ 
+---
+
+## Pytorch에서 클래스로 모듈 불러오기
+
+- 파이토치에서 대부분 모델을 생성할 때 클래스(Class)를 사용하고 있습니다.
+  - 아래의 예시에서는 `nn.Module`클래스의 `BERTClassifier`를 상속 받는 모델입니다.
+  - `__init__()`에서 모델의 구조와 동작을 정의하는 생성자를 정의합니다. 이는 파이썬에서 객체가 갖는 속성값을 초기화하는 역할로, 객체가 생성될 때 자동으호 호출됩니다. `super()` 함수를 부르면 여기서 만든 클래스는 nn.Module 클래스의 속성들을 가지고 초기화 됩니다. `foward()` 함수는 모델이 학습데이터를 입력받아서 forward 연산을 진행시키는 함수입니다. 이 `forward()` 함수는 model 객체를 데이터와 함께 호출하면 자동으로 실행이됩니다. `nn.Module`클래스에서 그렇게 만들어졌기에 그렇습니다.
+
+```python
+# 간단한 예시
+from torch import nn
+import torch.nn.functional as F
+class MultiLinear(nn.Module):
+    def __init__(self):
+        super().__init__()
+        self.linear = nn.Linear(3, 1) # input_dim=3, output_dim=1.
+
+    def forward(self, x):
+        return self.linear(x)
+######
+model = MultiLinear()
+optimizer = torch.optim.SGD(model.parameters(), lr=1e-5) 
+nb_epochs = 200
+# ...
+```
+
+## KoBERT 분류기 클래스로 생성
+
+- `어텐션 마스크(attention mask)`는 BERT가 어텐션 연산을 할 때, 불필요하게 패딩 토큰에 대해서 어텐션을 하지 않도록 실제 단어와 패딩 토큰을 구분할 수 있도록 알려주는 입력입니다. 0과 1으로 이루어져있는데, 숫자 0은 해당 토큰은 패딩 토큰이므로 마스킹을 한다는 의미이고 숫자 1은 해당 토큰은 실제 단어이므로 마스킹을 하지 않는다라는 의미입니다.
+
+```python
+from torch import nn
+
+#KoBERT 학습모델 생성
+class KoBERTClassifier(nn.Module):    ## nn.Module 클래스를 상속
+    def __init__(self,
+                 bert,              #bert모델
+                 hidden_size = 768, #히든사이즈
+                 num_classes=6,     #클래스 수
+                 dr_rate=None):     #dropout
+        super(BERTClassifier, self).__init__() #super함수 생성 시 self가 뒤에 와야한다.
+        self.bert = bert
+        self.dr_rate = dr_rate
+
+        #inputsize, outputsize의 Linearmodel 만드는 함수     
+        self.classifier = nn.Linear(hidden_size , num_classes)
+
+        #dropout옵션을 사용한다면 아래 함수 생성
+        if dr_rate:
+            self.dropout = nn.Dropout(p=dr_rate)
+    
+    #어텐션마스크 생성을 위한 함수
+    def gen_attention_mask(self, token_ids, valid_length):
+        attention_mask = torch.zeros_like(token_ids)
+        for i, v in enumerate(valid_length):
+            attention_mask[i][:v] = 1
+        return attention_mask.float()
+
+    def forward(self, token_ids, valid_length, segment_ids):
+        #어텐션마스크 생성
+        attention_mask = self.gen_attention_mask(token_ids, valid_length)
+        
+        _, pooler = self.bert(input_ids = token_ids, token_type_ids = segment_ids.long(), attention_mask = attention_mask.float().to(token_ids.device))
+
+        #dropout옵션을 사용한다면 아래 함수 생성
+        if self.dr_rate:
+            out = self.dropout(pooler)
+
+        return self.classifier(out)
+
+######## 사용 예시 ########
+bertmodel, vocab = get_pytorch_kobert_model()
+
+model = KoBERTClassifier(bertmodel,  dr_rate=0.5).to(device)
+```
+
+## 코드 분해하여 원리 파악하기
+
+```python
+torch.nn.Linear(in_features,out_features,bias = True, device = None,dtype = None)
+
+train_dataloader = torch.utils.data.DataLoader(data_train, batch_size=batch_size, num_workers=5)
+
+# train_dataloader의 리스트는
+# [[token_ids], [valid_length], [segment_ids], [label]] 의 순서로 이루어져 있습니다.
+# for i ,(token_ids, valid_length, segment_ids, label) in enumerate(train_dataloader): 이런식으로 사용.
+```

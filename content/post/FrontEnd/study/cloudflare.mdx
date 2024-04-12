@@ -1,0 +1,142 @@
+---
+title: 'CloudFlare'
+
+tags:
+  - cloudflare
+
+date: 2024-01-31
+---
+
+## Cloudflare - image
+
+[Cloudflare](https://dash.cloudflare.com/ '클라우드플레어')
+
+클라우드플레어는 웹서비스를 제공해주는 회사이며, image나 stream가 대표적인 서비스 입니다.
+
+일반적인 `파일 업로드의 프로세스`는 `DCU`라고 불리며 프로세스는 다음과 같습니다.
+
+```
+프로세스
+ File(browser) ---> Api Server ---> CloudFlare Server
+ File url(empty) ---> CloudFlare Server ---> if(success) {File url(file) in DB}
+
+
+Direct Creator Upload (DCU)
+1. 고객(Client)이 업로드를 원함 -> server에서 CF(CloudFlare)에 알림
+2. CF에서 파일이 없는 URL을 넘겨줌(옵션이 없으면 30분 후 URL이 사라짐)
+3. 고객이 URL에 파일을 채우고, id값 혹은 url을 db에 저장
+4. 웹에서 url을 사용하여 불러옴
+
+--> backend에 데이터를 넘기지 않고 client가 직접 업로드를 하고, Api key를 노출 시키지 않음
+```
+
+이미지 서비스는 유료이며 직접 사이트에서 업로드하는 방법과 API를 활용하여 업로드를 하는 방법이 있습니다.
+
+### API를 활용하여 업로드
+
+[Docs](https://developers.cloudflare.com/images/upload-images/direct-creator-upload/ '공식문서')
+
+1. [토큰 생성](https://dash.cloudflare.com/profile/api-tokens 'token generate')을 합니다.
+2. curl 혹은 js를 통해 요청
+
+```js:api.js
+// v1 방법
+await (
+  await fetch(
+    `https://api.cloudflare.com/client/v4/accounts/${process.env.CF_ID}/images/v1/direct_upload`
+    {
+      method: "POST",
+      headers: {
+                "Content-Type": "application/json",
+      Authorization: `Bearer ${process.env.CF_TOKEN}`,
+      },
+    }
+  )
+).json()
+
+
+// v2 방법
+await (
+    await fetch(
+      `https://api.cloudflare.com/client/v4/accounts/${process.env.CF_ID}/images/v2/direct_upload`,
+      {
+        method: "POST",
+        headers: {
+          // "Content-Type": "application/json", v2에서 사용하면 결과가 이상하게 나옵니다.
+          Authorization: `Bearer ${process.env.CF_TOKEN}`,
+        },
+      }
+    )
+  ).json();
+```
+
+```json
+// return 받는 결과 값 예시
+// result.id와 result.uploadURL이 필요합니다.
+{
+  "result": {
+    "id": "2cdc28f0-017a-49c4-9ed7-87056c83901",
+    "uploadURL": "https://upload.imagedelivery.net/Vi7wi5KSItxGFsWRG2Us6Q/2cdc28f0-017a-49c4-9ed7-87056c83901"
+  },
+  "result_info": null,
+  "success": true,
+  "errors": [],
+  "messages": []
+}
+```
+
+- file upload form의 예시입니다.
+
+```js
+// 예시
+// 백엔드에서 id, 빈 uploadURL을 받습니다. 
+const { id, uploadURL } = await (await fetch(`/api/files`)).json()
+
+// 빈 formData를 만듭니다
+const form = new FormData()
+
+// 예시에서는 파일을 1개만 첨부가 가능해서 
+// 'file'이라는 이름의 form에 avatar[0]을 -사진 포맷
+// user.id라는 이름으로 append합니다
+form.append('file', avatar[0], user.id.toString())
+
+// 백엔드에서 받은 uploadURL을 CF(cloudFlare)에 body값에 form(사진)을 넣고 보냅니다.
+const request = await (
+  await fetch(uploadURL, {
+    method: 'POST',
+    body: form,
+  })
+).json()
+
+// id값(추후에 이미지 불러올때 사용)을 db에 저장합니다.
+editProfile({
+  avatarId: id,
+})
+```
+
+## Variants
+
+`Resize images -> 사이즈 별로 이미지를 저장` 하는것을 의미합니다
+
+Cloudflare 이미지는 다양한 이미지의 사용을 고려하여 
+이미지 크기를 조정하는 방법을 지정하는 variants을 지원합니다. 
+기본적으로 최대 20개의 variants을 구성할 수 있으며,
+각 variants에는 크기가 조정된 이미지의 너비와 높이를 포함한 속성이 있습니다.
+
+Resize하는 방법은 4가지가 있으며 다음과 같습니다.
+
+
+```
+Scale down
+이미지는 주어진 너비 또는 높이에 완전히 맞도록 크기가 축소되지만 확대되지는 않습니다.
+
+Contain
+이미지는 가로 세로 비율을 유지하면서 주어진 너비 또는 높이 내에서 가능한 한 크게 크기 조정(축소 또는 확대)됩니다.
+
+Cover
+너비와 높이로 지정된 전체 영역을 정확히 채우도록 이미지 크기가 조정되고 필요한 경우 잘립니다.
+
+Crop
+너비와 높이로 지정된 영역에 맞게 이미지가 축소되고 잘립니다.
+```
+

@@ -1,0 +1,126 @@
+---
+title: 'Nextjs - route handler'
+
+tags:
+  - nextjs
+  - route
+
+date: 2023-11-24
+---
+
+## 새로운 페이지 생성하기
+
+`app/about/page.tsx` 파일을 생성하면, `/about` URL에 접근할 때 해당 파일을 렌더링하여 보여줍니다.
+
+```javascript:app/about/page.tsx
+function AboutPage() {
+  return <div>어바웃 페이지입니다.</div>;
+}
+
+export default AboutPage;
+```
+
+## 기본 API 라우트 설정
+
+- Route handler는 `route.js`또는 `route.ts`파일에 의해서 정의됩니다.
+- Route handler는 기본적으로 `GET` 메서드를 사용할때 응답 객체를 `캐싱`을 합니다.
+
+1. `app/api` 폴더를 생성합니다. - 꼭 폴더 이름이 `api`일 필요는 없지만 일반적으로 `api`를 사용.
+2. `app/api` 폴더 내에 `route.ts` 파일을 추가합니다 - 꼭 `route.ts`로 생성해야 합니다.
+
+예를 들어, `app/api/route.ts` 파일을 생성하면, `/api` 경로로 요청이 들어올 때 해당 파일의 코드가 실행됩니다.
+
+```javascript:app/api/route.ts
+export default function handler(request, response) {
+  response.status(200).json({ message: '안녕하세요!' });
+}
+```
+
+- 단, page와 route는 같은 폴더에서 존재 할 수 없습니다.
+
+```javascript:app/page.tsx
+export default function Page() {
+  return <h1>Hello, Next.js!</h1>
+}
+
+// ❌ 안됩니다 !
+// `app/route.ts`
+export async function POST(request,response) {}
+```
+
+- 위의 방식처럼 API route를 하기 위해서 `app/api/route.ts(js)`를 생성합니다.
+- 그러면 해당 주소로 페이지가 생성되며 HTTP 방법에 따라(GET, POST, ...) function을 생성합니다.
+
+- `NextRequest`와 `NextResponse`를 사용해주세요.
+- extends Request, response되었기 때문에 기존의 기능은 유지한 채 cookie 외의 추가 정보가 더 있습니다.
+- (middleware에서 사용하기 위해서는 NextRequest, NextResponse를 사용해야합니다.)
+
+```javascript:app/api/route.ts
+// 해당 페이지로 GET 요청이 오면 data를 리턴해줍니다.
+export async function GET(request, response) {
+  const res = await fetch('https://data.mongodb-api.com/...', {
+    headers: {
+      'Content-Type': 'application/json',
+      'API-Key': process.env.DATA_API_KEY,
+    },
+  })
+  const data = await res.json()
+
+  return Response.json({ data })
+}
+
+// 해당 페이지로 JSON데이터가 POST 요청이 오면 data를 리턴합니다.
+export async function POST(request, response) {
+  const data = await request.json()
+  //만약 json에서 'a', 'b' 데이터(key_value)만 필요하다면 아래와 같이 작성
+  // const { a, b } = await request.json()
+  return Response.json(data)
+}
+```
+
+### 동적 라우팅(Dynamic Routing)
+
+파일 이름에 대괄호를 사용하여 동적 라우트를 생성할 수 있습니다.
+
+예를 들어, `app/api/users/[slug]/route.ts`로 파일을 생성하면, `/api/users/1`, `/api/users/2` 등 다양한 ID에 대응하는 API 엔드포인트가 생성됩니다.
+여기서 `params.slug`의 값에 `1`, `2`등의 값이 들어오게 됩니다.
+단, 여기서 폴더 이름을 [slug]로 만들었으면 파일 내의 변수명도 반드시 slug로 설정해줘야 합니다.
+
+```javascript:app/api/users/[slug]/route.ts
+import { NextRequest } from "next/server";
+
+// 다이나믹 라우팅 예시
+export async function GET(
+  req: NextRequest,
+  { params }: { params: { slug: string } }
+) {
+  const message = params.slug;
+  return new Response(message,{status:200})
+}
+```
+
+---
+
+## 라우트 핸들러에서 HTTP 메소드 처리
+
+아래와 같은 방법으로도 가능합니다.
+Next.js의 API 라우트에서는 `req.method`를 사용하여 HTTP 메소드(GET, POST 등)에 따라 다른 작업을 수행할 수 있습니다.
+
+```javascript:app/api/message.js
+export default function handler(req, res) {
+  const { method } = req;
+
+  switch (method) {
+    case 'GET':
+      res.status(200).json({ message: '메시지를 가져왔습니다.' });
+      break;
+    case 'POST':
+      // 요청 본문을 처리하여 메시지를 생성합니다.
+      res.status(201).json({ message: '메시지가 생성되었습니다.' });
+      break;
+    default:
+      res.setHeader('Allow', ['GET', 'POST']);
+      res.status(405).end(`Method ${method} Not Allowed`);
+  }
+}
+```

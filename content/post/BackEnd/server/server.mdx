@@ -1,0 +1,111 @@
+---
+title: 'server - express'
+
+tags:
+  - server
+
+date: 2023-11-26
+---
+
+## Express
+
+```javascript
+const express = require("express");
+const app = express();
+const PORT = Number(process.env.PORT) || 3000;
+
+// 해당 js코드를 실행 시 (`node server.js`)
+// Localhost:PORT_NUMBER 에서 서버를 실행
+app.listen(PORT, ()=> {
+  console.log('http://localhost:' + PORT + ' 에서 서버 실행중')
+})
+
+// get 옵션으로 해당 페이지('/') 방문 시
+// html 파일 전달과 같은 기능 사용 가능.
+app.get('/', (req,res)=> {
+  res.sendFile(__dirname + '/index.html')
+})
+
+// use 옵션으로 html에서 사용되는 이미지, css파일, js파일 등을 등록을 해야 사용 가능.
+// 이러한 image, css, js 들을 'static file'이라고 부름
+app.use(express.static(__dirname + '/public'))
+
+// POST요청 시 data가 string에서 json으로 바꿔줘야함.
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
+app.post("/post", async (req, res) => {
+  console.log(req.body);
+  try { } catch { } // 조건식 추가
+});
+
+// query string, URL parameter
+app.get("/get/:id", async (req, res) => {
+  // url?name=kim&age=30
+  // { name : 'kim', age : 30 }
+  console.log(req.query)  // query sting
+  // url/123123
+  // req.params === 123123
+  console.log(req.params) // URL parameter
+})
+
+// Pagenation(페이지 나누기)
+app.get('/post/:id', async (req, res) => {
+  let id = req.params.id
+  // 5개 (id-1) 를 스킵하고 5개단위로 페이지를 보여주기
+  // 단, 페이지 수가 많은 경우 find()에 
+  // 조건식(마지막 페이지의 게시물 id등을 찾기)을 넣어서 찾아야 효율적임.
+  const result = await db.collection("post").find().skip(5*(id-1)).limit(5).toArray();
+  res.render("post.ejs", { post: result });
+});
+
+// API들을 분리해서 작성 - router
+app.use('/',require('./routes/new.js'))
+```
+
+```javascript
+// ./routes/new.js
+const router = require('express').Router()
+router.get('/new1', (req,res)=>{
+  res.send('new1')
+})
+router.get('/new2', (req,res)=>{
+  res.send('new2')
+})
+module.exports = router
+```
+
+## REST API
+
+위의 HTTP 요청(GET, POST, UPDATE...)을 API라고 부르고,
+RESTful API는 6가지 `좋은 API 디자인 하는 원칙`입니다.
+
+1. Uniform interface
+- 일관성 있는 URL이 좋음.
+
+2. Server와 Client의 구분
+- 유저와 서버의 역할 분리.
+
+3. Stateless
+- 요청끼리 의존성이 있으면 안됨.
+- 독립적으로 반응해야함.
+
+4. Cachability
+- 요청은 캐싱이 가능해야함
+- 자주 수신되는 자료(ex. 유저id)들은 요청을 다시 보내지 않고 하드(local storage...)에 저장하고 사용
+
+5. Layered system
+
+6. Code on demand
+
+
+
+## nodemon
+
+코드를 수정 후 반영할때마다 껏다가 켜야하는 번거로움이 있는데,
+이 재시작을 자동으로 해서 실시간으로 변경 사항을 확인 할 수 있게 해주는 프로그램.
+
+1. `npm install -g nodemon`으로 설치
+2. `nodemon server.js`로 해당 js 실행.
+3. 맥 유저인 경우 `npx nodemon app`또는 `npx nodemon server.js`으로 실행.
+

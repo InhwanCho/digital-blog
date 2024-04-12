@@ -1,0 +1,40 @@
+---
+title:  '파이토치 기본 정보들'
+
+
+tags:
+- deeplearning
+- torch
+- pytorch
+
+date: 2022-12-30
+lastmod: 2022-12-30
+ 
+---
+
+## 파이토치 기본 함수들
+
+- torch.autograd
+  - 자동 미분을 위한 함수들이 포함되어져 있습니다. 
+
+- torch.nn
+  - 신경망을 구축하기 위한 다양한 데이터 구조나 레이어 등이 정의되어져 있습니다.
+RNN, LSTM과 같은 레이어, ReLU와 같은 활성화 함수, MSELoss와 같은 손실 함수들이 있습니다.
+
+- torch.optim
+
+  - 확률적 경사 하강법(Stochastic Gradient Descent, SGD)를 중심으로 한 파라미터 최적화 알고리즘이 구현되어져 있습니다.
+
+- torch.utils.data
+  - Dataset, Dataloader등의 함수가 내장되어 있습니다.
+
+- torch.onnx
+  - ONNX(Open Neural Network Exchange)의 포맷으로 모델을 익스포트(export)할 때 사용합니다. ONNX는 텐서플로같은 다른 딥러닝 프레임워크간의 교류에 필요한 함수입니다.
+
+
+## 파이토치 정보들
+
+- optimizer.zero_grad()가 필요한 이유
+  - 파이토치는 미분을 통해 얻은 기울기를 이전에 계산된 기울기 값에 누적시키는 특징이 있어서 값을 초기화 시켜줄 필요가 있음
+
+  - backward()는 기울기를 계산하는 함수

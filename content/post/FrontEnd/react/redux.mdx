@@ -1,0 +1,186 @@
+---
+title: 'Redux'
+
+tags:
+  - redux
+
+date: 2023-11-22
+---
+
+## Redux (Toolkit)
+
+React에서 Redux를 사용하면 모든 components들이 state를 공유 가능.
+Global State와 유사합니다.
+
+`useState()`와 유사한 함수 `createSlice()`를 사용
+`slice(setState)` 변경 함수를 `Action`이라고 합니다.
+
+키워드를 요약하면 다음과 같습니다.
+
+```:keyword
+1. 액션 (Action)
+상태에 변화가 필요할 때 발생시킴 (객체 하나로 표현)
+type값은 필수값
+
+2. 액션 생성 함수 (Action Creator)
+컴포넌트에서 더욱 쉽게 액션을 발생시키기 위함(옵션)
+
+3. 리듀서 (Reducer)
+변화를 일으키는 함수. 
+현재의 상태와 액션을 참조하여 새로운 상태를 반환
+
+4. 스토어 (Store)
+한 애플리케이션 당 하나의 스토어
+현재의 앱 상태와, 리듀서, 내장 함수 포함
+
+5. 디스패치 (dispatch)
+스토어의 내장 함수
+액션을 발생 시키는 것
+
+6. 구독 (subscribe)
+스토어의 내장함수
+subscribe 함수에 특정 함수를 전달해주면, 액션이 디스패치 되었을 때 마다 전달해준 함수가 호출
+(리액트에서는 connect 함수 또는 useSelector Hook 을 사용)
+```
+
+`redux의 상태는 읽기 전용이라 useState나 java의 클래스를 만드는 것처럼 이전의 상태는 절대로 건들이지 않고, 변화를 일으킨 새로운 상태 객체를 만들어서 반환하게 만들어야합니다.`
+
+---
+
+## 사용 방법
+
+### install
+
+```:terminal
+# NPM
+npm install @reduxjs/toolkit react-redux
+
+# Yarn
+yarn add @reduxjs/toolkit react-redux
+```
+
+1. `index.js`에서 App을 Provider 태그로 감싸기
+
+```javascript:index.js
+//index.js
+import { Provider } from 'react-redux'
+import store from './store'
+
+const root = ReactDOM.createRoot(document.getElementById('root'))
+root.render(
+  <Provider store={store}>
+    <React.StrictMode>
+      <App />
+    </React.StrictMode>
+  </Provider>
+)
+```
+
+2. `store.js`를 생성 후 아래와 같이 작성
+
+>스토어 안에는, 현재의 앱 상태와, 리듀서와 몇가지 내장 함수들이 있습니다.
+
+- Slice를 작성하고, reducer를 작성
+
+```javascript:store.js
+//store.js
+import { configureStore, createSlice } from '@reduxjs/toolkit'
+
+// useState와 유사한 역할 - Slice라고 부름
+// 보통 name과 변수명을 동일하게 작성
+let 작명1 = createSlice({
+  name: '작명1',
+  initialState: 'value',
+})
+let 작명2 = createSlice({
+  name: '작명2',
+  initialState: [1, 2, 3],
+})
+// 공유할 slice를 reducer에 작성
+export default configureStore({
+  reducer: {
+    작명1: 작명1.reducer,
+    작명2: 작명2.reducer,
+  },
+})
+```
+
+3.불러올 컴포넌트에 가서 `useSelector`를 활용하여 불러오기
+
+```javascript
+import { useSelector } from 'react-redux'
+
+export default function ff() {
+  //방법1 - a =='value'
+  let a = useSelector((state) => state.작명1)
+
+  //방법2 - b.작명 == [1,2,3]
+  let b = useSelector((state) => state)
+  console.log(b.작명2)
+}
+```
+
+---
+
+## Slice 변경하기(자료가 String type인 경우)
+
+1.slice를 변경하는 함수를 reducers에 생성
+2.export 할 함수를 export
+
+```javascript
+let user = createSlice({
+  name: 'user',
+  initialState: 'bbb',
+  reducers: {
+    changeName(state) {
+      return 'aaa ' + state // aaa bbb
+    },
+    f1() {},
+    f2() {},
+  },
+})
+//export
+export let { changeName, f1, f2 } = user.actions
+```
+
+3.dispatch()로 감싸서 실행.
+
+```javascript
+import { useDispatch, useSelector } from 'react-redux'
+import { changeName } from './store'
+
+const user = useSelector((state) => state.user)
+const dispatch = useDispatch()
+
+return (
+  <div>
+    <p>{user}</p>
+    <button
+      onClick={() => {
+        dispatch(changeName())
+      }}
+    >
+      버튼
+    </button>
+  </div>
+)
+```
+
+## Slice 변경하기(Object, Array type인 경우)
+
+```javascript
+let user = createSlice({
+  name: 'user',
+  initialState: { name: 'aaa', age: 30 },
+  reducers: {
+    changeName(state, action) {
+      //방법 2가지 중 1개 선택하여 사용
+      state.name = 'bbb'
+      // return {name : 'bbb', age: 30};
+
+      // 파라미터를 사용하는 방법 - payload를 붙여서 사용
+      // state.name = 'bbb'+action.payload
+    },
+  },
+})
+```

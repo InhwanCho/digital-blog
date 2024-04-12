@@ -1,0 +1,122 @@
+---
+title: 'Nextjs 란?'
+
+tags:
+  - nextjs
+
+date: 2023-11-16
+---
+
+## Nextjs 란
+
+`Vercel`이란 회사에서 만든 `React Framework`입니다.
+
+`Framework`와 `Library`의 차이는 Framework는 구조가 설계되어있고, 그 구조에 맞춰서 코드를 설계하는 형식입니다.
+예를 들어 Nextjs에서는 라우팅을 할때, 'about/page.js'를 생성하는게 이미 구조가 그렇게 설계되어있기 때문입니다.(App Route 기준)
+`React`는 Library이기 때문에 자유롭게 코딩을 할 수 있습니다.
+
+<h4>
+  장점으로는 <br />
+</h4>
+1. `SSR`을 사용하여 `SEO`에 최적화되어있고, 2. 개발 생산성 향상 - `Routing(라우팅) 및 설정`이 매우 편리하게
+되어있습니다. 3. TypeScript 지원 4. 배포 용이성 - vercel에서 손쉬운 배포가 가능합니다. 5. 안정성 및 성능
+- 업데이트 주기가 빠릅니다.
+
+---
+
+### SSR(Server Side Rendering) 이란?
+
+`DB` -> `Server` -> `Client`의 과정에서 Server에서 html을 만들면 SSR, Client(ex.React)에서 만들면 CSR이라고 합니다.
+
+`서버 사이드 랜더링`은 이름에서 알 수 있듯이 브라우저에 보내기 전에 서버 측에서 웹 페이지를 렌더링하는 과정을 포함합니다.<br/>
+이 방식에서 서버는 요청된 페이지를 처리하고 HTML을 렌더링한 후 완전히 형성된 페이지를 사용자의 장치로 전송합니다. <br/>
+즉, `클라이언트로 전달될 HTML 파일 내용을 미리 그려서 보여줍니다.`
+
+이 방법에는 여러 이점이 있습니다.
+
+1. 속도: 실제로 네트워크 환경을 Slow 3G로 설정하고 React App(CSR)을 새로 고침을 해보면 흰 화면이 오래 보입니다.
+   그리고 SSR은 일반적으로 초기 페이지 로드가 빠르기 때문에 성능이 향상됩니다. 완전히 렌더링된 페이지가 클라이언트에게 전송되기 때문입니다.
+
+2. SEO(검색 엔진 최적화) 친화적: 검색 엔진 크롤러는 초기 HTML이 서버 응답에서 즉시 사용 가능하기 때문에 컨텐츠를 쉽게 색인화할 수 있습니다.
+
+3. 인터넷 연결 상태가 좋지 않은 상태에서도 SSR은 JavaScript가 비활성화되거나 지원되지 않더라도 사용자가 컨텐츠를 볼 수 있도록 보장합니다.
+
+### CSR(client Side Rendering) 이란?
+
+반면에 `클라이언트 사이드 랜더링`은 렌더링 프로세스를 클라이언트 브라우저로 이동시킵니다.
+서버는 최소한의 HTML 페이지와 JavaScript를 보냅니다.
+(이때, 아무런 설정하지 않은 React App의 기준으로 `빈 div 하나`가 만 보냅니다.-즉, 흰화면이 발생. 그래서 서버 비용이 쌉니다.)
+그런 다음 JavaScript를 실행하고 데이터를 가져와 페이지를 업데이트합니다.
+CSR의 이점은 다음과 같습니다.
+
+1. 상호작용성: CSR은 클라이언트 브라우저가 대부분의 렌더링 작업을 처리하기 때문에 매우 상호작용적이고 동적인 사용자 인터페이스를 가능하게 합니다.
+
+2. 서버 부하 감소: 서버는 최소한의 데이터만 보내므로 서버 부하가 줄어들어 초기 페이지 로드가 빨라집니다.(서버 비용이 쌈)
+
+3. 초기 페이지가 로드된 후 속도가 빠릅니다.
+
+### SEO(Serch Engine Optimizaion) 이란?
+
+> 검색엔진최적화(SEO)는 웹사이트가 검색 엔진 결과 페이지(SERP)에서 높은 순위를 차지할 수 있도록 최적화하는 프로세스입니다.<br/>
+> 이는 사용자들이 특정 검색어나 질문에 대한 정보를 빠르게 찾을 수 있도록 도와주는 중요한 온라인 마케팅 전략 중 하나입니다.
+
+## SSC(Server Side Component) vs CSR(Client Side Component)
+
+`랜더링(Rendering)`이란? 자바스크립트를 통해 HTML로 변환하는 작업을 의미합니다.
+브라우저는 tsx, jsx로 생성된 코드를 이해할 수 없고, js를 통해 이를 변환하여 UI를 보여줍니다.
+Nextjs는 이를 기본적으로 Server(backend)에서 처리하여 SSR 입니다.
+
+Nextjs에서는 초기 HTML 파일(더미 HTML)을 먼저 전달하고 이후,
+HTML 요소들을 React 컴포넌트로 변환 및 이벤트리스너 등을 부착하여 React DOM에서 관리하게 하는데 이 과정을 `Hydration`이라고 합니다.
+
+> 즉, 기본 HTML을 먼저 받고, 추후 js를 이용하여 interactive하게 변경하는걸 Hydration이라 합니다.
+
+`use client`가 적힌 컴포넌트를 CSR이라 하는데 이 CSR만 Hydration 작업을 수행하게됩니다.
+즉 `use client`가 적힌 컴포넌트는 interactive 하다는 의미이지, client에서 rendering 된다는 의미가 아닙니다.
+backend에서 rendering되고 frontend에서 Hydrate됩니다.
+
+## metadata
+
+Component가 아닌 page나 layout에서 `export const metadata`를 하면
+metadata를 생성할 수 있으며 중복되면 merge되며 나타납니다.
+
+```JavaScript
+export const metadata = {
+  title: "this is title",
+  description: "this is description"
+}
+
+//또한, template을 활용하여 사용 가능합니다.
+import { Metadata } from "next";
+export const metadata : Metadata= {
+  title: {
+    template: "%s | Title",
+    default : "Title",
+  },
+  description: "This is description"
+}
+```
+
+- dynamic metadata 사용하는 방법
+
+`[id].page` 인 경우 dynamic metadata가 필요한 경우가 있습니다.
+아래와 같이 `export generateMetadata`를 하면 됩니다.
+params은 page가 받는 인자를 동일하게 받을 수 있습니다.
+또한, getMovie 처럼 server side fetching한 경우, 
+앞에서(앞 페이지) 받은 api를 그대로 사용하기 때문에 실제로 fetch하지 않아, 로딩이 없습니다.
+
+```JavaScript
+async function getMovie(id:string) {
+  const response = await fetch(`${URL}/${id}`)
+  return response.json()
+}
+
+export async function generateMetadata({params: {id}}:{params: {id : string}}) {
+  const someMovie = await getMovie(id);
+  return {
+    title : someMovie.title
+  }
+}
+
+export default async function MovieDetailPage(){}
+```

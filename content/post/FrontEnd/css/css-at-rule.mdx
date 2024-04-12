@@ -1,0 +1,108 @@
+---
+title: "CSS @(at) rules 의 이해와 활용"
+tags:
+  - css
+  - must-know
+summary: "CSS at-rules에 대해 상세하게 알아보고, 실제 예시를 통해 그 활용법을 배워봅니다."
+
+date: 2024-03-11
+---
+
+CSS에서 `@keyframes`, `@media`와 같은 요소들을 `CSS at-rules(앳-룰`) 또는 단순히 `앳 규칙`이라고 합니다. 
+
+이 글에서는 CSS at-rules의 기본적인 이해를 돕고, 몇 가지 중요한 예시를 들어 그 사용법을 상세히 설명드리겠습니다.
+
+## CSS at-rules의 종류와 기능
+
+CSS at-rules은 특별한 지시어로, 스타일시트에 대한 메타 데이터를 정의하거나 조건부 스타일 규칙, 글꼴 및 키 프레임 애니메이션 등을 설정하는데 사용됩니다. 여기 몇 가지 주요 at-rules를 소개합니다.
+
+- `@import`: 다른 스타일시트를 현재 스타일시트에 가져옵니다.
+- `@media`: 미디어 쿼리를 사용하여 특정 조건에서만 스타일 규칙을 적용합니다.
+- `@font-face`: 웹 페이지에 사용자 지정 글꼴을 정의합니다.
+- `@keyframes`: 애니메이션 효과에 대한 중간 상태를 정의합니다.
+- `@layer`: 계층화하여 스타일 시트의 캐스케이딩(cascading)과 상속(inheritance) 동작을 더 세밀하게 제어할 수 있는 방법을 제공합니다.
+
+### \@import 사용 예
+
+`@import` 지시어를 사용하면 외부 스타일시트 파일을 메인 스타일시트에 포함시킬 수 있습니다. 
+
+이는 웹사이트의 스타일 관리를 모듈화하는 데 매우 유용합니다.
+
+```css:styles.css
+@import url("theme.css");
+```
+
+위 예시에서는 `theme.css` 파일의 모든 스타일을 `styles.css` 내로 가져옵니다. 
+
+다만, `@import`는 스타일시트의 최상단에서만 사용되어야 합니다.
+
+### \@media 사용 예
+
+`@media` 규칙은 디바이스의 화면 크기나 해상도와 같은 조건에 따라 다른 스타일을 적용할 수 있게 합니다. 
+
+반응형 웹 디자인에 필수적인 기능입니다.
+
+```css:responsive.css
+@media (min-width: 768px) {
+  body {
+    background-color: lightblue;
+  }
+}
+```
+
+위 코드는 디바이스의 화면 너비가 768픽셀 이상일 때, `body`의 배경색을 lightblue로 설정합니다.
+
+### \@font-face 사용 예
+
+`@font-face`는 웹 페이지에서 사용자 지정 글꼴을 사용할 수 있게 합니다. 
+
+이를 통해 디자이너와 개발자는 표준 웹 글꼴에 국한되지 않는 폭넓은 타이포그래피 디자인을 실현할 수 있습니다.
+
+```css:custom-font.css
+@font-face {
+  font-family: "MyCustomFont";
+  src: url("fonts/MyCustomFont.woff");
+}
+
+body {
+  font-family: "MyCustomFont", sans-serif;
+}
+```
+
+이 예시에서는 웹 폰트 파일(`MyCustomFont.woff`)을 가져와서 `MyCustomFont`라는 이름의 글꼴로 사용합니다. 
+
+`body` 태그에 적용함으로써 해당 글꼴을 사용자에게 보여줍니다.
+
+### \@keyframes 사용 예
+
+`@keyframes` 규칙은 애니메이션의 중간 중간 상태를 정의하여 복잡한 시각 효과를 만들어냅니다.
+
+```css:animation.css
+@keyframes example {
+  from {background-color: red;}
+  to {background-color: yellow;}
+}
+
+div {
+  animation-name: example;
+  animation-duration: 4s;
+}
+```
+
+### \@layer 사용 예
+
+- 명시적인 우선순위 지정: 다양한 출처에서 온 CSS 규칙들의 우선순위를 개발자가 직접 정의할 수 있게 해줍니다.
+- 코드의 유지보수성 향상: 스타일 규칙을 명확하게 계층화함으로써, 대규모 프로젝트에서 스타일 시트의 구조를 더 쉽게 관리할 수 있습니다.
+- 충돌 최소화: 다른 스타일 시트 또는 라이브러리 간의 스타일 충돌을 줄이는 데 도움을 줍니다.
+
+```css:layer.css
+/* 컴포넌트 스타일 정의 */
+@layer components {
+  .button {
+    padding: 10px 15px;
+    border-radius: 5px;
+  }
+}
+```
+
+이 코드는 애니메이션의 이름을 `example`로 정의하고, 배경색이 빨간색에서 노란색으로 변하는 효과를 만듭니다. `div`에 이 애니메이션을 적용하여 4초 동안 실행되게 합니다.

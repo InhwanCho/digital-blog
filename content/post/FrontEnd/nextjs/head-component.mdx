@@ -1,0 +1,61 @@
+---
+title: 'Next.js에서 Head 컴포넌트 사용 방법'
+tags:
+  - head
+  - nextjs
+  
+summary: 'Nextjs에서 Head 컴포넌트의 사용 방법 및 메타데이터에 대하여 알아봅시다.'
+
+date: 2024-03-11
+---
+
+html의 `<head>` 섹션에 HTML `메타데이터를 삽입`하기위해서는 Next.js에서 `<Head>` 컴포넌트를 사용합니다.
+
+`<Head>` 컴포넌트는 Next.js의 next/head 모듈에서 제공되며, SEO 최적화, 소셜 미디어 메타 태그 설정, 외부 스타일시트 또는 스크립트 추가 등 다양한 용도로 사용될 수 있습니다.
+
+## 기본 사용 방법
+
+```javascript:HomePage.jsx
+import Head from 'next/head';
+
+function HomePage() {
+  return (
+    <>
+      <Head>
+        <title>Next.js Page Title</title>
+        <meta name="description" content="This is a description of the Next.js page" />
+        <meta name="keywords" content="Next.js, SEO, React" />
+        <meta property="og:title" content="Next.js Page Title" />
+        <meta property="og:description" content="This is a description of the Next.js page" />
+        <meta property="og:image" content="https://example.com/thumbnail.jpg" />
+        <link rel="icon" href="/favicon.ico" />
+      </Head>
+      <main>
+        <h1>Welcome to My Awesome Website</h1>
+      </main>
+    </>
+  );
+}
+
+export default HomePage;
+```
+
+## 주요 메타데이터 태그 설명
+
+| 태그                                             | 설명                                                                                         |
+| ------------------------------------------------ | -------------------------------------------------------------------------------------------- |
+| `<title>`                                        | 페이지의 제목을 설정합니다. 검색 엔진 결과 페이지(SERP)와 브라우저 탭에 표시됩니다.          |
+| `<meta name="description" content="...">`        | 페이지의 간략한 설명을 제공합니다. 검색 엔진에서 페이지 설명으로 사용될 수 있습니다.         |
+| `<meta name="keywords" content="...">`           | 페이지와 관련된 키워드를 나열합니다. 최신 검색 엔진 최적화(SEO)에서는 중요도가 낮아졌습니다. |
+| `<meta property="og:title" content="...">`       | 페이지의 제목을 설정합니다. 주로 소셜 미디어에서 공유될 때 사용됩니다.                       |
+| `<meta property="og:description" content="...">` | 페이지의 간략한 설명을 제공합니다. 소셜 미디어에서 공유될 때 사용됩니다.                     |
+| `<meta property="og:image" content="...">`       | 페이지와 관련된 이미지 URL을 지정합니다. 소셜 미디어에서 공유될 때 이미지로 사용됩니다.      |
+| `<link rel="icon" href="...">`                   | 페이지의 파비콘(favicon)을 설정합니다. 브라우저 탭, 북마크 등에서 표시됩니다.                |
+
+## `<Head>` 컴포넌트의 장점
+
+1. 페이지별 메타데이터 커스터마이징: 각 페이지마다 고유의 메타데이터를 설정할 수 있어 SEO 최적화에 유리합니다.
+
+2. 동적 메타데이터 설정: 페이지의 내용이나 상태에 따라 동적으로 메타데이터를 변경할 수 있습니다.
+
+3. 편리한 사용: Next.js 프레임워크 내장 기능으로 별도의 설정 없이 쉽게 사용할 수 있습니다.

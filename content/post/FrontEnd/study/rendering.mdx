@@ -1,0 +1,141 @@
+---
+title: '렌더링(rendering)'
+
+tags:
+  - rendering
+  - must-know
+
+date: 2024-03-08
+---
+
+## 렌더링이란?
+
+`렌더링(rendering)` 또는 `이미지 합성`은 컴퓨터 프로그램을 사용하여 `이미지를 생성하는 프로세스`입니다. 
+
+브라우저가 화면에 나타나는 요소를 렌더링할 때, 웹킷(Webkit)이나 게코(Gecko) 등과 같은 렌더링 엔진을 사용합니다.
+
+엔진이 HTML, CSS, Javascript로 렌더링할 때 `CRP(Critical Rendering Path)` 라는 프로세스를 사용합니다.
+
+>이 CRP는 6단계로 이루어져있으며, 사이트 성능을 향상시키는 방법을 이해하는데 매우 유용합니다.
+
+1. DOM(Document Object Model) 트리 구축
+2. CSSOM(CSS Object Model) 트리 구축
+3. JavaScript 실행
+4. 렌더트리(Render Tree) 구축
+5. 레이아웃 생성
+6. 페인팅
+
+---
+
+자세히 살펴보겠습니다.
+
+1. HTML 파싱 후, `DOM(Document Object Model) 트리 구축`
+
+아래의 html을 예시로 살펴보겠습니다.
+
+```html:index.html
+<html>
+<head>
+  <title>Understanding the Critical Rendering Path</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header>
+      <h1>Understanding the Critical Rendering Path</h1>
+  </header>
+  <main>
+      <h2>Introduction</h2>
+      <p>Lorem ipsum dolor sit amet</p>
+  </main>
+  <footer>
+      <small>Copyright 2017</small>
+  </footer>
+</body>
+</html>  
+```
+
+위의 html은 아래와 같은 dom tree를 생성합니다.
+
+html의 장점 중 하나로 부분적으로 실행 될 수 있으며, 내용이 표시되기 위해 전체가 로드될 필요가 없습니다.
+
+<img width="800" alt="DOM tree" src="https://github.com/InhwanCho/Weight-pruning_A100-A6000/assets/111936229/dc5b2a5c-7fdd-4724-bae6-0b11ed22835c"/>
+
+---
+
+2. CSS 파싱 후, `CSSOM(CSS Object Model) 트리 구축`
+
+CSS의 특징으로는 "렌더링 차단 리소스(render blocking resource)"로 간주됩니다. 
+
+즉, 먼저 리소스를 완전히 파싱하지 않으면 렌더링 트리를 구성 할 수 없습니다. 
+
+HTML과 달리 CSS는 계단식 상속 특성 때문에 부분적으로 실행될 수 없습니다.
+
+---
+
+3. `Javascript 실행`
+   - 주의! HTML 중간에 스크립트가 있다면 HTML 파싱이 중단
+
+즉 ,파서가 내부 태그이든 외부 태그이든 `script태그`에 도달하면 fetch를 중단하고 실행합니다. 
+
+따라서 문서 내의 요소를 참조하는 JavaScript 파일이 있는 경우 해당 문서가 표시된 후에 배치 해야 한다.
+
+JavaScript가 파서 차단(parser blocking)되는 것을 피하기 위해 async 속성을 적용하여 비동기적으로 로드 할 수 있습니다.   
+
+---
+
+4. DOM과 CSSOM을 조합하여 `렌더트리(Render Tree) 구축`
+   - 주의! `display: none` 속성과 같이 화면에서 보이지도 않고 공간을 차지하지 않는 것은 렌더트리로 구축되지 않는다.
+
+---
+
+5. 뷰포트 기반으로 렌더트리의 각 노드가 가지는 정확한 위치와 크기 계산 (`Layout/Reflow 단계`)
+
+아래 코드는 HTML 문서의 `head 태그` 안에 들어가는 메타 태그입니다. 
+이 메타 태그는 웹 페이지가 모바일 장치에서 어떻게 렌더링될지를 제어합니다. 코드는 다음과 같습니다.
+
+```javascript
+<meta name="viewport" content="width=device-width,initial-scale=1">
+```
+이 메타 태그와 vw 단위의 사용은 반응형 웹 디자인에서 매우 중요합니다. 
+
+- `name="viewport"`: 이 부분은 메타 태그가 뷰포트 설정과 관련되어 있음을 명시합니다. 
+
+뷰포트는 사용자가 웹 페이지를 방문할 때 웹 페이지가 표시되는 영역을 의미합니다.
+
+- `content="width=device-width"`: 이 설정은 뷰포트의 너비를 장치의 화면 너비와 동일하게 설정합니다. 
+  
+즉, 웹 페이지의 너비가 사용자의 장치 너비에 맞춰집니다. 이렇게 설정하면 페이지가 다양한 크기의 화면에서도 적절하게 표시됩니다.
+
+- `initial-scale=1`: 이 부분은 페이지가 처음 로드될 때의 확대/축소 수준을 의미합니다. `1`은 페이지가 기본 배율로 표시되어야 함을 나타냅니다. 
+  
+즉, 추가적인 확대나 축소 없이 기본 크기로 표시됩니다.
+
+사용자가 화면 너비(width)가 1000px인 장치에서 웹 페이지를 방문한다고 가정해보겠습니다. 
+이 경우, 뷰포트의 너비는 `device-width` 설정에 따라 1000px가 됩니다.
+
+---
+
+6. `계산한 위치/크기를 기반으로 화면에 그림 (`Paint 단계`)
+
+실시간으로 개발자도구의 네트워크 탭을 눌러서 아래의 내용을 확인할 수 있습니다.
+
+```dev:networkTab
+//html
+Send Request - index.html에 대한 GET 요청 전송
+Parse HTML and Send Request - HTML 및 DOM 구문 분석을 시작. style.css 및 main.js에 대한 GET 요청
+Parse Stylesheet - CSSOM이 style.css 용으로 생성
+Evaluate Script - main.js 평가
+Layout - HTML의 메타 뷰포트 태그를 기반으로 레이아웃 생성
+Paint - 문서의 픽셀을 페인트
+```
+
+---
+
+### 참고 자료 
+
+
+[깃허브](https://github.com/baeharam/Must-know-About-Frontend?tab=readme-ov-file '깃헙')
+
+[렌더링-위키](https://ko.wikipedia.org/wiki/%EB%A0%8C%EB%8D%94%EB%A7%81 '위키')
+
+[렌더링-bitsofco](https://bitsofco.de/understanding-the-critical-rendering-path/ '렌더링')

@@ -1,0 +1,70 @@
+---
+title: 'aws - s3'
+
+tags:
+  - aws
+
+date: 2023-11-27
+---
+
+## s3
+
+aws의 s3는 클라우드 서비스 중 하나로
+s3에서 버킷은 하드디스크를 빌려주는 서비스라 생각하면 됩니다.
+
+aws가입 -> `IAM` 에서 사용자 및 키 등록 - accessKeyId,secretAccessKey 두 개가 발급됨.
+-> `S3` 에서 버킷 등록 ->
+엑세스 설정 -> 버킷 정책(보안, 일반 사용자 구분) -> CORS 설정
+
+`npm install multer multer-s3 @aws-sdk/client-s3`
+multer는 유저가 보낸 파일을 쉽게 처리하는 라이브러리.
+multer-s3는 multer에서의 파일을 s3로 업로드를 도와주는 라이브러리.
+aws-sdk는 aws를 사용하기 위한 라이브러리 입니다.
+
+```javascript
+const express = require('express')
+const app = express()
+const { MongoClient, ObjectId } = require('mongodb')
+const s3 = new S3Client({
+  region: 'ap-northeast-2', //지역설정(한국)
+  credentials: {
+    accessKeyId: process.env.KEY, //IAM 에서 발급받은 액세스키
+    secretAccessKey: process.env.KEY2, //IAM 에서 발급받은 시크릿키
+  },
+})
+
+const upload = multer({
+  storage: multerS3({
+    s3: s3,
+    bucket: process.env.NAME, //버킷 이름
+    key: function (request, file, cb) {
+      let fineName = Date.now().toString()
+      cb(null, fineName) //업로드시 파일명 변경 가능-중복이 안됨
+    },
+  }),
+})
+
+// upload.single()로 1개의 파일 업로드
+// upload.array('img1', maxNumber)로 여러개의 파일 업로드 가능
+// 미들 웨어에서는 img 처리의 에러처리가 힘들기 때문에 아래와 같이 코드 작성
+app.post('/img', async (req, res) => {
+  upload.single('img_')(req, res, (error) => {
+    if (error) {
+      console.log(error)
+    }
+  })
+  console.log(req.file) // 결과를 json형식으로 받음
+  console.log(req.file.location) // 결과 중 imgae url을 받음 - 실제로 필요한 정보
+})
+```
+
+```javascript
+<form action="/img" method="POST" enctype="multipart/form-data">
+  <h4>이미지 전송</h4>
+  // 나중에 img_이 img 파일이 맞는지 서버에서 확인하는 과정이 필요함.
+  // multiple 속성으로 여러 파일 전송 가능.
+  <input type="file" name="img_" accept="image/*" multiple />
+  <button type="submit">전송</button>
+</form>
+```
+

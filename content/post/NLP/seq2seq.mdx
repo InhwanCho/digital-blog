@@ -1,0 +1,131 @@
+---
+title: RNN & LSTM
+
+
+tags:
+- RNN
+- LSTM
+- NLP
+
+date: 2023-08-14
+lastmod: 2023-08-14
+ 
+---
+
+
+
+### 참고 자료
+
+
+[수원대 유튜브](https://www.youtube.com/watch?v=mFhiGKI3LZM&list=PLBiQZMT3oSxV3RxoFgNcUNV4R7AlvUMDx&index=7&t=2791s "수원대 유튜브")  
+[Wiki docs](https://wikidocs.net/152773 "위키 독스")  
+
+
+## CBOW(Continuous Bag of Words)
+
+자연어 분야에서 초창기에는 `Continuous Bag of Words(CBOW)`이라는 word2vec을 사용하였습니다. CBOW는 주변 단어(Context Word) 중간에 있는 단어를 예측하는 방법입니다. 
+
+1. 그러나 단어 집합의 크기가 수 백만 이상에 달하면 코스트가 큰 무거운 작업이 되고,
+2. 문장이 길어지면 뒤의 문장에 대한 답을 제대로 할 수 없고,
+3. 맥락 안의 단어 순서가 무시되기 때문에 (ex. [you,say], [say,you]의 행렬곱 층을 거쳐서 평균하면 값이 동일하다)
+
+
+   
+
+## RNN(Recurrent Neural Network)
+
+RNN은 순환 신경망(Recurrent Neural Network, RNN)이라고 합니다.
+RNN은 은닉층의 노드에서 활성화 함수를 통해 나온 결과값을 출력층 방향으로도 보내면서, 다시 은닉층 노드의 다음 계산의 입력으로 보내는 특징을 갖고있습니다.
+
+<img width="800" alt="RNN" src="https://github.com/InhwanCho/InhwanCho.github.io/assets/111936229/95b26b07-4c80-4d61-98c6-b7fa728826a9"/>
+
+$X_0$ 일때, Affine 변환을 거쳐서 hidden layer에 들어가게 되고 activation을 하면 $h_0$가 출력이 되고 바로 옆의 $X_1$로도 그 값을 넘겨주는 식으로 진행이 됩니다. 
+
+최근의 정보가 더 많이 남아있고, 먼 과거의 정보는 적게 남아있기는 하지만 값들이 작더라도 계속 남아있습니다.
+
+참고로 RNN 계열의 활성화 함수는 `하이퍼볼릭 탄젠트(tanh)`를 사용합니다. 
+
+## LSTM(Long Short Term Memory)
+
+기존의 RNN(Vanilla RNN)은 성능이 좋지 않기 때문에 보통 RNN이라고 하면 LSTM이나 GRU 등을 의미합니다.
+
+LSTM은 기존의 RNN이 출력과 먼 위치에 있는 정보를 기억할 수 없다는 단점(기울기 소실, 기울기 폭주의 문제)을 보완하여 장/단기 기억을 가능하게 설계한 신경망의 구조입니다.
+
+    기울기 소실 : 활성화 함수를 tanh를 사용하기 때문에 
+                그 값이 0~1인 값이기 때문에 계속 계산(곱)하다보면 기울기 소실이 됩니다.
+    기울기 폭주 : tanh가 아닌 matmul 단계에서 
+                1이상인 값을 계속 곱하게되어 큰 값이 되어 결국 발산되는 현상.
+
+
+<img width="650" alt="RNN" src="https://github.com/InhwanCho/InhwanCho.github.io/assets/111936229/ff0114e8-75b7-45dd-ab59-c6759099ba37"/>
+
+<img width="650" alt="LSTM" src="https://github.com/InhwanCho/InhwanCho.github.io/assets/111936229/08bd154a-1715-4d16-8d3d-77ac137db277"/>
+
+먼저 `RNN`의 구조와 `LSTM`의 구조를 비교 해보겠습니다. 
+
+`LSTM`은 RNN과 같이 체인 구조를 가지고 있지만, 4개의 Layer가 특별한 방식으로 서로 정보를 주고 받도록 되어있습니다.
+
+그럼 자세히 분석해보겠습니다.
+
+
+<img width="400" alt="cell state" src="https://github.com/InhwanCho/InhwanCho.github.io/assets/111936229/7af23d7d-2e52-485e-82c9-37bc1dd8fb87"/>
+
+LSTM은 `Cell State`와 `Hidden State`가 있습니다.
+
+`Cell State`는 LSTM의 핵심으로 정보가 전혀 바뀌지 않고 그대로만 흐르게 하는 부분입니다. 또한 꽤 경과하더라도 기울기가가 잘 전파 됩니다. 그리고 Gate(게이트)라는 구조에 의해서 정보가 추가되거나 제거 되며, 이 게이트는 어떤 정보를 유지하고 버릴지 학습합니다.
+
+그리고 3개의 게이트가 있습니다. 이 게이트 모두 `시그모이드` 사용합니다.
+
+위의 그림 중 `시그마`($\sigma$)가 보이는 부분이 모두 게이트입니다.
+
+---
+
+이 3개의 게이트는 `Forget Gate`, `Input Gate`, `Output Gate`라고 불립니다.
+
+### Forget Gate
+
+<img width="400" alt="Forget Gate" src="https://github.com/InhwanCho/InhwanCho.github.io/assets/111936229/8e14e76c-3ce4-46df-8ff7-df0e686cdc5e"/>
+
+이름 그대로 `과거의 정보를 얼마나 버릴지 결정`하는 게이트입니다. 수식은 다음과 같습니다. 
+
+$$f_t = \sigma (W_f\cdot [h_{t-1},x_t]+b_f)$$
+
+input embedding값인 x_t와 전 단계의 hidden_state($h_{t-1}$)와의 affine연산을 시그모이드를 통해 0~1사이의 값으로 나와서 1이면 모든 정보를 수용하고, 0이되면 모든 정보는 버리는 식이 됩니다.
+
+### Input Gate
+
+
+<img width="400" alt="Input Gate" src="https://github.com/InhwanCho/InhwanCho.github.io/assets/111936229/1945d1f1-fed4-4335-a220-c83836c0c8a5"/>
+
+$$i_t = \sigma (W_i\cdot [h_{t-1},x_t]+b_i)$$
+$$\tilde C_t = tanh(W_C\cdot [h_{t-1},x_t + b_C)$$
+
+이 게이트는 현재 정보를 기억하기 위한 게이트 입니다. 현재의 `Cell state 에 무엇을 얼마나 더할지 말지를 결정`합니다.
+
+<img width="400" alt="cell state의 업데이트" src="https://github.com/InhwanCho/InhwanCho.github.io/assets/111936229/91f91fd9-4118-490c-9b35-111869ac712d"/>
+
+앞의 Forget Gate와, Input Gate에서 얼마나 버릴지 더할지를 정했으므로 이 업데이트를 계산을 해서 Cell State로 업데이트를 해줍니다.
+
+$$ C_t = f_t \odot C_{t-1} + i_t \odot \tilde C_t $$
+
+### Output Gate
+
+<img width="400" alt="Output Gate" src="https://github.com/InhwanCho/InhwanCho.github.io/assets/111936229/c226ef13-2e2b-4726-99cb-0a69542b6f71"/>
+
+
+$$o_t = \sigma (W_o\cdot [h_{t-1},x_t]+b_o)$$
+$$h_t = o_t \odot tanh{(C_t)} $$
+
+새로운 cell state에서 `얼마나 hidden state로 출력할지 결정`하는 게이트입니다.
+
+- $\odot$은 아다마르 곱으로 행렬곱이 아닌 단순 곱입니다.
+
+계산을 보면 무척 복잡해보이지만 여기에 규칙들이 있어서 동일한 규칙을 가진 것들끼리는 묶어줍니다.
+
+$$ x_t\cdot W_x +h_{t-1}\cdot W_h + b $$
+
+여기서 Weight이랑 bias는 행렬 속 행렬로 보면 됩니다. 
+(예를들어 위의 수식의 b는 아래의 4가지 bias를 가진 행렬과 같습니다.)
+
+$$b == [[b^f], [b^c], [b^i], [b^o]]$$
+

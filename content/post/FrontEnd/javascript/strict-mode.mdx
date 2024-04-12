@@ -1,0 +1,68 @@
+---
+title: '엄격 모드(Strict Mode)'
+
+tags:
+  - strict-mode
+  - must-know
+summary: '자바스크립트에서 엄격 모드(Strict Mode)를 사용하는 이유와 그 특징에 대해 알아봅니다.'
+date: 2024-03-09
+---
+
+`엄격 모드(Strict Mode)`는 자바스크립트에서 더 안전하고, 오류를 줄이며, 성능 개선을 도모하기 위해 ECMAScript 5에서 도입된 개념입니다. 
+
+의도치 않은 오류를 방지하고, 코드의 안정성을 높여주며, 일반적인 코딩 실수를 예외처리 하여 디버깅을 용이하게 합니다. 
+
+이 모드를 활성화하기 위해서는 스크립트나 함수의 최상단에 `'use strict';`를 선언하면 됩니다.
+
+예를 들어, 엄격 모드가 아닌 일반 모드에서는 전역 변수를 의도치 않게 생성할 수 있습니다. 
+
+이는 나중에 코드가 복잡해졌을 때, 버그를 찾기 어렵게 만들 수 있습니다. 하지만 엄격 모드에서는 이러한 실수를 바로 잡아줍니다.
+
+### 일반 모드와 엄격 모드의 비교
+
+| 구분     | 일반 모드(Non-strict Mode)                        | 엄격 모드(Strict Mode)                            |
+|--------|---------------------------------------------|-----------------------------------------------|
+| 변수 선언 | 변수를 선언하지 않고 사용할 수 있습니다.          | 변수를 선언하지 않은 채로 사용하려 하면 `ReferenceError`가 발생합니다. |
+| 전역 객체 | `this`가 전역 객체를 가리킵니다.               | `undefined`를 가리킵니다.                             |
+| 삭제 연산 | `delete` 연산자를 이용하여 변수, 함수, 객체의 속성을 삭제할 수 있습니다. | 삭제가 불가능한 프로퍼티에 `delete` 연산을 사용하면 `TypeError`가 발생합니다. |
+| 중복 매개변수 | 함수에서 매개변수 이름을 중복해서 사용할 수 있습니다.  | 중복 매개변수를 사용하면 `SyntaxError`가 발생합니다.          |
+
+### 예시: 엄격 모드에서의 변수 사용
+
+엄격 모드를 활성화한 상태에서 아래와 같은 코드를 작성하면, 선언하지 않은 변수를 사용하려고 했기 때문에 오류가 발생합니다.
+
+```javascript:index.js
+'use strict';
+
+x = 10; // ReferenceError: x is not defined
+```
+
+반면, 엄격 모드를 사용하지 않는다면, 이 코드는 전역 변수 `x`를 만들고 그 값으로 `10`을 할당합니다. 
+
+이는 의도치 않은 전역 변수의 생성을 예로 들 수 있으며, 이는 프로그램의 예측 불가능한 동작을 초래할 수 있습니다.
+
+## React에서의 사용
+
+```javascript:App.jsx
+//사용(기본값으로 사용)
+import React from 'react';
+import ReactDOM from 'react-dom';
+import App from './App';
+
+ReactDOM.render(
+  <React.StrictMode>
+    <App />
+  </React.StrictMode>,
+  document.getElementById('root')
+);
+
+//끄기
+import React from 'react';
+import ReactDOM from 'react-dom';
+import App from './App';
+
+ReactDOM.render(
+  <App />,
+  document.getElementById('root')
+);
+```

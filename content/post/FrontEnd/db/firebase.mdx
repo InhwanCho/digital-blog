@@ -1,0 +1,142 @@
+---
+title: 'Firebase'
+
+tags:
+  - firebase
+
+date: 2023-12-25
+---
+
+## Firebase 시작하기
+
+[firebase doc](https://firebase.google.com/docs/firestore?hl=ko 'fire doc')
+
+firebase의 `Firestore`는 Firebase 및 Google Cloud의 모바일, 웹, 서버 개발에 사용되는 유연하고 확장 가능한 데이터베이스입니다
+
+참고로 firebase/lite는 firebase와 거의 유사한 40~60% 용량을 감소한 버전입니다. firebase에 비해 몇몇 기능이 없습니다.
+
+1. firebase에서 로그인 후 프로젝트 생성 
+
+2. 설치하기
+```
+npm install firebase
+```
+
+3. src폴더(작업 폴더)에 firebase에서 생성해준 script 복붙하기.
+
+```js:firebase.ts
+...
+const firebaseConfig = { ... }
+const app = initializeApp(firebaseConfig);
+...
+```
+
+---
+
+## FireStore(database)
+
+로그인 -> 프로젝트 선택 및 생성 -> 왼쪽 사이드바에서 `프로젝트 개요 ⚙` 선택 
+-> `Cloud Firestore` 선택 -> `데이터베이스 만들기` 선택 -> 위치 (asia-northeast3(Seoul))선택 
+-> `테스트 모드(30일만 사용하는 모드)` 혹은 `프로덕션 모드` 선택. - 생성
+
+왼쪽의 사이드바에서 빌드 -> `Storage` 선택 - 시작하기 -> -> `테스트 모드(30일만 사용하는 모드)` 혹은 `프로덕션 모드` 선택. - 생성
+
+```js:firebase.ts
+import { getAuth } from "firebase/auth";
+import { getFirestore } from "firebase/firestore";
+import { getStorage } from "firebase/storage";
+
+const firebaseConfig = { ... }
+
+const app = initializeApp(firebaseConfig);
+
+export const auth = getAuth(app);
+export const storage = getStorage(app);
+export const db = getFirestore(app);
+```
+
+firebase db에는 다른 데이터 베이스처럼 `collection`과 `document`, `field`가 있습니다.
+
+### 데이터(문서) 추가하기
+
+```js
+// 위에서 생성한 db를 import해서 doc을 생성합니다.
+// 여기서 'users'는 db 이름입니다.
+
+// 단일 문서를 만들때, addDoc 또는 setDoc을 이용합니다.
+// setDoc과 addDoc의 차이는 랜덤 ID의 차이입니다.(addDoc에서는 ID 랜덤)
+// 실제로 .addDoc()와 .doc().set()은 완전히 동일합니다.
+import { auth, db, storage } from "../firebase";
+import { collection, addDoc } from "firebase/firestore"; 
+
+try {
+  const doc = await addDoc(collection(db, 'users'), {
+    firstName : 'Inhwan',
+    lastName : 'Cho',
+    born : 1992,
+  })
+  // doc을 생성하면 모든 doc에 doc.id가 생성됨.
+  console.log("Document written with ID: ", doc.id);
+} catch(error){
+  console.log(error)
+}
+
+
+import { doc, setDoc } from "firebase/firestore"; 
+
+// 새로운 collection cities의 LA doc을 생성. doc이 없으면 생성되며, 
+// doc이 있으면 덮어씌웁니다 == 기존의 field가 전부 삭제되고 새로운 doc이 생성됨.
+// 세번째 옵션으로 { merge: true }를 준 경우는 update와 동일하게 병합이 됩니다.
+await setDoc(doc(db, "cities", "LA"), {
+  name: "Los Angeles",
+  state: "CA",
+  country: "USA"
+});
+
+```
+
+### 데이터 가져오기(읽기)
+
+```js
+// getDocs 말고 onSnapshot으로 실시간으로 가져올 수도 있으나, 데이터 소비가 크기때문에 설계를 잘해야합니다.
+// forEach대신 map을 사용해도 무방합니다.
+import { collection, getDocs } from "firebase/firestore"; 
+
+const querySnapshot = await getDocs(collection(db, "users"));
+querySnapshot.forEach((doc) => {
+  console.log(`${doc.id} => ${doc.data()}`);
+});
+```
+
+### 데이터(문서) 업데이트
+
+```js
+import { doc, updateDoc } from "firebase/firestore";
+
+const washingtonRef = doc(db, "cities", "DC");
+
+// collection 'cities'의 doc 'DC'의 capital의 상태를 변경.
+await updateDoc(washingtonRef, {
+  capital: true
+});
+```
+
+### 데이터(문서) 삭제
+
+```js
+// doc을 삭제할때는 deleteDoc
+import { doc, deleteDoc } from "firebase/firestore";
+
+await deleteDoc(doc(db, "cities", "DC"));
+
+
+// field를 삭제할때는 deleteField()로 삭제.
+import { doc, updateDoc, deleteField } from "firebase/firestore";
+
+const cityRef = doc(db, 'cities', 'BJ');
+
+// Remove the 'capital' field from the document
+await updateDoc(cityRef, {
+    capital: deleteField()
+});
+```

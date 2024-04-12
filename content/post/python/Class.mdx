@@ -1,0 +1,132 @@
+---
+title:  'Class(클래스, 상속)'
+
+
+tags:
+- class
+- 클래스
+- 상속
+
+date: 2022-11-30
+lastmod: 2022-12-01
+ 
+---
+
+## 클래스(Class)
+
+- 클래스 : 클래스는 `데이터와 기능을 함께 묶는 방법`
+
+- 인스턴스 : 클래스로 정의된 객체를 프로그램 상에서 이용할 수 있게 만든 `변수`
+  
+- 인스턴스를 사용하기 위해 클래스를 먼저 만들어야 함
+
+- 클래스의 함수 : `메소드` < 클래스 내부의 함수
+
+- 클래스의 명명은 맨 앞자는 대분자를 쓰는게 일반적입니다. 
+
+- 아래는 간단한 예제 입니다.
+
+### 예시1 - 클래스 생성
+
+```python
+class Charicters :
+    # 클래스의 생성자
+    # def __init__ 은 이와 유사한 형식을 따라야 함
+    def __init__(self, name, hobby):
+        self.name = name #클래스의 맴버
+        self.hobby = hobby #클래스의 맴버
+
+    #클래스의 메소드
+    def xxx(self):
+        print(f'이름 : {self.name}, 취미 : {self.hobby}')
+
+    #setter 메소드
+    def set_hobby(self, hobby):
+        self.hobby = hobby
+
+    #클래스 계승을 위한 함수(밑의 예시용)
+    def nice(self):
+        print('nice to meet you')
+
+
+a = Characters('조인환', '클라이밍')
+a.xxx()
+# 출력 결과
+# 이름 : 조인환, 취미 : 클라이밍
+
+a.hobby
+# 출력 결과
+# 클라이밍
+
+a = Characters('조인환', '클라이밍')
+a.set_hobby('산책')
+a.xxx()
+# 출력 결과
+# 이름 : 조인환, 취미 : 산책
+```
+
+### 예시 2 - 클래스 상속 - 딥러닝 모델 생성(pytorch)
+
+- 부모와 자식 관계가 존재
+- 부모 클래스 : 기존의 클래스
+- 자식 클래스 : 부모 클래스를 상속 받은 클래스
+
+```python
+#클래스에서 클레스를 만드는것을 클래스 상속이라고 합니다.
+class Baby(Characters) :
+  def hansome(self):
+    #super()를 사용하면 부모 클래스의 함수를 사용 가능합니다.
+    super().nice()
+
+  def hobi_is(self):
+    print(f'{self.name}의 취미는 {self.hobby}입니다')
+
+b = Baby('조인환','클라이밍')
+
+b.nice()
+#nice to meet you
+
+b.hobi_is()
+# 조인환의 취미는 클라이밍입니다
+```
+
+### 예시 3 - 클래스 상속 - 딥러닝 모델 생성(pytorch)
+
+```python
+import torch
+import torch.nn as nn
+#NeuralNet이라는 클래스를 만듬(nn.Module을 상속)
+class NeuralNet(nn.Module):
+  def __init__(self):
+    # torch.nn.Module의 NeuralNet을 사용한다는 의미
+    # (from nn import NeuralNet)를 수행
+    super(NeuralNet, self).__init__()
+
+    #Conv2d를 2번, Linear를 2번 실행한다는 의미
+    self.conv1 = nn.Conv2d(1,8,2)
+    self.conv2 = nn.Conv2d(8,10,3)
+
+    self.fc1 = nn.Linear(10*5*5,60)
+    self.fc2 = nn.Linear(60,10)
+
+  def forward(self,x):
+
+    x = F.max_pool2d(F.relu(self.conv1(x)), 2)
+    x = F.max_pool2d(F.relu(self.conv2(x)), 2)    
+
+    #Linear는 flatten한 데이터만 사용 가능해서 데이터 편집
+    x = x.view(-1,self.num_flat_features(x))
+    x = F.relu(self.fc1(x))
+    x = self.fc2(x)
+    return x
+
+  def num_flat_features(self, x):
+    size = x.size()[1:]
+    num_features = 1
+    for s in size:
+      num_features *= s
+    return num_features
+
+net = NeuralNet()
+print(net)
+```

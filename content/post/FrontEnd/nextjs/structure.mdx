@@ -1,0 +1,76 @@
+---
+title: 'Next.js의 폴더 구조 분석'
+tags:
+  - structure
+  - nextjs
+
+summary: 'Nextjs의 공식문서를 보고 전체적인 폴더 구조를 살펴보겠습니다.'
+
+date: 2024-03-12
+---
+
+공식문서를 번역하며 공부한걸 적어놨습니다.
+
+## 프로젝트 최상위 폴더
+
+> app - (앱 라우터의 경우)
+> pages - (페이지 라우터의 경우)
+> public - 정적인 소스들(images, favicons ...)
+> src - (옵션 - 선택 할 경우 app 혹은 pages 폴더 보다 상위 폴더가 됨.)
+
+## 라우팅 규칙들(Conventions)
+
+| 파일 이름    | 확장자        | 생성되는것                               |
+| ------------ | ------------- | ---------------------------------------- |
+| layout       | .js .jsx .tsx | Layout                                   |
+| page         | .js .jsx .tsx | Page                                     |
+| loading      | .js .jsx .tsx | Loading UI                               |
+| not-found    | .js .jsx .tsx | Not found UI                             |
+| error        | .js .jsx .tsx | Error UI                                 |
+| global-error | .js .jsx .tsx | Global error UI                          |
+| route        | .js .ts       | API endpoint                             |
+| template     | .js .jsx .tsx | 랜더링이 안되는 layout                   |
+| default      | .js .jsx .tsx | Parallel route 할때 보여주는 기본 페이지 |
+
+## Dynamic routes
+
+| 폴더 구조     | 설명                                            | 예시                               |
+| ------------- | ----------------------------------------------- | ---------------------------------- |
+| [folder]      | Dynamic route segment(단일)                     | /folder/1, /folder/2               |
+| [...folder]   | Catch-all route segment(여러개)                 | /folder/1/2/3, /folder/1/22        |
+| [[...folder]] | Optional catch-all route segment(단일 + 여러개) | /folder, /folder/202 /folder/22/22 |
+
+### 포착 그룹 동적 라우트 (Catch-all Routes)과 선택적 포착 그룹 동적 라우트 (Optional Catch-all Routes)의 차이
+
+주된 차이는 "선택적"이라는 단어에서 오는 유연성에 있습니다.
+
+선택적 포착 그룹 동적 라우트는 추가 경로 세그먼트가 없거나 여러 개 있을 때 모두 해당 페이지로 라우팅할 수 있는 더 큰 유연성을 제공합니다.
+
+## Route Groups and Private Folders
+
+|폴더 구조| 설명 | 예시 |
+|(folder) |레이아웃에 영향을 받지 않는 폴더 - 주로 app폴더에서 layout의 개수에 맞춰서 생성| app/(beforeLogin), app/(afterLogin) |
+|\_folder| 라우팅의 영향을 받지 않는 폴더| `_components`와 같은 기능을 가진 폴더를 생성|
+
+## Parallel and Intercepted Routes
+
+[패럴드 라우트](https://nextjs-blog-v2-amber.vercel.app/blog/FrontEnd/nextjs/paralled-route '패럴드 라우트')
+
+nextjs에서 모달창을 생성할때 자주 사용되는 구조입니다.
+
+먼저, `@folder`를 생성하면, layout props에서 `folder`를 받을 수 있습니다. 이는 URL 구조에 영향을 주지 않습니다.
+
+> 💡 인터셉팅 라우트는 클라이언트에서 라우팅 할 때만 적용됩니다.
+
+| 폴더 구조      | 설명                                |
+| -------------- | ----------------------------------- |
+| \@folder       | Named slot                          |
+| (.)folder      | 동일한 수준의 세그먼트와 일치       |
+| (..)folder     | 한 수준 위의 세그먼트와 일치        |
+| (..)(..)folder | 두 수준 위의 세그먼트와 일치        |
+| (...)folder    | 루트 app 디렉터리의 세그먼트와 일치 |
+
+
+### 공식 문서
+
+- [공식 문서](https://nextjs.org/docs/getting-started/project-structure '공식 문서')

@@ -1,0 +1,100 @@
+---
+title: 'Nextjs(pages-router) - data fetching'
+
+tags:
+  - nextjs
+  - fetch
+
+date: 2024-02-03
+---
+
+## server side에서 data fetching하기
+
+- pages-router의 기준입니다.
+
+실시간으로 fetching할 필요가 없다면 server side에서 fetch하는게 좋을 수 있습니다.
+
+방법은 아래와 같습니다.
+
+`export default function` 으로 `데이터`를 `await으로 fetch`하고 `return` 합니다.
+
+
+```JavaScript:(home)/page.tsx
+export const URL = 'https...'
+
+async function getMovies() {
+  //1초간 로딩(로딩 함수 확인용)
+  await new Promise((resolve) => setTimeout(resolve, 1000)) 
+  const response = await fetch(URL)
+  const json = await response.json()
+  return json
+}
+
+export default async function Page() {
+  const movies = await getMovies()
+  return (
+    <div>
+      <ul>{movies.map((movie) => <li key={movie.id}><Link href={`/movies/${movie.id}`}>
+      {movie.title}</Link></li>)}</ul>
+    </div>
+  );
+}
+```
+
+## 여러 data를 server에서 fetch하기
+
+1. data fetching 하는 Component를 생성(여기서는 GetMovies,GetVideos)
+2. `import { Suspense } from "react"`
+3. Suspense안에 Component를 넣고 로딩 메시지 나 Component를 만들어 fallback에 넣습니다.
+
+```JavaScript:Component/getvideos.tsx
+//예시
+async function getVideos(id:string) {
+  const response = await fetch(`${URL}/${id}`)
+  return response.json()
+}
+
+export default async function Getvideos({id}:{id: string}) {
+  const videos = await getVideos(id)
+  return (
+    <p>{JSON.stringify(videos)}</p>
+  )
+}
+```
+
+```JavaScript:(home)/page.tsx
+import { Suspense } from "react"
+//data fetch 하는 async function import
+import {GetMovies , GetVideos} from '...'
+
+export default async function Page() {
+  return (
+    <div>
+      <p>movies</p>
+      <Suspense fallback={<h2>Movies 로딩 중 ...</h2>}>
+        <GetMovies />
+      </Suspense>
+      <p>videos</p>
+      <Suspense fallback={<h2>Videos 로딩 중 ...</h2>}>
+        <GetVideos />
+      </Suspense>
+    </div>
+  )
+}
+```
+
+## 에러 및 로딩 처리
+
+아래의 페이지를 같은 경로에 만들면, 예외 처리를 쉽게 할 수 있습니다.
+
+```JavaScript:(home)/error.tsx
+export default function NAME(){}
+```
+
+```JavaScript:(home)/loading.tsx
+export default function NAME(){}
+```
+
+```JavaScript:(home)/not-found.tsx
+export default function NAME(){}
+```

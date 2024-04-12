@@ -1,0 +1,62 @@
+---
+title:  '맥북(Mac OS) 사용자의 Pytorch GPU를 사용법'
+
+
+tags:
+  - pytorch
+  - study
+  - torch
+  - mps
+  - cuda
+  - gpu
+  - mac
+
+
+date: 2022-12-10
+lastmod: 2022-12-10
+ 
+---
+
+## GPU사용
+
+
+- 일단 아래의 사진을 보면 아시겠지만, 현재 파이토치는 맥OS에 CUDA가 지원되지 않습니다.
+- mps로 GPU를 사용해야 합니다.
+- 그래서 아나콘다 가상환경을 만들어 준 다음(필수는 아님)
+
+```shell
+#생성
+conda create --name name_of_conda_env
+#실행
+conda activate name_of_conda_env
+#만약 가상환경으로 돌아가고 싶다면
+conda deactivate
+```
+
+- [파이토치 공식 홈페이지](https://pytorch.org/ "파이토치 공홈")로 들어가서 
+
+<img width="819" alt="스크린샷 2022-12-10 오전 11 01 15" src="https://user-images.githubusercontent.com/111936229/206823346-3ff56f2a-2763-4981-889a-934ec2dec6f3.png"/>
+
+- `conda ...`으로 입력된 칸의 명령어를 복사하여 터미널에서 실행해 설치합니다.
+
+### 확인 및 사용 방법
+
+```python
+import torch
+#여기서 'cuda'가 아닌 'mps'를 사용합니다
+device = torch.device('mps:0' if torch.backends.mps.is_available() else 'cpu')
+
+print (f'PyTorch version:{torch.__version__}') # 1.12.1 이상
+print(f'MPS 장치를 지원하도록 build 되었는지: {torch.backends.mps.is_built()}') # True 여야 합니다.
+print(f'MPS 장치가 사용 가능한지: {torch.backends.mps.is_available()}') # True 여야 합니다.
+!python -c 'import platform;print(platform.platform())'
+
+model.to(device)
+```
+
+또는
+
+```python
+mps_device = torch.device('mps')
+model.to(mps_device)  
+```

@@ -1,0 +1,57 @@
+---
+title: "Github 메인페이지 README.md 배지(badge)로 꾸미기"
+
+tags:
+  - git
+  - badge
+
+date: 2023-01-02
+lastmod: 2023-01-02
+---
+
+## 깃허브 메인페이지 README 파일 노출 시키기
+
+<img
+  width="1247"
+  alt="제 깃허브 페이지 메인"
+  src="https://user-images.githubusercontent.com/111936229/210235355-cbc01d11-6cfc-4582-b5e0-66562e920e6d.png"
+/>
+
+- 위의 사진의 `Hi there...` 가 적힌 문구는 제 깃허브 아이디(InhwanCho)와 동일한 이름의 repo(저장소) `InhwanCho`
+  README.md 파일입니다.(더블 클릭된 부분)
+
+1. 오른쪽 상단에 +를 눌러서 `New Repository`를 클릭해서 아이디(Owner)와 동일한 이름의 repo를 생성합니다.
+2. 아이디와 동일한 이름의 repo에 들어가서 README.md 파일을 생성합니다.
+3. 마크다운 문법을 사용하여 메인 페이지를 꾸며줍니다.
+
+## 배지(badge) 사용 방법
+
+- 위의 사진의 README.md 파일의 데이터입니다.
+
+```markdown
+### Hi there, I'm Inhwan Cho 👋
+
+<h3 align="center">📚 my STACKS📚</h3>
+<p align="center">
+  <img src="https://img.shields.io/badge/Python-3766AB?style=flat-square&logo=Python&logoColor=white"/></a>&nbsp
+  <br/>
+  <img src="https://img.shields.io/badge/TensorFlow-FF6F00?style=flat-square&logo=TensorFlow&logoColor=white"/></a>&nbsp
+  <img src="https://img.shields.io/badge/PyTorch-EE4C2C?style=flat-square&logo=PyTorch&logoColor=white"/></a>&nbsp
+  <img src="https://img.shields.io/badge/Linux-FCC624?style=flat-square&logo=Linux&logoColor=white"/></a>&nbsp
+  <br/>
+  <img src="https://img.shields.io/badge/Visual Studio Code-007ACC?style=flat-square&logo=Visual Studio Code&logoColor=white"/></a>&nbsp  
+  <img src="https://img.shields.io/badge/GitHub-181717?style=flat-square&logo=GitHub&logoColor=white"/></a>&nbsp    
+  <img src="https://img.shields.io/badge/GitHub Pages-222222?style=flat-square&logo=GitHub Pages&logoColor=white"/></a>&nbsp    
+  <br/>
+  <img src="https://img.shields.io/badge/Google Sheets-34A853?style=flat-square&logo=Google Sheets&logoColor=white"/></a>&nbsp
+
+</p>
+```
+
+- 맨위는 ###의 H3문법, 그 아래는 html 문법이 적용되었습니다.
+- 아이콘 및 컬러에 대한 정보는 [simpleicons](https://simpleicons.org/) 를 들어가셔서 참고하시면 됩니다.
+- 예를들어 스텍스에 파이썬을 입력하고 싶다면 아래 대괄호 `[]` 부분만 변경하여 사용하시면 됩니다.
+
+```text
+https://img.shields.io/badge/[파이썬 <아이콘>]-[색상넘버 <#빼고 입력>]?style=flat-square&logo=[파이썬 <글자>]&logoColor=[글자 색(보통 white or black)]
+```

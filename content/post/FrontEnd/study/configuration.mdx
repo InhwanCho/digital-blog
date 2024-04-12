@@ -1,0 +1,284 @@
+---
+title: '프론트엔드 설정 파일(Configuration Files) 세팅'
+
+tags:
+  - configuration
+    
+summary: '프론트엔드 개발 시 설정 파일들 - nex.config.js, tsconfig.json, eslintrc.json, package.json를 자세히 살펴보겠습니다.'
+date: 2024-03-12
+---
+
+# next.config.js
+
+next.config.js 파일은 Next.js 애플리케이션의 구성을 담당하는 파일로, 프로젝트 루트에 위치합니다. 
+
+이 파일을 통해 Next.js의 다양한 설정을 커스터마이즈할 수 있으며, 여러 가지 확장 기능을 사용할 수 있습니다.
+
+### 주요 옵션들
+
+```javascript:next.config.js
+// 여기에 구성 옵션을 추가합니다.
+module.exports = {
+  // 환경 변수 설정.
+  env: {
+    CUSTOM_API_KEY: 'YOUR_API_KEY',
+  },
+  // Image 컴포넌트에서 외부 도메인 이미지를 가져오려면 사용.
+  images: {
+    domains: ['example.com', 'anotherdomain.com'],
+  },  
+  // custom webpack 설정
+  webpack: (config, { buildId, dev, isServer, defaultLoaders, webpack }) => {
+    // 추가적인 플러그인 설정
+    config.plugins.push(new webpack.IgnorePlugin(/\/__tests__\//));
+    
+    // 변경된 Webpack 설정 반환
+    return config;
+  },
+  // redirects 및 rewrite 설정
+  // 
+};
+```
+
+### redirects 및 rewrite 설정
+
+- 특정 경로에 리다이렉트라 URL rewrite를 설정해서 보안을 높일 수 있습니다.
+
+```javascript:next.config.js
+module.exports = {
+  async redirects() {
+    return [
+      {
+        source: '/old-path',
+        destination: '/new-path',
+        permanent: true,
+      },
+    ];
+  },
+  async rewrites() {
+    return [
+      {
+        source: '/api/:path*',
+        destination: 'https://example.com/api/:path*',
+      },
+    ];
+  },
+};
+```
+---
+
+# tsconfig.json 
+
+- 타입스크립트 설정 파일을 확인해보겠습니다.
+
+```json:tsconfig.json
+{
+  "compilerOptions": {
+    // 컴파일러 옵션
+  },
+  "include": [
+    // 컴파일에 포함될 파일 또는 디렉토리
+  ],
+  "exclude": [
+    // 컴파일에서 제외될 파일 또는 디렉토리
+  ]
+}
+```
+
+### 주요 옵션들
+
+|옵션명|	설명	|예시 값|
+| --- | --- | ---|
+|target|	컴파일된 JavaScript 코드가 실행될 환경의 ECMAScript 버전을 지정합니다.	|"es5", "es6", "es2016", "esnext"|
+|module|	사용할 모듈 시스템을 지정합니다.	|"none", "commonjs", "amd", "es6"|
+|strict|	모든 엄격한 타입 검사 옵션을 활성화합니다.|	true 또는 false|
+|esModuleInterop|	CommonJS와 ES 모듈 간의 상호 운용성을 위해 필요한 추가적인 코드를 생성합니다.|	true 또는 false|
+|outDir|	컴파일된 파일들이 저장될 디렉토리를 지정합니다.|	예: "./dist"|
+|baseUrl|	비상대 모듈 이름을 해석할 기본 디렉토리를 설정합니다.	|예: "./src"|
+|paths|	baseUrl에 설정된 기본 경로를 기준으로 모듈에 대한 경로 별칭을 설정합니다.|	\{ "moduleAlias": ["./path/to/module"] \}|
+|allowJs|	TypeScript 프로젝트에서 JavaScript 파일(.js)의 컴파일을 허용합니다.	|true 또는 false|
+|noEmit|	출력 파일을 생성하지 않습니다. 주로 타입 검사만을 위해 사용됩니다.	|true 또는 false|
+
+### 예시
+
+```json:tsconfig.json
+{
+  "compilerOptions": {
+    "target": "es5",
+    "module": "commonjs",
+    "strict": true,
+    "esModuleInterop": true,
+    "outDir": "./dist",
+    "baseUrl": "./src",
+    "paths": {
+      "@models/*": ["models/*"],
+      "@utils/*": ["utils/*"]
+    },
+    "allowJs": true,
+    "noEmit": false
+  },
+  "include": ["src/**/*"],
+  "exclude": ["node_modules", "dist", "**/*.spec.ts"]
+}
+```
+
+- 이 예시에서는 ECMAScript 5 버전의 JavaScript 코드로 컴파일하도록 설정하고, CommonJS 모듈 시스템을 사용합니다. 
+
+- strict 모드를 활성화하여 엄격한 타입 검사를 수행하고, esModuleInterop을 통해 ES 모듈과의 호환성을 개선합니다. 
+
+- 컴파일된 파일은 ./dist 디렉토리에 저장되며, 모듈 별칭을 설정하여 개발자가 더 편리하게 모듈을 import할 수 있도록 합니다. 
+
+- include와 exclude를 사용하여 컴파일할 파일과 제외할 파일을 명시적으로 지정합니다.
+
+# eslintrc.json
+
+-  ESLint는 코드의 일관성을 유지하고, 문법 오류나 안티 패턴을 찾아내는 데 도움을 주는 정적 코드 분석 도구입니다.
+
+```json:eslintrc.json
+{
+  "env": {
+    // 여기에 환경 설정
+  },
+  "extends": [
+    // 확장할 설정
+  ],
+  "parserOptions": {
+    // 파서 옵션
+  },
+  "rules": {
+    // 규칙을 재정의하거나 추가
+  }
+}
+```
+
+### 주요 옵션들
+
+|옵션|	설명|
+| --- | ---|
+|env|	코드가 실행될 환경을 지정합니다. 예를 들어, browser, node 등이 있습니다.|
+|extends	|기본 설정을 확장합니다. 예를 들어, eslint:recommended 또는 다른 공유 설정 패키지입니다.|
+|parserOptions|	ESLint가 코드를 분석할 때 사용할 파서 설정입니다. ecmaVersion, sourceType 등이 있습니다.|
+|rules|	프로젝트에 적용할 규칙을 설정합니다. 각 규칙에 대해 "off", "warn", "error" 중 하나를 지정할 수 있습니다.|
+|plugins|	ESLint에 추가적인 규칙을 제공하는 플러그인입니다.|
+
+### 예시
+
+```json:eslintrc.json
+{
+  "env": {
+    "browser": true,
+    "es2021": true,
+    "node": true
+  },
+  "extends": [
+    "eslint:recommended",
+    "plugin:react/recommended"
+  ],
+  "parserOptions": {
+    "ecmaFeatures": {
+      "jsx": true
+    },
+    "ecmaVersion": 12,
+    "sourceType": "module"
+  },
+  "plugins": [
+    "react"
+  ],
+  "rules": {
+    "indent": ["error", 2],
+    "linebreak-style": ["error", "unix"],
+    "quotes": ["error", "single"],
+    "semi": ["error", "always"],
+    "no-unused-vars": "warn",
+    "react/prop-types": "off"
+  }
+}
+```
+
+- env: 브라우저, ES2021, Node.js 환경에서 코드가 실행될 것이라고 지정합니다.
+
+- extends: ESLint의 기본 권장 설정과 React 플러그인의 권장 설정을 확장합니다.
+
+- parserOptions: JSX 지원을 포함하여 ECMAScript 2021(12) 버전을 사용하고, 모듈 시스템을 사용하도록 설정합니다.
+
+- plugins: React 관련 규칙을 추가하기 위해 react 플러그인을 사용합니다.
+
+- rules: 들여쓰기는 공백 2개, 줄바꿈 스타일은 unix, 따옴표는 단일 따옴표를 사용하도록 지정하고, 세미콜론 사용을 강제합니다. 사용되지 않는 변수에 대해서는 경고를 출력하고, React의 prop-types 규칙은 비활성화합니다.
+
+---
+
+# package.json
+
+
+`package.json` 파일은 Node.js 프로젝트에서 매우 중요한 역할을 합니다. 
+
+이 파일은 프로젝트의 메타데이터, 의존성, 스크립트 등을 정의하며, npm이나 yarn 같은 패키지 관리자가 프로젝트를 관리하는 데 필요한 정보를 제공합니다. 
+
+다음은 package.json의 기본 구조와 주요 필드에 대한 설명 및 예시입니다.
+
+```json:package.json
+{
+  "name": "your-project-name",
+  "version": "1.0.0",
+  "description": "Your project description",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "express": "^4.17.1"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.7"
+  }
+}
+```
+
+### 주요 옵션들
+
+|필드명	|설명|
+|---|---|
+|name|	프로젝트의 이름을 지정합니다. npm 저장소에서 공유될 때 중요합니다.|
+|version|	프로젝트의 현재 버전을 지정합니다. SemVer(유의적 버전) 규칙을 따르는 것이 일반적입니다.|
+|description	|프로젝트에 대한 간단한 설명을 제공합니다.|
+|main|	프로젝트의 진입점 파일을 지정합니다.|
+|scripts	|npm 스크립트를 정의합니다. 이를 통해 프로젝트를 빌드, 테스트, 실행하는 등의 커맨드를 실행할 수 있습니다.|
+|dependencies|	프로젝트 실행에 필요한 npm 패키지 의존성을 지정합니다.|
+|devDependencies|	프로젝트 개발에만 필요한 npm 패키지 의존성을 지정합니다. 예를 들어, 테스트 라이브러리나 빌드 도구 등이 여기에 해당됩니다.|
+
+### 예시
+
+```json:package.json
+{
+  "name": "example-app",
+  "version": "0.1.0",
+  "description": "An example Node.js app",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js",
+    "dev": "nodemon app.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yourusername/example-app.git"
+  },
+  "author": "Your Name",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.17.1"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.7",
+    "jest": "^26.6.3"
+  }
+}
+```
+
+이 예시에서는 간단한 Node.js 애플리케이션의 package.json을 설정한 것으로, 
+
+애플리케이션의 이름, 버전, 설명, 메인 파일, 스크립트, 저장소 정보, 저자, 라이센스, 의존성 및 개발 의존성이 정의되어 있습니다. 
+
+scripts 섹션에는 앱을 시작하고 개발 중에 사용할 명령어들이 정의되어 있으며, 
+
+dependencies와 devDependencies 섹션에는 각각 애플리케이션 실행과 개발에 필요한 패키지들이 지정되어 있습니다.

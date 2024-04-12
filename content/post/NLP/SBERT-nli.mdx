@@ -1,0 +1,62 @@
+---
+title:  'SBERT(Sentence BERT) 개념'
+
+
+tags:
+  - nlp
+
+
+date: 2023-01-04
+lastmod: 2023-01-04
+ 
+---
+
+## SBERT(Sentence + BERT)
+
+- Sentence-BERT: Sentence Embeddings using Siamese BERT-Networks(2019)의 논문에서 처음 등장하였다.<br/>
+기존의 BERT는 학습시간이 너무 많이 걸리는 단점을 보완한 모델
+
+- Sentence-BERT 는 word embedding model이다. 워드임베딩이란 텍스트 분석을 위한 단어 표현에 사용되는 용어로, <br/>
+일반적으로 벡터 공간에서 더 가까운 단어가 의미가 유사할 것으로 예상되도록 `단어의 의미를 인코딩하는 실수 값 벡터의 형태`입니다.
+
+- SBERT의 데이터는 2가지 종류로 구분됩니다.
+  - STS(Semantic Textual Similarity)
+  - NLI(Natural Language Inference)
+
+## STS
+
+- 두 문장 사이의 문장간 similarity(의미적 유사성)의 정도를 평가하고 분류
+- 보통 0(관련 없음)에서 5.0(거의 유사)사이의 값으로 분류
+
+## NLI(Natural Language Inference)
+
+- 두 문장(premise, hypothesis)을 입력 받아 두 관계를 
+- entailment(positive), contradiction(negative), neutral로 분류
+
+a : 나는 학원에 간다(anchor)
+b : 나는 버스를 타고 학원에 간다(entailment)
+c : 나는 헬스장에서 운동을 한다(contradiction)
+
+학습 :
+두 문장(s1, s2)이 초기화 된 siamese network(샴 네트워크)로 입력
+두 입력 문장에 대한 임베딩 벡터값(e1, e2)을 추출
+두 임베딩 벡터(e1, e2)에 대해 유사도를 계산
+만약 두 입력 문장이 같은 class라면 거리가 가까워지도록, 다른 class라면 거리가 멀어지도록 weight을 조절하며 학습
+
+- SBERT에서는 cost function으로 triplet loss을 사용 ==> 앵커 문장과 동일(다른) 클래스 문장 거리
+- softmax를 사용하는 대신 -> MNR loss(triplet loss와 유사) 사용
+
+## SBERT - finetuning하기 위한 개요
+
+- NLI dataset(문장과의 관계도), 문장과의 유사도(거리) 두 가지가 필요하다.
+
+1. triplet 구조로(엥커, Positive 문장, Negative 문장) NLI 데이터셋을 구성한다.
+
+     - 예를 들면 아래와 같은 구조이다.(a,b,c)
+     - a : 나는 학원에 간다(anchor)
+     - b : 나는 버스를 타고 학원에 간다(entailment)
+     - c : 나는 헬스장에서 운동을 한다(contradiction)
+
+2. pretrained BERT모델로 NLI 데이터를 문장 임베딩 벡터로 변환
+   
+3. MNR loss(MultipleNegativesRankingLoss) 함수를 이용하여 NLI 데이터를 파인튜닝

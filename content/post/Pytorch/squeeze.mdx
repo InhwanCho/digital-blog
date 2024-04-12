@@ -1,0 +1,74 @@
+---
+title:  'Squeeze, Unsqueeze'
+
+
+tags:
+- torch
+- pytorch
+- squeeze
+- unsqueeze
+
+date: 2023-01-06
+lastmod: 2023-01-06
+ 
+---
+
+## squeeze
+
+> squeeze와 unsqueeze는 1인 차원을 제거, 생성할때 매우 유용한 함수이다.
+
+- squeeze는 차원이 1인 차원을 제거해준다.(default값)
+- 차원을 설정해주면 그 차원만 제거한다.(1인 차원만 제거되니 참고)
+
+```python
+
+import torch
+x = torch.rand(3, 20, 1, 1)
+
+
+print(x.shape)
+# torch.Size([3, 20, 1, 1])
+
+x = x.squeeze()
+print(x.shape)
+# torch.Size([3, 20])
+
+x = torch.squeeze(x, 1)
+print(x.shape)
+# torch.Size([3, 20])
+```
+
+## unsqueeze
+
+- unsqueeze는 차원이 1인 차원을 생성해준다.
+
+```python
+x = torch.rand(3, 20, 30, 40)
+print(x.shape)
+# torch.Size([3, 20, 30, 40])
+
+
+x = x.unsqueeze(dim=1)
+print(x.shape)
+# torch.Size([3, 1, 20, 30, 40])
+
+
+x = torch.rand(3, 20, 30, 40)
+print(x.shape)
+# torch.Size([3, 20, 30, 40])
+
+
+x = torch.unsqueeze(x,1)
+print(x.shape)
+# torch.Size([3, 1, 20, 30, 40])
+
+
+x = torch.rand(3, 20, 30, 40)
+print(x.shape)
+# torch.Size([3, 20, 30, 40])
+
+
+x = x.unsqueeze(dim = 0)
+print(x.shape)
+# torch.Size([1, 3, 20, 30, 40])
+```

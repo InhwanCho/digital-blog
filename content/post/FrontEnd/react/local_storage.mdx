@@ -1,0 +1,64 @@
+---
+title: 'LocalStorage'
+
+tags:
+  - localstorage
+
+date: 2023-11-22
+---
+
+## LocalStorage
+
+크롬에서 관리자도구를 열고 `>>` 버튼을 눌러 `Application`을 눌러보면, 저장 공간들을 볼 수 있습니다.
+그 중 `local storage`에 대해 살펴보겠습니다.
+
+local storage는 사용하는 기기에 해당 사이트에 대한 정보를 `반-영구적`으로 저장할 수 있는 공간입니다.
+페이지를 새로고침을 해도 저장 정보는 살아있고, 인터넷을 청소하지 않는다면 계속 남아있습니다.
+또한, 5MB까지 저장이 가능하며, 무조건 문자(string type)만 `key:value 형태`로 저장이 됩니다.
+
+일단 간단한 사용법을 확인해 보겠습니다.
+
+```javascript
+// localStorage에 key:'user', value:'inhwan'으로 저장
+localStorage.setItem('user', 'inhwan')
+
+// localStorage에서 key값이 'user'인 value값을 가져옴
+localStorage.getItem('user')
+
+// localStorage에서 key값이 'user'인 정보를 삭제함.
+localStorage.removeItem('user')
+```
+
+Array나 Object를 사용하기 위해서는 JSON type으로 변경해서 사용해야 할 필요가 있습니다.
+
+사용 방법에 대해 예시를 보겠습니다.
+이 예시는 중복값을 제거(set type)를 하는 방식의 예시입니다.
+
+```javascript
+// 일단 localstorage를 초기화해줍니다.
+useEffect(() => {
+  if (localStorage.getItem('user')) {
+    return
+  } else {
+    localStorage.setItem('user', JSON.stringify([]))
+  }
+}, [])
+
+// user에서 값을 꺼냅니다.
+let 꺼낸거 = localStorage.getItem('user')
+
+// '꺼낸거'는 문자 타입이기 때문에 JSON으로 변경합니다.
+꺼낸거 = JSON.parse(꺼낸거)
+
+// 정보를 추가합니다
+꺼낸거.push(real.id)
+
+// 중복값을 제거 할 필요가 있으면 Set을 사용하고 array로 변경합니다.
+// 중복 체크가 필요없으면 생략.
+꺼낸거 = new Set(꺼낸거)
+꺼낸거 = Array.from(꺼낸거)
+
+// 다시 정보를 stringify로 변경하여 localStorage에 저장합니다.
+localStorage.setItem('user', JSON.stringify(꺼낸거))
+```
+

@@ -1,0 +1,78 @@
+---
+title:  'globals(), eval()'
+
+
+tags:
+  - globals
+  - eval
+  - 전역변수
+
+date: 2022-11-23
+lastmod: 2022-11-23
+ 
+---
+
+## globas() 함수를 사용하는 이유
+
+- for문을 돌리기 전에 함수를 정의하면 1~2개 정도는 그냥 만들면 되지만 여러개의 함수를 명명할 경우 생각보다 보기에 안좋고 반복 작업이 될 수 있기에 globals() 함수를 사용한다.
+
+```python
+# 예를 들어 item_1 ~ item5 까지 함수를 만든다고 가정해보자
+# globals()를 사용하지 않는다면, 아래와 같이 지저분하게 보인다.
+item_1 = []
+item_2 = []
+item_3 = []
+item_4 = []
+item_5 = []
+```
+
+```python
+# 아래와 같이 2줄이면, 여러개의 함수를 생성 가능하다.
+for i in range(1,6):
+    globals()[f'items_{i}'] = []
+```
+
+## eval() 함수를 사용하는 이유
+
+- eval함수는 \' \' -이러한 홑따음표로 묶인것에서 홑따음표를 제거해주는 함수이다.
+- for문에서 규칙성이 있는 함수를 호출(추출)할 경우 사용됩니다.
+
+- 이게 무슨말인지 이해가 잘 안갈 수 있어서 예시를 보여주겠습니다.
+
+```python
+item_1 = ['가','나','다']
+item_2 = ['라','마','바']
+# eval을 사용하지 않은 경우
+for i in range(1,3):
+    print(f'item_{i}')
+
+#출력 결과
+item_1
+item_2
+```
+
+```python
+# eval을 사용한 경우
+for i in range(1,3):
+    print(eval(f'item_{i}'))
+
+#출력 결과
+['가', '나', '다']
+['라', '마', '바']
+```
+
+## globals()와 eval()을 같이 사용도 가능합니다
+
+```python
+# 아래와 같이 새로운 변수명(함수)에 입력도 가능합니다.
+test_1 = [1,2,3]
+test_2 = [4,5,6]
+for i in range(1,3):
+    globals()[f'items_{i}'] = eval(f'test_{i}')
+print(items_1)
+print(items_2)
+
+# 출력 결과
+[1, 2, 3]
+[4, 5, 6]
+```

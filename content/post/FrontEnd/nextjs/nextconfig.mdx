@@ -1,0 +1,61 @@
+---
+title: 'Nextjs config'
+
+tags:
+  - nextjs
+
+date: 2023-12-31
+---
+
+## redirects
+
+fetch 주소에 API_KEY가 있을때 숨길때는 rewrites를 사용해서 숨길 수 있습니다.
+
+nextjs root 폴더에 `next.config.js` 파일이 있습니다.
+
+이 파일을 설정하면 됩니다.
+
+```js:next.config.js
+const nextConfig = {
+  reactStrictMode: true,
+  async redirects(){
+      return [
+        {
+          source: '/old-one/:path*',
+          destination:'/new-one/path*',
+          permanent:false,
+        },
+      ]
+    },
+  async rewrites(){
+    return [
+      {
+        source:'api/api-key',
+        destination:`https://api.newmovies.com/${API_KEY}`,
+      }
+    ]
+  }
+}
+```
+
+`redirects()`는 단순히 주소를 redirect해주고,
+`rewrites()`는 주소는 source 그대로이지만 실제로는 destination을 실행합니다.
+
+## 외부의 이미지를 추가할때
+
+허용된 주소를 아래와 같이 추가해줘야됩니다.
+
+```config:next.config.mjs
+const nextConfig = {
+  reactStrictMode: true,
+  images: {
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "imagedelivery.net",
+        pathname: "**",
+      },
+    ],
+  },
+};
+```

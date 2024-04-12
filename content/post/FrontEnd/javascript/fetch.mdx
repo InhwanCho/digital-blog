@@ -1,0 +1,59 @@
+---
+title: 'Fetch web API'
+
+tags:
+  - fetch
+
+summary: 'fetch web API의 사용 방법에 대해 알아보겠습니다.'
+date: 2024-03-13
+---
+
+# Fecth API
+
+`Fetch API`는 브라우저에서 HTTP 요청을 수행하기 위한 JavaScript의 인터페이스입니다.
+
+기본적으로 Promise를 반환하기 때문에 비동기적으로 네트워크 요청을 처리할 수 있습니다.
+
+```javascript
+// url: 요청을 보낼 URL입니다.
+// options: 요청 방식, 헤더, 본문 등 요청을 설정하는데 사용되는 선택적 매개변수 객체입니다.
+fetch(url, options)
+  .then((response) => {
+    // 응답을 처리합니다.
+    return response.json() // JSON 응답을 파싱하는 경우
+  })
+  .then((data) => {
+    // JSON 데이터를 처리합니다.
+  })
+  .catch((error) => {
+    // 오류를 처리합니다.
+  })
+```
+
+| 요청 옵션   | 설명                                                                                    |
+| ----------- | --------------------------------------------------------------------------------------- |
+| method      | HTTP 요청 메소드 (GET, POST, PUT, DELETE 등)                                            |
+| headers     | 요청과 함께 전송할 헤더 (객체 형태)                                                     |
+| body        | 요청 본문. 주로 POST나 PUT 요청에 사용됩니다. (FormData, Blob, BufferSource, String 등) |
+| mode        | 요청의 모드 (cors, no-cors, same-origin)                                                |
+| credentials | 요청과 함께 쿠키를 보낼지 설정 (include, same-origin, omit)                             |
+| cache       | HTTP 캐싱 방식을 설정                                                                   |
+
+## POST 요청 보내기 예시
+
+```javascript
+fetch('https://api.example.com/posts', {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json'
+  },
+  body: JSON.stringify({
+    title: 'Fetch API',
+    body: 'Fetch API 사용 방법',
+    userId: 1
+  })
+})
+.then(response => response.json())
+.then(data => console.log(data))
+.catch(error => console.error('Error:', error));
+```

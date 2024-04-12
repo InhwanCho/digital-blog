@@ -1,0 +1,141 @@
+---
+title:  'NLP 분야의 MRC'
+
+tags:
+- deeplearning
+- pytorch
+- torch
+- testtag
+
+date: 2023-08-18
+lastmod: 2023-08-18
+ 
+---
+
+
+
+## 질의 응답 개념
+
+- 질의 응답(Question Answering, QA)
+
+    주어진 지문에 대하여 질문에 답변하는 과제 
+    대답 할 수 없는 질문이 등장하면 'No-answer'를 해야함
+
+- 기계 독해(Machine Reading Comprehension, MRC)
+
+    기계가 주어진 지문과 질문을 '이해'하여 답변
+
+    ex) context - '서울은 한국의 수도이며, ...'
+        Question(user) - '한국의 수도가 어디야?'
+        Answer(AI) - '서울'
+
+### task 1. Cross-Lingual Question Answering
+
+- 질문의 언어와 영어의 자료 사이의 정보 비대칭이 존재
+- 질문의 언어가 다른 언어의 답변 내용을 통해 답변이 될 수 있도록
+  언어 교차(Cross-lingual)로 문제를 해결
+
+### task 2. Visual Question Answering
+
+- 이미지와 이미지 내용에 관한 질문이 주어졌을 때, 적절한 답변을 하는 과제(멀티모달)
+- CVPR에서 VQA Challenge를 하고 있으며 `VQA` 데이터셋 또한 연구 및 개발에 널리 사용됨
+
+## 질의 응답 관련 서비스
+
+1. AI 챗봇
+
+- MRC를 활용하여 기본적 응답 외 고객이 궁금해 할 수 있는 정보를 제공
+- 기존의 챗봇은 모든 예상 답변을 등록해야 하지만(Rule-base), MRC 기반은 설계가 간단하며
+  추가 학습도 가능하여 업무에 맞게 변경가능.
+
+2. AI 콜센터
+
+- 사람이 아닌 AI와 상담을 통해 서비스를 제공(STT, TTS 필요)
+- 기존의 ARS보다 빠른 대응으 가능하며 24시간 운영 가능.
+
+
+## 질의 응답 관련 데이터셋
+
+[Papers with code](https://paperswithcode.com "papers with code")  
+
+### KLUE
+
+[KLUE benchmark ner file](https://klue-benchmark.com/tasks "KLUE ner file")  
+
+### SQuAD(The Stanford Question Answering Dataset)
+
+- 가장 많이 사용되는 QA 데이터셋 중 하나
+- SQuAD 1.0과 2.0(답변 할 수 없는 데이터도 있음)이 존재
+- 이를 벤치마킹한 다른 언어 데이터셋 다수 존재(KorQuAD(한국어 버전), ...)
+
+#### KorQuAD
+
+[KorQuAD](https://korquad.github.io/KorQuad%201.0/ "KorQuAD")
+
+SQuAD의 한국어 버전입니다.
+1.0과 2.0의 차이점은 1.0은 1-2개의 문단을 대상으로 하지만,
+2.0은 위키 문서 전체를 대상으로 합니다.
+
+
+## ELECTRA
+
+ELECTRA : Pre-training Text Encoders as Discriminators Rather Than Generators(Google, 2020)
+
+- RTD(Replaced Token Detection)이라는 새로운 사전 학습 과제 제안
+  
+    기존의 BERT는 MLM의 문제점 :
+
+  - 전체 토큰 중 15%에 대해서만 loss발생(비용 증가)
+  - 추론 시 MASK가 존재하지 않음
+
+### RTD(Replaced Token Detection)
+
+1. Generator를 이용해 `입력의 일부를 가짜 토큰으로 변환`
+2. 각 토큰이 실제 입력에 있는 `진짜 토큰`인지 `가짜 토큰`인지 맞히는 이진 분류로 해석.
+3. 모든 토큰에 대해 학습하므로 BERT에 비해 효율적이다.
+4. Generator와 Discriminator 둘 다 Transformer의 Encoder 구조를 사용.
+
+#### Generator G
+
+    BERT의 MLM과 같은 학습 메커니즘.
+    = 주어진 위치 t에 대해 토큰 x_t를 생성할 확률을 출력으로 설정
+
+    t번째 토큰이 원래 어떤 토큰인지 예측
+
+$$ P_G(X_t | X_{maksed} = \exp (e(X_t)^T\cdot h_G(X_{masked})_t) / \Sigma_{x^\prime}\exp (e(x^\prime)^T\cdot h_G)(X_{masked})) $$
+
+$$ X_{maksed} = REPLACE(X, m, [MASK]) $$
+
+#### Discriminator D
+
+    입력 토큰 시퀀스의 각 토큰이 진짜인지 가짜(replaced)인지 이진 분류
+
+    Generator의 softmax 분포에 대해 샘플링한 토큰으로 치환한 입력이 원래 입력과 동일한지 예측
+
+$$ D(X_{corrupt},t) = sigmoid(W^T\cdot h_D(X_{corrupt})_t) $$
+
+$$ X_{corrupt} = REPLACE(X, m, \hat X) $$
+-> Generator의 softmax 분포의 수식은 아래와 같습니다.
+ $$ P_G(X_i | X_{masked} for i \in m) $$
+
+
+### GAN과의 차이점
+
+- G가 기존 토큰과 같은 토큰값을 복원하면 GAN에서는 `fake`(negative)로 간주하지만, RTD에서는 `real`(positive)로 간주
+- 속이기 위해 학습하지 않고 Maximum likelihood를 통해 학습
+- 노이즈 벡터를 입력으로 넣지 않음
+
+G와 D의 loss 합을 최소화하여 사전 학습(pre-train)
+
+### ELECTRA의 특징
+
+1. Weight sharing
+   - 임베딩 가중치만 공유
+2. Smaller generators
+   - layer의 크기 조절
+   - Unigram generator(unigram의 분포를 기반으로 샘플링)
+
+3. Training algorithms
+   - tow-stage(G만 MLM loss로 학습-> D의 weight을 초기화하고 학습)
+
+fine-tuneing시 D모델만 사용. - 다시 논문 찾아서 적기

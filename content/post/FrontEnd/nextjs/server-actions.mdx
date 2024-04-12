@@ -1,0 +1,148 @@
+---
+title: 'Nextjs - server actions'
+tags:
+  - nextjs
+  - server-action
+summary: 'Nextjs에서 새로 도입된 server actions에 대해서 알아보겠습니다.'
+
+date: 2024-03-17
+---
+
+## Server Actions
+
+Next.js에서 새로 도입된 `server actions`은 `API 라우트의 대안`으로 제공됩니다.
+
+Server Actions을 사용하면, 페이지나 컴포넌트 내부에서 직접 서버 측 코드를 작성할 수 있어, 데이터를 가져오거나 데이터베이스와의 상호작용 같은 서버 측 작업을 보다 쉽게 처리할 수 있습니다.
+
+이는 개발자가 프론트엔드와 백엔드 로직을 하나의 파일 내에서 관리할 수 있게 하여, 파일 구조를 단순화하고 개발 프로세스를 개선합니다.
+
+## 주요 특징
+
+- 로컬 개발 환경의 개선: 별도의 API 경로를 설정하지 않고도, 페이지 또는 컴포넌트 내에서 직접 데이터베이스 쿼리를 실행할 수 있습니다.
+
+- 백엔드 코드의 재사용성 향상: 컴포넌트나 페이지 간에 쉽게 백엔드 로직을 공유하고 재사용할 수 있습니다.
+
+- 페이지 데이터 요구 사항의 명시적 선언: Server Actions을 통해 페이지가 필요로 하는 데이터와 그 데이터를 가져오는 방법을 명시적으로 선언할 수 있습니다.
+
+- React 18 버전에서 새로 생긴 `useFormStatus`와 `useFormState`와 연계하여 다양한 기능 활용.
+
+- 단점은 `복잡성 증가`, 서버 측 코드라서 `디버깅이 어려움`, `서버의 부하 증가`가 있습니다.
+
+---
+
+## React의 18 버전에서 새로 생긴 form 관련 hooks
+
+먼저 server action에 대해 설명하기 전에 새로 나온 리엑트 훅들에 대해 설명하겠습니다.
+
+form 태그의 action에 콜백 함수를 생성하여 넣으면, props로 formData = input태그의 name값들을 받을 수 있습니다.
+
+```javascript
+export default function Search() {
+  function search(formData) {
+    // 'use server'를 입력하지 않으면 클라이언트에서 실행.
+    'use server'
+    const query = formData.get('custom_name')
+    alert(`You searched for '${query}'`)
+  }
+  return (
+    <form action={search}>
+      <input name="custom_name" />
+      <button type="submit">Search</button>
+    </form>
+  )
+}
+```
+
+## useOptimistic
+
+- server action에서 mutation을 사용할때 사용합니다.
+- `useOptimistic` 훅은 UI를 낙관적으로 업데이트하여 애플리케이션의 반응성을 향상시킵니다.
+- 사용자가 폼 제출 시, 서버 응답을 기다리는 대신 예상되는 결과로 UI가 즉시 업데이트됩니다.
+- "전송 중..." 상태의 메시지가 사용자에게 바로 보여지며, 이후 서버로부터 성공적인 응답을 받으면 해당 상태가 업데이트됩니다.
+
+---
+
+## useFormState
+
+nextjs에서 `useFormState`를 사용하기 위해서는 `actions` 함수를 따로 빼야합니다.
+
+`useFormState`는 React의 hook 중 하나 이기때문에 `클라이언트 컴포넌트`에서 작동하기 때문입니다.
+
+사용 방법은 `useState`와 유사합니다.
+
+- 매개변수 첫 번째 인자로 `actions 함수`를 넣고, 두 번째 인자로 `초기값-보통 null`을 넣습니다.
+
+- return[] 값의 첫 번째 인자로는 state(actions 함수의 return 값 = 결과 값),두 번째 인자로는 action(dispatch) 입니다.
+
+---
+
+## useTransition
+
+- `useTransition`은 UI를 차단하지 않고 상태를 업데이트 할 수 있는 리액트 훅입니다.
+- `useFormState`, `useFormStatus` 조합 중 하나를 선택해서 사용하면 됩니다.
+
+- `ispending`, `startTransition`을 반환받습니다.
+
+```javascript
+const [isPending, startTransition] = useTransition()
+// ...
+const onSubmit = (values: z.infer<typeof LoginSchema>) => {
+  setError('')
+  setSuccess('')
+
+  startTransition(() =>
+    loginAction(values).then((data:any) => {
+      setError(data.error)
+      setSuccess(data.success)
+    })
+  )
+}
+```
+
+---
+
+## server actions 사용 예시
+
+1. 서버 액션 함수를 따로 컴포넌트로 만들어서 useFormState에 첫번째 인자로 넣고, 두번째 인자로 초기값(보통 null)을 넣습니다.
+
+```javascript:/app/login/actions.tsx
+"use server";
+
+export default async function HandleForm(prevState: any, formData: FormData) {  
+  console.log(prevState);
+  console.log(formData.get("name"), formData.get("password"));
+  console.log("I run in the server");
+  return { errors: ["this is just test message","test msg is short"] };
+}
+```
+
+2. 제출 버튼을 클라이언트 컴포넌트로 만들어줍니다.
+3. form에 `action`, input에 `name` 속성을 잘 지정해줍니다.
+
+```javascript:app/page.tsx
+import { useFormStatus } from "react-dom";
+import action from '@/app/login/actions';
+const Page = () => {
+  
+  const [state, action] = useFormState(action,null)
+
+  return (
+    <form action={action} className="flex flex-col gap-3">
+      <div className="flex flex-col gap-3">
+        <input name="name" type="text" placeholder="user name" required/>
+        <input name="password" type="password" placeholder="********" required autoComplete='none'/>
+
+        <FormButton />
+        {/* 아래처럼 생긴 버튼 client compoent 생성 
+        // <button type="submit" disabled={pending}>{pending ? "로딩 중..." : "생성하기"}</button>*/}
+      </div>
+    </form>
+  )
+}
+export default Page;
+
+// console.log(state)
+// { errors: ["this is just test message","test msg is short"] }
+```
+
+

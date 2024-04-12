@@ -1,0 +1,156 @@
+---
+title: 'Cookie와 Session의 차이점'
+
+tags:
+  - session
+  - cookie
+  - must-know
+summary: '웹 개발에서 중요한 두 가지 인증 방식, 쿠키와 세션에 대해 자세히 알아보고, 각각의 특징과 차이점을 비교해 봅니다.'
+date: 2024-03-10
+---
+
+웹 개발을 하다 보면 사용자의 상태를 유지하는 여러 방법 중 `쿠키(Cookie)`와 `세션(Session)`이 자주 언급됩니다.
+
+이 두 기술은 웹에서 사용자를 식별하고 사용자의 상태를 관리하는 핵심적인 역할을 하지만, 구체적인 동작 방식과 사용 목적에서 차이가 있습니다.
+
+본문에서는 쿠키와 세션에 대해 자세히 설명하고, 두 기술의 차이점을 비교해 보겠습니다.
+
+## 쿠키(Cookie)
+
+쿠키는 클라이언트(사용자의 웹 브라우저)에 `텍스트 형태로 저장되는 작은 데이터 조각`입니다.
+
+웹 서버는 HTTP 헤더를 통해 클라이언트에게 쿠키를 전송할 수 있으며, 일단 클라이언트에 저장된 쿠키는 후속 요청에서 웹 서버로 다시 전송됩니다.
+
+이를 통해 서버는 사용자를 식별하고 상태 정보를 유지할 수 있습니다.
+
+## 쿠키 사용 방법(in JavaScript)
+
+### 쿠키 생성
+
+```javascript:cookie.js
+// 쿠키에 'username'이라는 이름으로 'John Doe'라는 값을 저장합니다.
+// 쿠키의 만료 기간을 7일로 설정합니다.
+const d = new Date();
+d.setTime(d.getTime() + (7*24*60*60*1000)); // 7 days in milliseconds
+const expires = "expires=" + d.toUTCString();
+document.cookie = "username=John Doe;" + expires + ";path=/";
+```
+
+### 쿠키 읽기
+
+```javascript:cookie.js
+function getCookie(name) {
+  const nameEQ = name + "=";
+  const ca = document.cookie.split(';');
+  for(let i=0;i < ca.length;i++) {
+    let c = ca[i];
+    while (c.charAt(0) === ' ') c = c.substring(1,c.length);
+    if (c.indexOf(nameEQ) === 0) return c.substring(nameEQ.length,c.length);
+  }
+  return null;
+}
+
+console.log(getCookie("username"));
+// 'John Doe'를 출력, 해당 쿠키가 없다면 null을 반환
+```
+
+### 쿠키 삭제
+
+```javascript:cookie.js
+function deleteCookie(name) {
+  document.cookie = name + "=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/";
+}
+
+deleteCookie("username"); // 'username' 쿠키를 삭제
+```
+
+---
+
+## 세션(Session)
+
+세션은 `서버에서 관리되는 사용자의 상태 정보`입니다. 
+
+사용자가 웹 애플리케이션에 접속할 때, 고유한 세션 ID가 생성되고, 이 ID는 사용자의 브라우저와 서버 사이에 쿠키 형태로 주고받으며 사용됩니다.
+
+세션 데이터는 서버의 메모리나 데이터베이스에 저장될 수 있으며, 사용자의 민감한 정보를 보다 안전하게 관리할 수 있습니다.
+
+## 세션 사용 방법(in JavaScript)
+
+클라이언트 측에서는 쿠키나 웹 스토리지(localStorage, sessionStorage)를 사용하여 유사한 방식으로 사용자의 세션 정보를 관리할 수 있습니다.
+
+여기서는 클라이언트 측에서의 세션 유사 관리 방법에 대한 예시를 보겠습니다.
+
+### 세션 생성
+
+```javascript:sessionExample.js
+// 세션 저장소에 사용자 이름 저장하기
+sessionStorage.setItem('username', 'John Doe');
+```
+
+### 세션 읽기
+
+```javascript:sessionExample.js
+// 세션 저장소에서 사용자 이름 읽기
+const userName = sessionStorage.getItem('username');
+console.log(userName); // 'John Doe' 출력
+```
+
+### 세션 삭제하기
+
+```javascript:sessionExample.js
+// 세션 저장소에서 특정 데이터 삭제하기
+sessionStorage.removeItem('username');
+
+// 모든 세션 데이터 삭제하기
+sessionStorage.clear();
+```
+
+## 서버에서 세션 관리 예시
+
+```javascript
+const express = require('express')
+const session = require('express-session')
+const app = express()
+
+app.use(
+  session({
+    secret: 'your_secret_key',
+    resave: false,
+    saveUninitialized: true,
+    cookie: { secure: true },
+  })
+)
+
+app.get('/', (req, res) => {
+  if (req.session.views) {
+    req.session.views++
+    res.send(`Number of views: ${req.session.views}`)
+  } else {
+    req.session.views = 1
+    res.send('Welcome to this page for the first time!')
+  }
+})
+
+app.listen(3000, () => console.log('Server is running on port 3000'))
+```
+
+---
+
+## 쿠키와 세션의 주요 차이점
+
+쿠키와 세션을 비교해보면, 여러 중요한 차이점을 발견할 수 있습니다. 아래 표는 그 중 몇 가지를 정리한 것입니다.
+
+| 기준 쿠키 | (Cookies)                                                                                | 세션 (Sessions)                                                                                                  |
+| --------- | ---------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------- |
+| 저장 위치 | 클라이언트 측 (사용자의 웹 브라우저)                                                     | 서버 측 (서버의 메모리 또는 데이터베이스)\                                                                       |
+| 보안      | 쿠키는 클라이언트 측에 저장되므로 보안에 상대적으로 취약합니다.                          | 세션 ID가 클라이언트에 저장되지만, 실제 데이터는 서버에 저장되므로 쿠키보다 안전합니다.                          |
+| 생명주기  | 개발자가 설정한 만료 시간에 따라 달라집니다. 만료 시간이 지나면 자동으로 삭제됩니다.     | 일반적으로 사용자가 브라우저를 닫거나 로그아웃할 때까지 유지됩니다. 서버에서 세션 타임아웃을 설정할 수 있습니다. |
+| 리소스    | 쿠키 데이터는 매 HTTP 요청마다 서버로 전송되므로 네트워크 트래픽을 증가시킬 수 있습니다. | 세션 데이터는 서버에 저장되므로 네트워크 트래픽에 영향을 미치지 않습니다.                                        |
+| 용량 제한 | 각 쿠키는 약 4KB의 데이터만 저장할 수 있습니다.                                          | 서버의 메모리 또는 디스크 공간에 따라 크게 제한받지 않습니다.                                                    |
+| 사용 사례 | 사용자의 환경 설정, 로그인 상태 유지 등의 비교적 덜 민감한 정보 저장에 적합합니다.       | 사용자의 로그인 세션 관리, 쇼핑 카트 정보 저장 등의 민감하거나 큰 데이터 저장에 적합합니다.                      |
+
+## 결론
+
+쿠키와 세션은 각각의 장단점이 있으며, 웹 애플리케이션의 요구사항에 따라 적절하게 선택하여 사용해야 합니다. 
+
+예를 들어, 단순한 사용자 선호도 저장은 쿠키를 사용하고, 로그인 세션 관리와 같은 보안이 중요한 정보는 세션을 사용하는 것이 일반적입니다.
