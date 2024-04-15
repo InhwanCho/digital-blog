@@ -30,6 +30,14 @@ export const siteConfig = {
       label: "About",
       path: "/about",
     },
+    {
+      label: "Categories",
+      path: "/categories",
+    },
+    {
+      label: "Tags",
+      path: "/tags",
+    },
   ],
 };
 

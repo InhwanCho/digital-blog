@@ -3,6 +3,10 @@ import { type ClassValue, clsx } from "clsx";
 import { slug } from "github-slugger";
 import { twMerge } from "tailwind-merge";
 
+interface Categories {
+  [key: string]: string[];
+}
+
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
@@ -34,8 +38,8 @@ export function getAllCategories(posts: Array<Post>) {
   return categories;
 }
 
-export function getCategories(posts: Array<Post>) {
-  const categories = {};
+export function getCategories(posts: Array<Post>): Categories {
+  const categories: Record<string, Set<string>> = {}; // Set을 사용하여 중복 제거
 
   posts.forEach((post) => {
     const paths = post.categories?.filter((c) => c); // 빈 값 제거 및 구조분해
@@ -59,13 +63,15 @@ export function getCategories(posts: Array<Post>) {
     }
   });
 
-  // Set을 배열로 변환
+  // Set을 배열로 변환하여 최종 객체 구성
+  const result: Categories = {};
   Object.keys(categories).forEach((key) => {
-    categories[key] = [...categories[key]];
+    result[key] = [...categories[key]];
   });
 
-  return categories;
+  return result;
 }
+
 
 export function sortCategoryByCount(categories: Record<string, number>) {
   return Object.keys(categories).sort((a, b) => categories[b] - categories[a]);

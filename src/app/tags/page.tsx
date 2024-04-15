@@ -9,6 +9,7 @@ export const metadata: Metadata = {
 };
 
 export default async function TagsPage() {
+  
   const tags = getAllTags(posts);
   const sortedTags = sortTagsByCount(tags);
   return (

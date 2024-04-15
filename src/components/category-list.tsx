@@ -18,6 +18,7 @@ import { getAllCategories, getCategories, getPostsByCategorySlug, sortCategoryBy
 import { posts } from '#site/content';
 import { Tag } from './tag';
 import { PostItem } from './post-item';
+import { IoFolderOpenOutline } from "react-icons/io5";
 
 
 export default function CategoryList() {
@@ -33,7 +34,7 @@ export default function CategoryList() {
     updatedItems[index] = itemName;
     setSelectedItems(updatedItems);
   };
-  
+
   const displayPosts = getPostsByCategorySlug(posts, undefined, selectedItems);
 
   return (
@@ -45,12 +46,13 @@ export default function CategoryList() {
           </BreadcrumbItem>
           <BreadcrumbSeparator />
           <BreadcrumbItem>
-            <BreadcrumbLink href="/post">Posts</BreadcrumbLink>
+            <BreadcrumbLink href="/post">All Posts</BreadcrumbLink>
           </BreadcrumbItem>
           <BreadcrumbSeparator />
           <BreadcrumbItem>
             <DropdownMenu>
               <DropdownMenuTrigger className="flex items-center gap-1">
+                <IoFolderOpenOutline className='mr-2' />
                 {selectedItems[0]}
                 <ChevronDown className="h-4 w-4" />
               </DropdownMenuTrigger>
@@ -68,6 +70,7 @@ export default function CategoryList() {
                 <BreadcrumbItem>
                   <DropdownMenu>
                     <DropdownMenuTrigger className="flex items-center gap-1">
+                      <IoFolderOpenOutline className='mr-2' />
                       {selectedItems[1]}
                       <ChevronDown className="h-4 w-4" />
                     </DropdownMenuTrigger>
