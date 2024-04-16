@@ -22,7 +22,6 @@ export default function ReadingProgressBar() {
   return (
     <div className={`fixed z-50 top-[54px] left-0 h-[2px] bg-gradient-to-r from-gray-700 to-gray-800`}
       style={{ width: `${width}%` }}>
-      
       <style global jsx>{`
         body {
           -ms-overflow-style: none; /* IE and Edge */

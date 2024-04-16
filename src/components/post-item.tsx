@@ -4,7 +4,6 @@ import { Calendar, MoveRight } from "lucide-react";
 import Link from "next/link";
 import { buttonVariants } from "@/components/ui/button";
 import { Tag } from "@/components/tag";
-import { useRegisterActions } from "kbar";
 
 interface PostItemProps {
   slug: string;
@@ -23,7 +22,7 @@ export function PostItem({
 }: PostItemProps) {
 
   return (
-    <article className="flex flex-col gap-2  py-3">
+    <article className="flex flex-col gap-2 py-3">      
       <div>
         <h2 className="text-2xl font-bold">
           <Link href={"/" + slug}>{title}</Link>
@@ -34,13 +33,13 @@ export function PostItem({
           <Tag tag={tag} key={tag} />
         ))}
       </div>
-      <div className="max-w-none text-muted-foreground">{description}</div>
+      <div className="max-w-none text-slate-600">{description}</div>
       <div className="flex justify-between items-center">
         <dl>
           <dt className="sr-only">Published On</dt>
           <dd className="text-sm sm:text-base font-medium flex items-center gap-2">
-            <Calendar className="size-4" />
-            <time dateTime={date}>{formatDate(date)}</time>
+            <Calendar className="size-3" />
+            <time className="text-sm" dateTime={date}>{formatDate(date)}</time>
           </dd>
         </dl>
         <Link

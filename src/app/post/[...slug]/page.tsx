@@ -65,7 +65,6 @@ export default async function PostPage({ params }: PostPageProps) {
     notFound();
   }
 
-
   return (
     <section className="py-6 prose dark:prose-invert max-w-5xl h-full mx-auto container xl:flex xl:justify-center">
       <ReadingProgressBar />
@@ -77,7 +76,7 @@ export default async function PostPage({ params }: PostPageProps) {
           ))}
         </div>
         {post.description ? (
-          <p className="text-lg mt-4 text-muted-foreground">{post.description}</p>
+          <p className="text-lg mt-4 text-slate-700">{post.description}</p>
         ) : null}
         <hr className="my-4" />
         <MDXContent code={post.body} />
