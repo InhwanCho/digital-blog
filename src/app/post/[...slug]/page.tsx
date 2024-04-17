@@ -8,6 +8,8 @@ import Giscus from "@/components/giscus";
 import TocSide from "@/components/toc-side";
 import "@/css/prism.css";
 import ReadingProgressBar from "@/components/reading-progress-bar";
+import { Calendar } from "lucide-react";
+import { formatDate } from "@/lib/utils";
 
 interface PostPageProps {
   params: {
@@ -69,15 +71,19 @@ export default async function PostPage({ params }: PostPageProps) {
     <section className="py-6 prose dark:prose-invert max-w-5xl h-full mx-auto container xl:flex xl:justify-center">
       <ReadingProgressBar />
       <article className="w-full h-full mx-auto xl:max-w-[980px] xl:flex-grow">
-        <h1 className="mb-2">{post.title}</h1>
-        <div className="flex gap-2 mb-2">
+        <dl>
+          <dt className="sr-only">Published On</dt>
+          <dd className="text-sm sm:text-base font-medium flex items-center gap-2 pl-0">
+            <Calendar className="size-3" />
+            <time className="text-sm" dateTime={post.date}>{formatDate(post.date)}</time>
+          </dd>
+        </dl>
+        <h1 className="mb-3.5">{post.title}</h1>
+        <div className="flex gap-2.5 mb-2">
           {post.tags?.map((tag) => (
             <Tag tag={tag} key={tag} />
           ))}
         </div>
-        {post.description ? (
-          <p className="text-lg mt-4 text-slate-700">{post.description}</p>
-        ) : null}
         <hr className="my-4" />
         <MDXContent code={post.body} />
         <div className="min-h-[400px] bg-red-100">이전블로그, 다음블로그, 카테고리별 리스트 보여주는 section</div>

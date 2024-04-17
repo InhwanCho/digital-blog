@@ -28,7 +28,7 @@ export const generateStaticParams = () => {
 
 export default function TagPage({ params }: TagPageProps) {
   const { tag } = params;
-  console.log(tag);
+  
   const title = tag.split('-').join(' ');
   const displayPosts = getPostsByTagSlug(posts, tag);
   const tags = getAllTags(posts);
