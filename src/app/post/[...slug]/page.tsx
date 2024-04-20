@@ -52,6 +52,17 @@ export async function generateMetadata({
           alt: post.title,
         },
       ],
+      locale: siteConfig.locale
+    },
+    twitter: {
+      card: 'summary_large_image',
+      site: siteConfig.twitterHandle,
+      title: post.title,
+      description: post.description,
+      images: {
+        url: `/api/og?${ogSearchParams.toString()}`,
+        alt: post.title,
+      }
     }
   };
 }

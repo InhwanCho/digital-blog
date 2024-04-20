@@ -10,6 +10,7 @@ export const siteConfig = {
   since: 2024,
   googleAnalyticsId: "",
   locale: "ko-KR",
+  twitterHandle:'',
   author: {
     name: "InhwanCho",
     photo:

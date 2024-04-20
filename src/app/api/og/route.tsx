@@ -70,6 +70,7 @@ export async function GET(req: NextRequest) {
       }
     );
   } catch (error) {
+    console.error("Error generating image:", error);
     return new Response("Failed to generate image", { status: 500 });
   }
 }
