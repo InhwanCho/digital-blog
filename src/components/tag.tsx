@@ -1,4 +1,4 @@
-import Link from "next/link";
+import { Link } from 'next-view-transitions';
 import { slug } from "github-slugger";
 import { badgeVariants } from "@/components/ui/badge";
 

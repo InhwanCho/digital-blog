@@ -2,7 +2,7 @@ import { buttonVariants } from "@/components/ui/button";
 import { siteConfig } from "@/config/site";
 import { cn, sortPosts } from "@/lib/utils";
 import { posts } from "#site/content";
-import Link from "next/link";
+import { Link } from 'next-view-transitions';
 import { PostItem } from "@/components/post-item";
 import { IoLogoGithub } from "react-icons/io";
 

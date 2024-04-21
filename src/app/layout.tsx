@@ -8,6 +8,9 @@ import Footer from "@/components/site-footer";
 import localFont from 'next/font/local';
 import { Toaster } from "react-hot-toast";
 import KbarLayout from "@/components/kbar/kbar-layout";
+import { ViewTransitions } from "next-view-transitions";
+
+
 
 // const roboto = Roboto({ subsets: ["latin"], weight: "300", variable: "--font-sans" });
 const pretendard = localFont({
@@ -36,38 +39,40 @@ export default function RootLayout({
 }>) {
 
   return (
-    <html lang="en" suppressHydrationWarning className="scroll-smooth scroll-pt-20">
-      <link rel="icon" href="/static/favicons/favicon.ico" />
-      <link rel="apple-touch-icon" sizes="76x76" href="/static/favicons/apple-touch-icon.png" />
-      <link rel="icon" type="image/png" sizes="32x32" href="/static/favicons/favicon-32x32.png" />
-      <link rel="icon" type="image/png" sizes="16x16" href="/static/favicons/favicon-16x16.png" />
-      <link rel="manifest" href="/static/favicons/site.webmanifest" />
-      <body
-        className={cn(
-          "min-h-dvh bg-background font-sans antialiased",
-          pretendard.className
-        )}
-      >
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="system"
-          enableSystem
-          disableTransitionOnChange
+    <ViewTransitions>
+      <html lang="en" suppressHydrationWarning className="scroll-smooth scroll-pt-20">
+        <link rel="icon" href="/static/favicons/favicon.ico" />
+        <link rel="apple-touch-icon" sizes="76x76" href="/static/favicons/apple-touch-icon.png" />
+        <link rel="icon" type="image/png" sizes="32x32" href="/static/favicons/favicon-32x32.png" />
+        <link rel="icon" type="image/png" sizes="16x16" href="/static/favicons/favicon-16x16.png" />
+        <link rel="manifest" href="/static/favicons/site.webmanifest" />
+        <body
+          className={cn(
+            "min-h-dvh bg-background font-sans antialiased",
+            pretendard.className
+          )}
         >
-          <div className="relative flex min-h-dvh flex-col bg-background">
-            <KbarLayout >
-              <NavBar />
-              <main className="flex-1">{children}</main>
-              <Footer />
-              <Toaster
-                toastOptions={{
-                  position: "bottom-center",
-                }}
-              />
-            </KbarLayout>
-          </div>
-        </ThemeProvider>
-      </body>
-    </html>
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="system"
+            enableSystem
+            disableTransitionOnChange
+          >
+            <div className="relative flex min-h-dvh flex-col bg-background">
+              <KbarLayout >
+                <NavBar />
+                <main className="flex-1">{children}</main>
+                <Footer />
+                <Toaster
+                  toastOptions={{
+                    position: "bottom-center",
+                  }}
+                />
+              </KbarLayout>
+            </div>
+          </ThemeProvider>
+        </body>
+      </html>
+    </ViewTransitions>
   );
 }

@@ -1,7 +1,7 @@
 
 import { cn, formatDate } from "@/lib/utils";
 import { Calendar, MoveRight } from "lucide-react";
-import Link from "next/link";
+import { Link } from 'next-view-transitions';
 import { buttonVariants } from "@/components/ui/button";
 import { Tag } from "@/components/tag";
 

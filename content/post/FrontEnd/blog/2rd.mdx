@@ -1,0 +1,67 @@
+---
+title: 'Next.js로 블로그 제작하기 2'
+tags:
+  - Next.js
+description: 'Next.js app-router를 활용하여 템플릿 없이 블로그를 직접 제작 2탄'
+date: 2024-04-20
+---
+
+## 환경 설정하기
+
+- `pnpm` package manager를 이용하여 nextjs 생성
+
+```bash
+# nextjs 설치
+pnpm create next-app
+
+# dark모드를 위한 theme 라이브러리 설치
+pnpm i next-themes
+
+# tailwindcss의 3rd party로 사용할 `typography`, `forms`를 설치
+pnpm i -D @tailwindcss/forms @tailwindcss/typography
+
+# mdx를 html로 parsing할 라이브러리 설치
+pnpm i -D velite
+
+# html parsing할 rehype 라이브러리들 설치
+pnpm i -D rehype-slug rehype-pretty-code rehype-autolink-headingspnpm rehype-prism-plus
+
+# 기본 ui로 shadcn-ui 설치
+pnpm dlx shadcn-ui@latest init\n
+pnpm dlx shadcn-ui@latest add button sheet dropdown-menu badge pagination card
+
+# class merge를 위한 라이브러리 설치
+pnpm i -D clsx tailwind-merge
+# 코드 문법을 위한 shiki, 경로를 설정을 위한 slugger 설치
+pnpm i shiki github-slugger
+```
+
+- config 설정
+
+```javascript:tailwind.config.js
+plugins: [require("@tailwindcss/forms"), require('@tailwindcss/typography')],
+```
+
+```ts:tsconfig.json
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./src/*"],
+      "contentlayer/generated":["./.contentlayer/generated"],
+    },
+"include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", ".contentlayer/generated"],
+```
+
+```js:next.config.js
+const { withContentlayer } = require('next-contentlayer')
+
+/** @type {import('next').NextConfig} */
+const nextConfig = {reactStrictMode: true,swcMinify: true};
+
+module.exports = withContentlayer(nextConfig);
+```
+
+```:gitignore
+.env
+# velite
+.velite
+```

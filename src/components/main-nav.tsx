@@ -1,7 +1,7 @@
 'use client';
 
 import { cn } from '@/lib/utils';
-import Link from 'next/link';
+import { Link } from 'next-view-transitions';
 import React from 'react';
 import { usePathname } from "next/navigation";
 import Image from 'next/image';
@@ -12,7 +12,7 @@ export default function MainNav() {
   return (
     <nav className="flex items-center space-x-4 lg:space-x-6">
       <Link href="/" className="mr-6 flex items-center space-x-2 font-bold ">
-        <Image alt='logo image' width={30} height={30} src='/static/favicons/apple-touch-icon.png' quality={100}/>
+        <Image alt='logo image' width={30} height={30} src='/static/favicons/apple-touch-icon.png' quality={100} />
         <strong className='inline-block'>{siteConfig.title}</strong>
       </Link>
       <Link
