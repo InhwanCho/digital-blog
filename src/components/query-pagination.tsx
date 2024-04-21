@@ -4,10 +4,9 @@ import {
   Pagination,
   PaginationContent,
   PaginationItem,
-  PaginationLink,
-  PaginationPrevious,
-  PaginationNext,
 } from "@/components/ui/pagination";
+import { Link } from "next-view-transitions";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 
 interface QueryPaginationProps {
   totalPages: number;
@@ -30,21 +29,28 @@ export function QueryPagination({ totalPages, className }: QueryPaginationProps)
   return (
     <Pagination className={className}>
       <PaginationContent className="space-x-5">
-        <PaginationItem>
-          <PaginationPrevious
-            href={prevPage >= 1 ? createPageUrl(prevPage) : undefined}
-            onClick={(e) => {
-              // Prevent clicking on the link if it's the first page
-              if (currentPage === 1) {
-                e.preventDefault();
-              }
-            }}
-            style={{
-              cursor: currentPage === 1 ? 'not-allowed' : 'pointer',
-              opacity: currentPage === 1 ? 0.5 : 1,
-            }}
-          />
-        </PaginationItem>
+        {prevPage >= 1 && (
+          <PaginationItem>
+            <Link
+              className="flex items-center text-sm"
+              href={createPageUrl(prevPage)}
+              onClick={(e) => {
+                // 첫 페이지일 경우 클릭을 막습니다.
+                if (currentPage === 1) {
+                  e.preventDefault();
+                  e.stopPropagation();
+                }
+              }}
+              style={{
+                cursor: currentPage === 1 ? 'not-allowed' : 'pointer',
+                opacity: currentPage === 1 ? 0.5 : 1,
+              }}
+            >
+              <ChevronLeft className="h-4 w-4" />
+              PrevPage
+            </Link>
+          </PaginationItem>
+        )}
 
         {/* Display page info with format 1/n when there are more than 2 pages */}
         {totalPages > 2 && (
@@ -55,7 +61,9 @@ export function QueryPagination({ totalPages, className }: QueryPaginationProps)
 
         {nextPage <= totalPages && (
           <PaginationItem>
-            <PaginationNext href={createPageUrl(nextPage)} />
+            <Link href={createPageUrl(nextPage)} className="flex items-center text-sm">nextPage
+              <span className=""><ChevronRight className="h-4 w-4" /></span>
+            </Link>            
           </PaginationItem>
         )}
       </PaginationContent>

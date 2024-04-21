@@ -7,7 +7,7 @@ import { PostItem } from "@/components/post-item";
 import { IoLogoGithub } from "react-icons/io";
 
 export default function Home() {
-  
+
   const latestPosts = sortPosts(posts).slice(0, 5);
   return (
     <>
@@ -36,7 +36,7 @@ export default function Home() {
               )}
             >
               <span className="pr-2">GitHub</span>
-              <IoLogoGithub className="size-5"/>
+              <IoLogoGithub className="size-5" />
             </Link>
           </div>
         </div>

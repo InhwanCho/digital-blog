@@ -58,18 +58,20 @@ export default function RootLayout({
             enableSystem
             disableTransitionOnChange
           >
-            <div className="relative flex min-h-dvh flex-col bg-background">
-              <KbarLayout >
-                <NavBar />
-                <main className="flex-1">{children}</main>
-                <Footer />
-                <Toaster
-                  toastOptions={{
-                    position: "bottom-center",
-                  }}
-                />
-              </KbarLayout>
-            </div>
+            <section className="mx-auto max-w-3xl px-4 sm:px-6 xl:max-w-5xl xl:px-0">
+              <div className="relative flex min-h-dvh flex-col bg-background">
+                <KbarLayout >
+                  <NavBar />
+                  <main className="flex-1">{children}</main>
+                  <Footer />
+                  <Toaster
+                    toastOptions={{
+                      position: "bottom-center",
+                    }}
+                  />
+                </KbarLayout>
+              </div>
+            </section>
           </ThemeProvider>
         </body>
       </html>

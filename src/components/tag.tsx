@@ -9,6 +9,7 @@ interface TagProps {
   isCategory?: boolean;
 }
 export function Tag({ tag, current, count, isCategory }: TagProps) {
+  
   return (
     <Link
       className={badgeVariants({

@@ -49,7 +49,7 @@ export default function CategoryList() {
             <BreadcrumbLink href="/post">All Posts</BreadcrumbLink>
           </BreadcrumbItem>
           <BreadcrumbSeparator />
-          <BreadcrumbItem>
+          <BreadcrumbItem className='outline-none hover:text-slate-800 dark:hover:text-slate-300'>
             <DropdownMenu>
               <DropdownMenuTrigger className="flex items-center gap-1">
                 <IoFolderOpenOutline className='mr-2' />
@@ -67,15 +67,15 @@ export default function CategoryList() {
             categori[selectedItems[0]].length > 0 ? (
               <>
                 <BreadcrumbSeparator />
-                <BreadcrumbItem>
-                  <DropdownMenu>
+                <BreadcrumbItem className='outline-none hover:text-slate-800 dark:hover:text-slate-300'>
+                  <DropdownMenu >
                     <DropdownMenuTrigger className="flex items-center gap-1">
                       <IoFolderOpenOutline className='mr-2' />
                       {selectedItems[1]}
                       <ChevronDown className="h-4 w-4" />
                     </DropdownMenuTrigger>
-                    <DropdownMenuContent align="start">
-                      <DropdownMenuItem onSelect={() => handleMenuItemClick(1, 'all')}>all</DropdownMenuItem>
+                    <DropdownMenuContent align="start" >
+                      <DropdownMenuItem  onSelect={() => handleMenuItemClick(1, 'all')}>all</DropdownMenuItem>
                       {categori[selectedItems[0]].map((item, i) => (
                         <DropdownMenuItem key={i} onSelect={() => handleMenuItemClick(1, item)}>{item}</DropdownMenuItem>
                       ))}

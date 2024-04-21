@@ -10,12 +10,12 @@ export const siteConfig = {
   since: 2024,
   googleAnalyticsId: "",
   locale: "ko-KR",
-  twitterHandle:'',
+  twitterHandle: "@wh_dlsghks",
   author: {
     name: "InhwanCho",
     photo:
       "https://github.com/InhwanCho/portfolio/assets/111936229/53aecb04-94b4-4e05-8711-81b14c3eccc7",
-    bio: "Frontend Engineer",
+    bio: "Frontend Developer",
     contacts: {
       email: "wh_dlsghks@naver.com",
       github: "https://github.com/InhwanCho",
