@@ -10,6 +10,7 @@ import "@/css/prism.css";
 import ReadingProgressBar from "@/components/reading-progress-bar";
 import { Calendar } from "lucide-react";
 import { formatDate } from "@/lib/utils";
+import PostFooter from "@/components/post-footer";
 
 interface PostPageProps {
   params: {
@@ -17,16 +18,23 @@ interface PostPageProps {
   };
 }
 
-async function getPostFromParams(params: PostPageProps["params"]) {
+async function getPostFromParams(params: PostPageProps["params"]) { 
   const slug = params?.slug?.join("/");
+  // 날짜 순으로 정렬
+  posts.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
   const post = posts.find((post) => post.slugAsParams === slug);
-  return post;
+  const postIndex = posts.findIndex((post) => post.slugAsParams === slug);
+  const postFooterProps = {
+    prevPost: posts.at(postIndex - 1) ?? null,
+    nextPost: posts.at(postIndex + 1) ?? null,
+  };
+  return { post, postFooterProps };
 }
 
 export async function generateMetadata({
   params,
 }: PostPageProps): Promise<Metadata> {
-  const post = await getPostFromParams(params);
+  const { post } = await getPostFromParams(params);
 
   if (!post) {
     return {};
@@ -72,7 +80,7 @@ export async function generateStaticParams(): Promise<PostPageProps["params"][]>
 }
 
 export default async function PostPage({ params }: PostPageProps) {
-  const post = await getPostFromParams(params);
+  const { post, postFooterProps } = await getPostFromParams(params);
 
   if (!post || !post.published) {
     notFound();
@@ -97,7 +105,9 @@ export default async function PostPage({ params }: PostPageProps) {
         </div>
         <hr className="my-4" />
         <MDXContent code={post.body} />
-        <div className="min-h-[400px] bg-red-100">이전블로그, 다음블로그, 카테고리별 리스트 보여주는 section</div>
+        <hr className="my-4" />
+        <PostFooter {...postFooterProps} />
+        <hr className="my-4" />
         <Giscus />
       </article>
       <aside className="relative order-2 xl:grow w-full max-w-[210px] hidden xl:block pl-10">

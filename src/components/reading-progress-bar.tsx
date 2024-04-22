@@ -20,7 +20,7 @@ export default function ReadingProgressBar() {
   }, []);
 
   return (
-    <div className={`fixed z-50 top-[54px] left-0 h-[2px] bg-gradient-to-r from-gray-700 to-gray-800`}
+    <div className={`fixed z-50 top-[54px] left-0 h-[1.5px] bg-gradient-to-r from-slate-400 to-slate-600/90`}
       style={{ width: `${width}%` }}>
       <style global jsx>{`
         body {

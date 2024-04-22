@@ -11,7 +11,7 @@ export const metadata: Metadata = {
   description: "This is a description",
 };
 
-const POSTS_PER_PAGE = 6;
+const POSTS_PER_PAGE = 5;
 
 interface PostPageParams {
   searchParams: {

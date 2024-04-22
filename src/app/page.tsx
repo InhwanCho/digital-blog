@@ -40,8 +40,7 @@ export default function Home() {
             </Link>
           </div>
         </div>
-      </section>
-
+      </section>      
       <section className="container max-w-4xl py-6 lg:py-10 flex flex-col space-y-6">
         <h2 className="text-3xl font-black text-center">
           최신 포스트
