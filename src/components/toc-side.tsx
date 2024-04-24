@@ -60,7 +60,7 @@ const TocSide = ({ tableOfContents }: TocSideProps) => {
 
   return (
     <div className='fixed top-4 pt-[80px] w-[240px] h-[calc(100vh-80px)] overflow-x-hidden overflow-y-auto'>
-      <span className='text-slate-800/90'>On this page</span>
+      <span className='text-slate-800/90 dark:text-slate-300'>On this page</span>
       {tableOfContents.length > 0 && (
         <ul className='content-toc mt-0'>{renderToc(tableOfContents)}</ul>
       )}

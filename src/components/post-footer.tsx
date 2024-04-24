@@ -15,7 +15,7 @@ export default function PostFooter({ prevPost, nextPost }: PostFooterProps) {
       {prevPost && (
         <div className=''>
           <p className=''>이전 포스트</p>
-          <Link href={`/post/${prevPost.slugAsParams}`} className="group gap-3 px-2 py-2 flex items-center">
+          <Link href={`/post/${prevPost.slugAsParams}`} className="group gap-3 px-2 py-2 flex items-center custom-underline">
             <ChevronLeft className='size-5' />
             <span>{prevPost.title}</span>
           </Link>
@@ -24,7 +24,7 @@ export default function PostFooter({ prevPost, nextPost }: PostFooterProps) {
       {nextPost && (
         <div className='text-end'>
           <p className=''>다음 포스트</p>
-          <Link href={`/post/${nextPost.slugAsParams}`} className="group ml-auto gap-3 px-2 py-2 text-right flex  items-center">
+          <Link href={`/post/${nextPost.slugAsParams}`} className="group ml-auto gap-3 px-2 py-2 text-right flex custom-underline items-center">
             <span>{nextPost.title}</span>
             <ChevronRight className='size-5' />
           </Link>

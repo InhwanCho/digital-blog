@@ -11,6 +11,7 @@ import ReadingProgressBar from "@/components/reading-progress-bar";
 import { Calendar } from "lucide-react";
 import { formatDate } from "@/lib/utils";
 import PostFooter from "@/components/post-footer";
+import PostSeries from "@/components/post-series";
 
 interface PostPageProps {
   params: {
@@ -18,17 +19,23 @@ interface PostPageProps {
   };
 }
 
-async function getPostFromParams(params: PostPageProps["params"]) { 
+async function getPostFromParams(params: PostPageProps["params"]) {
   const slug = params?.slug?.join("/");
   // 날짜 순으로 정렬
   posts.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
   const post = posts.find((post) => post.slugAsParams === slug);
   const postIndex = posts.findIndex((post) => post.slugAsParams === slug);
+  // 이전 포스트, 다음 포스트를 날짜 순으로 찾기
   const postFooterProps = {
     prevPost: posts.at(postIndex - 1) ?? null,
     nextPost: posts.at(postIndex + 1) ?? null,
   };
-  return { post, postFooterProps };
+  // 일치하는 카테고리 찾기(마지막 slug는 파일 이름이여서 제거)
+  const temslug = post?.slug.split('/');
+  temslug?.pop();
+  const series = posts.filter((post) => post.slug.startsWith(`${temslug?.join('/')}`)) ?? null;
+  
+  return { post, postFooterProps, series };
 }
 
 export async function generateMetadata({
@@ -80,7 +87,7 @@ export async function generateStaticParams(): Promise<PostPageProps["params"][]>
 }
 
 export default async function PostPage({ params }: PostPageProps) {
-  const { post, postFooterProps } = await getPostFromParams(params);
+  const { post, postFooterProps, series } = await getPostFromParams(params);
 
   if (!post || !post.published) {
     notFound();
@@ -105,8 +112,10 @@ export default async function PostPage({ params }: PostPageProps) {
         </div>
         <hr className="my-4" />
         <MDXContent code={post.body} />
-        <hr className="my-4" />
+        <hr className="my-8" />
         <PostFooter {...postFooterProps} />
+        <hr className="my-4" />
+        <PostSeries series={series} current={post}/>
         <hr className="my-4" />
         <Giscus />
       </article>
