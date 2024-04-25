@@ -23,14 +23,15 @@ export default function PostSeries({ series, current }: PostSeriesProps) {
       )}
       onClick={onClickCard}
     >
-      <p className="text-base font-medium sm:text-lg">연관된 포스트 구경가기</p>
+      <p className="text-base font-bold sm:text-lg border-b dark:border-b-slate-400">연관된 포스트 구경가기</p>
+      
       {open && <div className='mt-4 flex flex-col gap-2 text-sm sm:text-base'>
         {series?.map((post, index) => (
           current?.title === post.title ?
-            <span key={index} className='font-bold text-slate-900 dark:text-slate-100'>
+            <span key={index} className='font-bold text-slate-900 dark:text-slate-100 bg-slate-200/60 dark:bg-slate-900/80 rounded-sm'>
               {`> ${index + 1}. ${post.title}`}
             </span> :
-            <Link key={index} href={`/post/${post.slugAsParams}`} className='no-underline hover:underline'>
+            <Link key={index} href={`/post/${post.slugAsParams}`} className='no-underline hover:underline hover:text-slate-600 dark:hover:text-slate-200'>
               {index + 1}. {post.title}
             </Link>
         ))}

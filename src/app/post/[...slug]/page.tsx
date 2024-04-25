@@ -34,7 +34,7 @@ async function getPostFromParams(params: PostPageProps["params"]) {
   const temslug = post?.slug.split('/');
   temslug?.pop();
   const series = posts.filter((post) => post.slug.startsWith(`${temslug?.join('/')}`)) ?? null;
-  
+
   return { post, postFooterProps, series };
 }
 
@@ -96,7 +96,7 @@ export default async function PostPage({ params }: PostPageProps) {
   return (
     <section className="py-6 prose dark:prose-invert max-w-5xl h-full mx-auto container xl:flex xl:justify-center">
       <ReadingProgressBar />
-      <article className="w-full h-full mx-auto xl:max-w-[980px] xl:flex-grow">
+      <article className="w-full h-full mx-auto xl:flex-grow">
         <dl>
           <dt className="sr-only">Published On</dt>
           <dd className="text-sm sm:text-base font-medium flex items-center gap-2 pl-0">
@@ -115,11 +115,11 @@ export default async function PostPage({ params }: PostPageProps) {
         <hr className="my-8" />
         <PostFooter {...postFooterProps} />
         <hr className="my-4" />
-        <PostSeries series={series} current={post}/>
+        <PostSeries series={series} current={post} />
         <hr className="my-4" />
         <Giscus />
       </article>
-      <aside className="relative order-2 xl:grow w-full max-w-[210px] hidden xl:block pl-10">
+      <aside className="relative order-1 xl:grow w-full max-w-[210px] hidden xl:block pl-10 bg-red-50">
         <TocSide tableOfContents={post.toc} />
       </aside>
     </section>

@@ -1,14 +1,17 @@
 'use client';
 import { cn } from '@/lib/utils';
 import { useKBar } from 'kbar';
+import { Search } from 'lucide-react';
+
+
 
 export default function KBarButton() {
   const { query } = useKBar();
-  
+
   return (
     <button
       className={cn(
-        'flex cursor-pointer items-center rounded-lg p-1 text-xs',
+        'hidden md:flex cursor-pointer items-center rounded-lg p-1 text-xs ',
         'bg-secondary transition-colors dark:bg-slate-800 dark:hover:bg-slate-800/70 hover:bg-slate-200/80',
       )}
       onClick={query.toggle}

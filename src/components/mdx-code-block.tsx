@@ -47,7 +47,8 @@ export default function CodeBlock({ children, title, className }: React.Componen
           <div className="flex justify-between border-b border-b-slate-200/90 border-r border-r-slate-700/30 px-5 pl-6 pt-3 pb-2 text-sm font-bold text-slate-200/90">
             <span>{title}</span>
             <span className='flex text-muted dark:text-muted-foreground'>
-              {className ? className.split('-')[1].toLowerCase() : null}
+              {/* code type 입력 'js'->'javascript' */}
+              {className ? (className.split('-')[1].toLowerCase() === 'js' ? 'javascript' : className.split('-')[1].toLowerCase()) : null}
             </span>
           </div>
         </div>

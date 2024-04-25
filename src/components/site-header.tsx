@@ -11,17 +11,19 @@ export default function NavBar() {
 
   return (
     <header className="z-10 sticky top-0 w-full bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 ">
-      <div className="container flex h-14 max-w-screen-lg items-center justify-between">
+      <div className="container flex h-14 items-center justify-between">
         <MainNav />
         <div className="flex flex-1 items-center justify-end space-x-3">
           <nav className="sm:flex gap-5 hidden">
-            <KBarButton/>
+            <KBarButton />
+            {/* 깃허브 */}
             <LinkExternal href={siteConfig.author.contacts.github}>
               <Button variant="ghost" className="w-10 px-0" >
                 <IoLogoGithub className="size-6" />
               </Button>
             </LinkExternal>
           </nav>
+          {/* 모바일 UI */}
           <ModeToggle />
           <MobileNav />
         </div>

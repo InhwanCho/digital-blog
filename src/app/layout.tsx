@@ -58,7 +58,7 @@ export default function RootLayout({
             enableSystem
             disableTransitionOnChange
           >
-            <section className="mx-auto max-w-3xl px-4 sm:px-6 xl:max-w-5xl xl:px-0">
+            <section className="mx-auto max-w-4xl xl:max-w-5xl px-4 sm:px-6  xl:px-0">
               <div className="relative flex min-h-dvh flex-col bg-background">
                 <KbarLayout >
                   <NavBar />

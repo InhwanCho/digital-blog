@@ -1,6 +1,6 @@
 'use client';
 import { Link } from 'next-view-transitions';
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState } from 'react';
 
 interface TocEntry {
   title: string;
@@ -13,7 +13,6 @@ interface TocSideProps {
 }
 
 const TocSide = ({ tableOfContents }: TocSideProps) => {
-  // const observer = useRef<IntersectionObserver | null>(null);
   const [activeToc, setActiveToc] = useState('');
 
   useEffect(() => {
@@ -25,11 +24,11 @@ const TocSide = ({ tableOfContents }: TocSideProps) => {
         }
       });
     }, { rootMargin: '0px 0px -91% 0px', threshold: 0.1 });
-  
+
     headings.forEach(element => observer.observe(element));
     return () => observer.disconnect();
   }, []);
-  
+
 
 
   const isActiveToc = (url: string): boolean => {
