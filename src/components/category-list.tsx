@@ -14,14 +14,20 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { getAllCategories, getCategories, getPostsByCategorySlug, sortCategoryByCount } from '@/lib/utils';
+import { getAllCategories, getCategories, getPostsByCategorySlug, sortCategoryByCount, sortPosts } from '@/lib/utils';
 import { posts } from '#site/content';
 import { Tag } from './tag';
 import { PostItem } from './post-item';
 import { IoFolderOpenOutline } from "react-icons/io5";
+import { QueryPagination } from './query-pagination';
+import { useSearchParams } from 'next/navigation';
+
+const POSTS_PER_PAGE = 8;
 
 
 export default function CategoryList() {
+  const searchParams = useSearchParams();
+  const currentPage = Number(searchParams.get('page')) || 1;    
   // 상태의 타입을 string[]로 설정
   const categories = getAllCategories(posts);
   const categori = getCategories(posts);
@@ -34,8 +40,11 @@ export default function CategoryList() {
     updatedItems[index] = itemName;
     setSelectedItems(updatedItems);
   };
-
-  const displayPosts = getPostsByCategorySlug(posts, undefined, selectedItems);
+  const sortedPosts = getPostsByCategorySlug(posts, undefined, selectedItems);
+  const totalPages = Math.ceil(sortedPosts.length / POSTS_PER_PAGE);
+  const displayPosts = sortedPosts.slice(
+    POSTS_PER_PAGE * (currentPage - 1),
+    POSTS_PER_PAGE * currentPage);
 
   return (
     <div>
@@ -75,7 +84,7 @@ export default function CategoryList() {
                       <ChevronDown className="h-4 w-4" />
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="start" >
-                      <DropdownMenuItem  onSelect={() => handleMenuItemClick(1, 'all')}>all</DropdownMenuItem>
+                      <DropdownMenuItem onSelect={() => handleMenuItemClick(1, 'all')}>all</DropdownMenuItem>
                       {categori[selectedItems[0]].map((item, i) => (
                         <DropdownMenuItem key={i} onSelect={() => handleMenuItemClick(1, item)}>{item}</DropdownMenuItem>
                       ))}
@@ -109,6 +118,10 @@ export default function CategoryList() {
             );
           })}
         </ul> : <p>No posts here yet</p>}
+        <QueryPagination
+          totalPages={totalPages}
+          className="justify-end mt-4"
+        />
       </div>
     </div>
 

@@ -1,11 +1,15 @@
+
 import CategoryList from '@/components/category-list';
 import { Metadata } from 'next';
+
 import React from 'react';
 
 export const metadata: Metadata = {
   title: "Category",
   description: "Blog categories I've written",
 };
+
+
 
 export default function CategoriesPage() {
   
@@ -16,10 +20,10 @@ export default function CategoriesPage() {
           <h1 className="inline-block font-bold text-2xl md:text-3xl">Categories</h1>
         </div>
       </div>
-      <hr className="my-4" />    
+      <hr className="my-4" />
       <div className='pb-6'>
         <CategoryList/>
-      </div>      
+      </div>
     </div>
   );
 }

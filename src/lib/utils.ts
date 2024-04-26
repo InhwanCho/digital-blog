@@ -72,7 +72,6 @@ export function getCategories(posts: Array<Post>): Categories {
   return result;
 }
 
-
 export function sortCategoryByCount(categories: Record<string, number>) {
   return Object.keys(categories).sort((a, b) => categories[b] - categories[a]);
 }
@@ -105,7 +104,8 @@ export function getPostsByCategorySlug(
   category?: string,
   categories?: string[]
 ): Array<Post> {
-  return posts.filter((post) => {
+  let filteredPosts = posts.filter((post) => {
+    if (!post.published) return false;
     if (!post.categories) return false;
 
     const slugifiedCategories = post.categories.map((categoryName) =>
@@ -140,4 +140,6 @@ export function getPostsByCategorySlug(
     // 아무 조건도 충족하지 않는 경우, 해당 포스트는 필터링에서 제외
     return false;
   });
+  //날짜순으로 포스트 정렬
+  return sortPosts(filteredPosts);
 }

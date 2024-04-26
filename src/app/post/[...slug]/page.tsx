@@ -119,7 +119,7 @@ export default async function PostPage({ params }: PostPageProps) {
         <hr className="my-4" />
         <Giscus />
       </article>
-      <aside className="relative order-1 xl:grow w-full max-w-[210px] hidden xl:block pl-10 bg-red-50">
+      <aside className="relative order-1 xl:grow w-full max-w-[210px] hidden xl:block pl-10">
         <TocSide tableOfContents={post.toc} />
       </aside>
     </section>

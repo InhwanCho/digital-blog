@@ -27,8 +27,8 @@ export default async function PostPage({ searchParams }: PostPageParams) {
     POSTS_PER_PAGE * (currentPage - 1),
     POSTS_PER_PAGE * currentPage);
 
-  const tags = getAllTags(posts);
-  const sortedTags = sortTagsByCount(tags);
+  // const tags = getAllTags(posts);
+  // const sortedTags = sortTagsByCount(tags);
   const categories = getAllCategories(posts);
   const sortedCategories = sortCategoryByCount(categories);
 
