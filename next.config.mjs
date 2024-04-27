@@ -26,6 +26,10 @@ const nextConfig = {
     config.plugins.push(new VeliteWebpackPlugin());
     return config;
   },
+  images: {
+    domains: ["github.com", "user-images.githubusercontent.com"],
+    formats: ["image/avif", "image/webp"],
+  },
 };
 
 export default nextConfig;

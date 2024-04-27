@@ -35,7 +35,7 @@ Encoder에서는 문장을 입력 받아서 Context vector(=hidden state)를 생
 
 그림으로 보면 다음과 같습니다.
 
-<img width="900" alt="seq2seq" src="https://github.com/InhwanCho/InhwanCho.github.io/assets/111936229/4641dd5c-1d1f-45a3-8c42-c6821102d860"/>
+<MdxImage width="900" alt="seq2seq" src="https://github.com/InhwanCho/InhwanCho.github.io/assets/111936229/4641dd5c-1d1f-45a3-8c42-c6821102d860"/>
 
 Encoder는 Embedding층과 LSTM층으로 구성되있고, 보통의 신경망에서의 위로 올라가는 `Affine 층`은 여기서는 사용하지 않고, `Cell state`는 마지막 embedding까지 사용하고 `폐기`하며, `Hidden state만 최종적으로 출력`한다(이를 `context vecotr`라 부름)
 
@@ -48,7 +48,7 @@ Encoder는 Embedding층과 LSTM층으로 구성되있고, 보통의 신경망에
 
 ### Decoder
 
-<img width="700" alt="디코더" src="https://github.com/InhwanCho/InhwanCho.github.io/assets/111936229/0b62e21b-7fb8-4076-8401-3bda9dcc0677"/>
+<MdxImage width="700" alt="디코더" src="https://github.com/InhwanCho/InhwanCho.github.io/assets/111936229/0b62e21b-7fb8-4076-8401-3bda9dcc0677"/>
 
 디코더에서는 그림과 같이 진행됩니다.
 
@@ -60,13 +60,7 @@ Encoder는 Embedding층과 LSTM층으로 구성되있고, 보통의 신경망에
 
 - 아래 동영상을 보시면 쉽게 이해될 것입니다(10초)
 
-
-<video controls width="800">
-    <source src="/assets/videos/seq2seq.mp4" type="video/mp4"/>
-</video>
-
-
-   
+<MdxVideo width="800" src="/assets/videos/seq2seq.mp4"/>
 
 ## seq2seq의 한계점
 

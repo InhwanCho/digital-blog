@@ -38,7 +38,7 @@ Transfoer에서는 1차원 벡터로 만든 후 self-attention을 통해 특징�
 
 아래는 논문에 나와있는 전체적인 ViT overview 입니다.
 
-<img width="800" alt="VIT overview" src="https://github.com/InhwanCho/InhwanCho.github.io/assets/111936229/9cbd8a18-8ba0-476b-bebb-4ec4e896234f"/>
+<MdxImage width="800" alt="VIT overview" src="https://github.com/InhwanCho/InhwanCho.github.io/assets/111936229/9cbd8a18-8ba0-476b-bebb-4ec4e896234f"/>
 
 여기서 16은 패치의 사이즈를 의미합니다. 즉, 논문의 그림으로 설명하자면 기존의 이미지 사이즈가 48x48이고 이를 9개의 16x16의 패치로 자른 모델을 의미합니다.  
 (실제 이미지넷 데이터 기준으로 설명하면 H=W=224, Patch\_size=16이면 실제 패치의 수 = 14\*14 == 196이 됩니다.)
@@ -217,7 +217,7 @@ class ViT(nn.Sequential):
 
 아래는 논문에 나와있는 ViT 수식입니다.
 
-<img width="800" alt="VIT 수식" src="https://github.com/InhwanCho/InhwanCho.github.io/assets/111936229/518dd7b5-0b7a-4551-919f-786511454021"/>
+<MdxImage width="800" alt="VIT 수식" src="https://github.com/InhwanCho/InhwanCho.github.io/assets/111936229/518dd7b5-0b7a-4551-919f-786511454021"/>
 
 수식으로 설명하면 다음과 같습니다.
 

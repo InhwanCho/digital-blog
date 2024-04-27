@@ -1,7 +1,8 @@
-import Image from "next/image";
 import * as runtime from "react/jsx-runtime";
-import { Callout } from "@/components/callout";
-import CodeBlock from "./mdx-code-block";
+import { Callout } from "@/components/mdx/callout";
+import CodeBlock from "@/components/mdx/mdx-code-block";
+import { MdxImage } from "@/components/mdx/mdx-image";
+import { MdxVideo } from "@/components/mdx/mdx-video";
 
 const useMDXComponent = (code: string) => {
   const fn = new Function(code);
@@ -9,15 +10,17 @@ const useMDXComponent = (code: string) => {
 };
 
 const components = {
-  pre:CodeBlock,
-  Image,
+  pre: CodeBlock,
+  // Image,
   Callout,
+  MdxImage,
+  MdxVideo
 };
 
 interface MdxProps {
   code: string;
 }
- 
+
 export function MDXContent({ code }: MdxProps) {
   const Component = useMDXComponent(code);
   return <Component components={components} />;

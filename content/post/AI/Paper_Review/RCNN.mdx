@@ -11,10 +11,9 @@ lastmod: 2023-02-09
  
 ---
 
-
 ## 서론
 
-`Region proposals with CNNs(R-CNN` 이라는 Object Detect 분야의 새로운 방향을 제시하는 논문입니다.
+`Region proposals with CNNs(R-CNN)` 이라는 Object Detect 분야의 새로운 방향을 제시하는 논문입니다.
 
 그 이전까지 최고의 성능을 나타낸 기법의 mAP보다 30% 높은 53.3%를 달성하여 detection 분야에 새로운 방향을 제시하게 됩니다.
 object detection의 성능 평가 지표는 mAP(mean average precision)입니다.
@@ -29,11 +28,11 @@ object detection의 성능 평가 지표는 mAP(mean average precision)입니다
 
 이미지 분류 보다는 훨씬 복잡한 문제입니다.
 
-<img width="453" alt="물체 인식" src="https://user-images.githubusercontent.com/111936229/217687292-37e272fa-1e60-4353-9e0d-46d8a2224194.png"/>
+<MdxImage width="500" alt="물체 인식" src="https://user-images.githubusercontent.com/111936229/217687292-37e272fa-1e60-4353-9e0d-46d8a2224194.png"/>
 
 일단, R-CNN의 구조는 다음과 같습니다
 
-<img width="697" alt="R-CNN 구조" src="https://user-images.githubusercontent.com/111936229/217687794-e73444b0-919b-4eb4-876f-d39fca5d1539.png"/>
+<MdxImage width="700" alt="R-CNN 구조" src="https://user-images.githubusercontent.com/111936229/217687794-e73444b0-919b-4eb4-876f-d39fca5d1539.png"/>
 
 ---
 
@@ -85,7 +84,7 @@ fine tune을 적용했을 떄와 하지 않았을 때의 성능을 비교해보�
 
 그리고 `BB`로 적힌 것은 Bounding Box Regression을 적용한 것으로 조금 아래에서 설명하겠습니다.
 
-<img width="1007" alt="파인튜닝 후 결과가 좋아짐(표)" src="https://user-images.githubusercontent.com/111936229/217694744-4ce8b0fd-474a-41e3-b30c-526945b044e2.png"/>
+<MdxImage width="1000" alt="파인튜닝 후 결과가 좋아짐(표)" src="https://user-images.githubusercontent.com/111936229/217694744-4ce8b0fd-474a-41e3-b30c-526945b044e2.png"/>
 
 1. `두 번째 단계`는 `Region Classification` (물체를 분류하는 일)
 
@@ -132,9 +131,9 @@ Selective Search나 SVM이 GPU에 적합한 구조가 아닙니다.
 IoU는 (Intersection over Union)의 약자로서 이름 그대로
 $(Intersection) \over (Union)$ 입니다. 즉, 박스의 IOU는 겹치는 부분의 넓이는 전체 합집합의 넓이로 나눈 값입니다.
 
-<img width="500" alt="IoU" src="https://user-images.githubusercontent.com/111936229/217699272-58d80b13-29c6-476f-b482-064072020a01.png"/>
+<MdxImage width="500" alt="IoU" src="https://user-images.githubusercontent.com/111936229/217699272-58d80b13-29c6-476f-b482-064072020a01.png"/>
 
-<img width="463" alt="IoU scores" src="https://user-images.githubusercontent.com/111936229/217697379-b6e1d404-0415-4f43-a9bb-318c7ccd6adf.png"/>
+<MdxImage width="500" alt="IoU scores" src="https://user-images.githubusercontent.com/111936229/217697379-b6e1d404-0415-4f43-a9bb-318c7ccd6adf.png"/>
 
 ---
 
@@ -172,7 +171,7 @@ $$ \hat{G_w} = P_w \exp(d_w(P)) $$
 $$ \hat{G_h} = P_h \exp(d_h(P)) $$
 
 논문에서는 d 함수를 구하기 위해서 앞서 CNN을 통과할 때 pool5 레이어에서 얻어낸 특징 벡터를 사용합니다.
-(d(P)는 transformation 함수입니다.
+(d(P))는 transformation 함수입니다.
 
 $$ d_*(P) = w_*^T \varnothing_5(P)$$
 
@@ -186,11 +185,11 @@ w : 학습 가능한 weight vector
 
 저자들은 람다를 1000으로 설정하였습니다.
 
-<img width="489" alt="w" src="https://user-images.githubusercontent.com/111936229/217702435-4fb4b82b-b47c-4fca-9d13-67ef1511a2d8.png"/>
+<MdxImage width="500" alt="w" src="https://user-images.githubusercontent.com/111936229/217702435-4fb4b82b-b47c-4fca-9d13-67ef1511a2d8.png"/>
 
 여기서 t는 P를 G로 이동시키기 위해서 필요한 이동량을 의미하며 식으로 나타내면 아래와 같습니다.
 
-<img width="257" alt="최종 수식" src="https://user-images.githubusercontent.com/111936229/217702534-b160c646-29f8-4103-8abf-b45e42e8c068.png"/>
+<MdxImage width="300" alt="최종 수식" src="https://user-images.githubusercontent.com/111936229/217702534-b160c646-29f8-4103-8abf-b45e42e8c068.png"/>
 
 정리를 해보면 CNN을 통과하여 추출된 벡터와 x, y, w, h를 조정하는 함수의 웨이트를 곱해서
 

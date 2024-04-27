@@ -18,12 +18,12 @@ seq2seq모델(문장을 입력받아 문장을 출력해주는)에서 RNN대신 
 이 Attention을 통해 만든 Transformer 분석해보겠습니다.
 
 
-<img width="700" alt="Transformer 구조" src="https://github.com/InhwanCho/InhwanCho.github.io/assets/111936229/3ced3af7-c1af-4dfc-9b1f-ca6fa3d4f67f"/>
+<MdxImage width="700" alt="Transformer 구조" src="https://github.com/InhwanCho/InhwanCho.github.io/assets/111936229/3ced3af7-c1af-4dfc-9b1f-ca6fa3d4f67f"/>
 
 그림의 왼쪽 부분은 Encoder, 오른쪽 부분은 Decoder부분입니다.
 먼저, 왼쪽의 빨간색 박스의 inputs이 어떻게 들어가는지 확인해보겠습니다.
 
-<img width="700" alt="Transformer의 inputs" src="https://github.com/InhwanCho/InhwanCho.github.io/assets/111936229/71671c01-b56c-47f1-a2ae-55e02990c7b9"/>
+<MdxImage width="700" alt="Transformer의 inputs" src="https://github.com/InhwanCho/InhwanCho.github.io/assets/111936229/71671c01-b56c-47f1-a2ae-55e02990c7b9"/>
 
     1. input으로 문장이 들어오면 ("je suis etudiant")
 
@@ -53,7 +53,7 @@ seq2seq모델(문장을 입력받아 문장을 출력해주는)에서 RNN대신 
 
 이 Q, K, V를 구하기 위해서는 앞에서 구한 `input vector`에 weight matrix를 곱하여 얻게 됩니다.
 
-<img width="700" alt="attention의 q,k,v를 얻는 과정" src="https://github.com/InhwanCho/InhwanCho.github.io/assets/111936229/8bdbc042-8820-471e-b412-be4838be19db"/>
+<MdxImage width="700" alt="attention의 q,k,v를 얻는 과정" src="https://github.com/InhwanCho/InhwanCho.github.io/assets/111936229/8bdbc042-8820-471e-b412-be4838be19db"/>
 
 위의 사진을 통해 보면 $X_1$, $X_2$가 `input vector`고 $W^Q$, $W^K$, $W^V$ 가 weight matrix로 학습을 통해 구해야할 파라미터입니다.
 
@@ -63,7 +63,7 @@ seq2seq모델(문장을 입력받아 문장을 출력해주는)에서 RNN대신 
 
 그렇다면, 여기서 attention이 진행되는 과정과 의미가 어떻게 되는지 알아보겠습니다.
 
-<img width="700" alt="어텐션의 메커니즘" src="https://github.com/InhwanCho/InhwanCho.github.io/assets/111936229/ecc392cb-17de-4e57-a3ea-33eae6610867"/>
+<MdxImage width="700" alt="어텐션의 메커니즘" src="https://github.com/InhwanCho/InhwanCho.github.io/assets/111936229/ecc392cb-17de-4e57-a3ea-33eae6610867"/>
 
 1. 위의 사진을 보면 먼저 score를 구합니다($q_1 \cdot k_1$)
 2. 그 후 $\sqrt {dim_k}$ 만큼 나눠줍니다. 여기서는 64차원이기 때문에 $\sqrt{64} = 8$ 으로 나눠줍니다.
@@ -73,11 +73,11 @@ seq2seq모델(문장을 입력받아 문장을 출력해주는)에서 RNN대신 
 
 여기까지는 단 1개의 self-attention을 기준으로 설명하였고, 실제로는 multi-headed attention이기 때문에 위의 self-attention이 여러개 연산됩니다.(아래 그림 참조)
 
-<img width="700" alt="멀티해드 어텐션" src="https://github.com/InhwanCho/InhwanCho.github.io/assets/111936229/dfeaeeda-4547-4c61-85c6-175ea9639eb9"/>
+<MdxImage width="700" alt="멀티해드 어텐션" src="https://github.com/InhwanCho/InhwanCho.github.io/assets/111936229/dfeaeeda-4547-4c61-85c6-175ea9639eb9"/>
 
 아래 그림은 최종적으로 multi-headed attention의 값을 얻는 과정입니다.
 
-<img width="700" alt="멀티해드 어텐션의 최종 과정" src="https://github.com/InhwanCho/InhwanCho.github.io/assets/111936229/f67d6d08-e664-4ecd-a621-53f85507a7a3"/>
+<MdxImage width="700" alt="멀티해드 어텐션의 최종 과정" src="https://github.com/InhwanCho/InhwanCho.github.io/assets/111936229/f67d6d08-e664-4ecd-a621-53f85507a7a3"/>
 
 6. $z_0, z_1, z_2, ... , z_7$의 값을 concat한 값과 $W^O$값을 연산하여 최종 $Z$값을 얻습니다. [여기서 W_O의 열은 concat한 z들의 차원과 동일하고 행은 input embedding($x$)값의 차원과 동일하기 때문에 $Z$의 차원은 input차원과 동일합니다.]($W^O$는 학습을 통해 구하는 파라미터)
 
@@ -86,7 +86,7 @@ seq2seq모델(문장을 입력받아 문장을 출력해주는)에서 RNN대신 
 8. Position-wise Feed-forward Network 연산을 진행합니다.
 [$FFN(x) = max(0,x W_1 + b_1)W_2 +b_2$]
 
-<img width="700" alt="FFN" src="https://github.com/InhwanCho/InhwanCho.github.io/assets/111936229/173ed316-d309-4f03-8b41-b8e1ae0aac8e"/>
+<MdxImage width="700" alt="FFN" src="https://github.com/InhwanCho/InhwanCho.github.io/assets/111936229/173ed316-d309-4f03-8b41-b8e1ae0aac8e"/>
 
 FFN을 그림으로 살펴보면 다음과 같습니다.
 여기서는 `1x1 conv연산`을 통해 차원을 늘리고 Relu를 취한뒤 다시 `1x1 conv연산`를 통해 줄인다고 생각하면 편합니다.
@@ -95,24 +95,24 @@ FFN을 그림으로 살펴보면 다음과 같습니다.
 
 ### Decoder
 
-<img width = "700" alt ="decoder" src="https://github.com/InhwanCho/InhwanCho.github.io/assets/111936229/b4fdca5d-509f-45dc-81bd-284944319196"/>
+<MdxImage width = "700" alt ="decoder" src="https://github.com/InhwanCho/InhwanCho.github.io/assets/111936229/b4fdca5d-509f-45dc-81bd-284944319196"/>
 
 이제 `Decoder`에 대해 설명하겠습니다.
 
 1. 디코더에서는 Multi-head attention 대신 `Masked Multi-head attention`을 먼저 수행합니다.
 (이 self-attention은 연산을 수행 할 때, 앞에 있는 attention score만 볼 수 있습니다)
 
-<img width="700" alt="decoder의 masked attention" src="https://github.com/InhwanCho/InhwanCho.github.io/assets/111936229/c3964977-cebb-433e-9672-9f0f7d74d323"/>
+<MdxImage width="700" alt="decoder의 masked attention" src="https://github.com/InhwanCho/InhwanCho.github.io/assets/111936229/c3964977-cebb-433e-9672-9f0f7d74d323"/>
 
 위의 그림을 보면, $z_1$의 연산을 수행 할 때, $x_2$의 값들은 `inf`로 가려있어서 연산에 포함되지 않습니다.
 
-<img width="700" alt="masked attention의 연산" src="https://github.com/InhwanCho/InhwanCho.github.io/assets/111936229/e340218f-8123-4b01-8b3b-e99918ab337f"/>
+<MdxImage width="700" alt="masked attention의 연산" src="https://github.com/InhwanCho/InhwanCho.github.io/assets/111936229/e340218f-8123-4b01-8b3b-e99918ab337f"/>
 
 하지만 실제로는 sequential하게 연산하지 않고 위의 그림과 같은 방식으로 softmax로 연산하기 전에 `-inf`로 처리하고 연산하게됩니다.
 
 2. 이 output값인 $Z$값을 decoder의 Multi-head attention에서 $Q$값으로 사용하고, encoder의 output값을 $K$, $V$로 사용하여 연산을 합니다.
 
-<img width="700" alt="Leaner & softmax & argmax" src="https://github.com/InhwanCho/InhwanCho.github.io/assets/111936229/771f7b11-8cc8-4eb5-a991-938b09249e7d"/>
+<MdxImage width="700" alt="Leaner & softmax & argmax" src="https://github.com/InhwanCho/InhwanCho.github.io/assets/111936229/771f7b11-8cc8-4eb5-a991-938b09249e7d"/>
 
 3. 마지막으로 위의 그림과 같이 Linear(vocab size) and softmax를 통하여 output 값을 얻고 거기에 `argmax`를 통해 최종적으로 우리가 얻고 싶은 단어를 얻습니다.
 

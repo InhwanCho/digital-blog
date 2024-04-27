@@ -41,7 +41,7 @@ lastmod: 2023-01-05
 
 ## Scaled Dot Product Attention(흔히 어텐션으로 알려진 Attention)
 
-<img width="704" alt="Scaled Dot Product Attention" src="https://user-images.githubusercontent.com/111936229/210674989-c2839a05-6fa2-4238-a918-a5b5a90f86d7.png"/>
+<MdxImage width="700" alt="Scaled Dot Product Attention" src="https://user-images.githubusercontent.com/111936229/210674989-c2839a05-6fa2-4238-a918-a5b5a90f86d7.png"/>
 
 - 입력값은 Q(query), K(key), V(value) 그리고 attention mask로 구성 되어 있습니다.
 - 입력값 중 K, V는 같은 값 이어야 합니다.
@@ -94,14 +94,14 @@ lastmod: 2023-01-05
 
 <br/>
 
-<img width="866" alt="qkv 상세 사진" src="https://user-images.githubusercontent.com/111936229/210926682-c8810032-2dc5-4ccb-8f7f-1d737767f423.png"/>
+<MdxImage width="900" alt="qkv 상세 사진" src="https://user-images.githubusercontent.com/111936229/210926682-c8810032-2dc5-4ccb-8f7f-1d737767f423.png"/>
 
 <br/>
 
 - 그리고 Decoder의 은닉층은 RNN(또는 LSTM)에서 연산하여 $$ s_{i} $$ → $$ s_{i+1} $$로 만듭니다.
 - 그 후 $$ a_{i} $$와 $$ s_{i+1} $$을 합하고 ($$ v_{i} = [s_{i}; a_{i-1}] $$) 하여 $$ v_{i+1} $$을 만듭니다. 이 값을 FC layer와 Softmax를 거쳐서 최종 출력인 $$ y_{i} $$를 출력합니다.
 
-<img width="881" alt="전체적인 사진" src="https://user-images.githubusercontent.com/111936229/210926781-12a00b72-7ab9-42bc-86d6-44d154209871.png"/>
+<MdxImage width="900" alt="전체적인 사진" src="https://user-images.githubusercontent.com/111936229/210926781-12a00b72-7ab9-42bc-86d6-44d154209871.png"/>
 
 > attention에서 Query, Key, Value를 사용하지 않고 다른 방법으로 사용도 가능합니다.
 

@@ -1,5 +1,5 @@
 import { posts } from "#site/content";
-import { MDXContent } from "@/components/mdx-components";
+import { MDXContent } from "@/components/mdx/mdx-components";
 import { notFound } from "next/navigation";
 import { Metadata } from "next";
 import { siteConfig } from "@/config/site";
@@ -119,7 +119,7 @@ export default async function PostPage({ params }: PostPageProps) {
         <hr className="my-4" />
         <Giscus />
       </article>
-      <aside className="relative order-1 xl:grow w-full max-w-[210px] hidden xl:block pl-10">
+      <aside className="relative order-1 xl:grow w-full max-w-[210px] hidden 2xl:block pl-10">
         <TocSide tableOfContents={post.toc} />
       </aside>
     </section>

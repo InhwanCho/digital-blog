@@ -178,7 +178,7 @@ ax.plot()
 ### 중국이 너무 탄소배출량 자체가 압도적 -> 국가 인구별 탄소배출량 시각화 필요
 ```
 
-<img width="688" alt="geopandas 시각화 결과" src="https://user-images.githubusercontent.com/111936229/213953007-fa68db61-a141-4dfb-a8cf-817a52dac7e8.png"/>
+<MdxImage width="688" alt="geopandas 시각화 결과" src="https://user-images.githubusercontent.com/111936229/213953007-fa68db61-a141-4dfb-a8cf-817a52dac7e8.png"/>
 
 ### 연간 탄소 배출량을 StackPlot으로 시각화
 
@@ -205,7 +205,7 @@ plt.title('Annual CO2 emissions')
 plt.show()
 ```
 
-<img width="660" alt="연간 탄소 배출량 Stack plot" src="https://user-images.githubusercontent.com/111936229/213953134-9522113c-44fb-497b-9bd9-566ab1c7e822.png"/>
+<MdxImage width="660" alt="연간 탄소 배출량 Stack plot" src="https://user-images.githubusercontent.com/111936229/213953134-9522113c-44fb-497b-9bd9-566ab1c7e822.png"/>
 
 ### 세계 국가 인구별 탄소 배출량 도식화
 
@@ -248,7 +248,7 @@ world_map.save("세계 국가 인구별 탄소 배출량 도식화.html")
 world_map
 ```
 
-<img width="1908" alt="탄소 배출 인구별 세계지도(folium)" src="https://user-images.githubusercontent.com/111936229/213953352-d90cac80-ddd4-47c3-a46b-68a7bd0f50c9.png"/>
+<MdxImage width="1908" alt="탄소 배출 인구별 세계지도(folium)" src="https://user-images.githubusercontent.com/111936229/213953352-d90cac80-ddd4-47c3-a46b-68a7bd0f50c9.png"/>
 
 ### 1인당 GDP가 높은 국가와 탄소 배출량의 상관 분석
 
@@ -266,7 +266,7 @@ df8.corrwith(df8['Annual CO2 emissions (per capita)'])
 # -> 잘 사는 국가가 높은 탄소 배출량을 보여주는 경향이 있다.
 ```
 
-<img width="858" alt="상관 관계 분석" src="https://user-images.githubusercontent.com/111936229/213953469-56675607-4a94-4fc4-9e59-2769ed51a865.png"/>
+<MdxImage width="858" alt="상관 관계 분석" src="https://user-images.githubusercontent.com/111936229/213953469-56675607-4a94-4fc4-9e59-2769ed51a865.png"/>
 
 >상관계수 => 0.616106 으로 높은 편이다.
 > > 잘 사는 국가가 높은 탄소 배출량을 보여주는 경향이 있다.
@@ -600,7 +600,7 @@ most_common_words = Counter(word_count_sum).most_common(30) # 뉴스에서 가�
 
 `most_common_words`
 
-<img width="213" alt="관련 뉴스 Top 30" src="https://user-images.githubusercontent.com/111936229/213954221-59bad582-d4b3-4735-8817-bb1d443a873a.png"/>
+<MdxImage width="213" alt="관련 뉴스 Top 30" src="https://user-images.githubusercontent.com/111936229/213954221-59bad582-d4b3-4735-8817-bb1d443a873a.png"/>
 
 ### 가장 많이 언급된 단어 TOP10이 모두 들어가 있는 본문 추출
 
@@ -613,7 +613,7 @@ trendy_news = trendy_news.loc[~filt]
 trendy_news
 ```
 
-<img width="1288" alt="가장 트렌디한 뉴스 기사 추출" src="https://user-images.githubusercontent.com/111936229/213954312-ecd817a1-fcc2-4199-9d88-15a11acdaf14.png"/>
+<MdxImage width="1288" alt="가장 트렌디한 뉴스 기사 추출" src="https://user-images.githubusercontent.com/111936229/213954312-ecd817a1-fcc2-4199-9d88-15a11acdaf14.png"/>
 
 ### url주소에서 이미지 추출하여 저장하기 + 세계지도 모양의 워드클라우드 작성
 
@@ -655,7 +655,7 @@ plt.savefig('wordcloud.png') # 필요시 저장
 plt.show()
 ```
 
-<img width="853" alt="세계지도 모양의 워드 클라우드" src="https://user-images.githubusercontent.com/111936229/213954437-bbdddafe-01ae-40c8-b48b-418c6b20a201.png"/>
+<MdxImage width="853" alt="세계지도 모양의 워드 클라우드" src="https://user-images.githubusercontent.com/111936229/213954437-bbdddafe-01ae-40c8-b48b-418c6b20a201.png"/>
 
 ## 결론
 
@@ -670,7 +670,7 @@ newsize = (1050,700)
 curl_img.resize(newsize)
 ```
 
-<img width="1056" alt="결론" src="https://user-images.githubusercontent.com/111936229/213954516-2c6539ed-85cc-46c8-ba1c-83d6acee742a.png"/>
+<MdxImage width="1056" alt="결론" src="https://user-images.githubusercontent.com/111936229/213954516-2c6539ed-85cc-46c8-ba1c-83d6acee742a.png"/>
 
 결론 : 돈이 안되더라도 기후 기술을 미래를 위해 꾸준히 개발해야만 지구온난화가 적어질 것이다.
 
