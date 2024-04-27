@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Inter, Roboto } from "next/font/google";
 import "@/css/globals.css";
+// import "@/css/latex.css";
 import { ThemeProvider } from "@/provider/theme-provider";
 import NavBar from "@/components/site-header";
 import { cn } from "@/lib/utils";
@@ -9,6 +10,7 @@ import localFont from 'next/font/local';
 import { Toaster } from "react-hot-toast";
 import KbarLayout from "@/components/kbar/kbar-layout";
 import { ViewTransitions } from "next-view-transitions";
+import { KaTeXStyles } from "@/provider/katex-styles";
 
 
 
@@ -46,6 +48,7 @@ export default function RootLayout({
         <link rel="icon" type="image/png" sizes="32x32" href="/static/favicons/favicon-32x32.png" />
         <link rel="icon" type="image/png" sizes="16x16" href="/static/favicons/favicon-16x16.png" />
         <link rel="manifest" href="/static/favicons/site.webmanifest" />
+        
         <body
           className={cn(
             "min-h-dvh bg-background font-sans antialiased",

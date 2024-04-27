@@ -1,6 +1,5 @@
 ---
-title:  'Attention 개념'
-
+title: "Attention 개념"
 
 tags:
   - nlp
@@ -8,9 +7,7 @@ tags:
   - transformers
 date: 2023-01-05
 lastmod: 2023-01-05
- 
 ---
-
 
 ## 어텐션 모델
 
@@ -41,13 +38,17 @@ lastmod: 2023-01-05
 
 ## Scaled Dot Product Attention(흔히 어텐션으로 알려진 Attention)
 
-<MdxImage width="700" alt="Scaled Dot Product Attention" src="https://user-images.githubusercontent.com/111936229/210674989-c2839a05-6fa2-4238-a918-a5b5a90f86d7.png"/>
+<MdxImage
+  width="700"
+  alt="Scaled Dot Product Attention"
+  src="https://user-images.githubusercontent.com/111936229/210674989-c2839a05-6fa2-4238-a918-a5b5a90f86d7.png"
+/>
 
 - 입력값은 Q(query), K(key), V(value) 그리고 attention mask로 구성 되어 있습니다.
 - 입력값 중 K, V는 같은 값 이어야 합니다.
 - Q까지 K, V와 동일한 경우는 self attention이라 합니다.
 - Query : 찾고자 하는 대상
-- Key   : 저장된 데이터를 찾고자 할 때 참조하는 값
+- Key : 저장된 데이터를 찾고자 할 때 참조하는 값
 - Value : 저장되는 데이터
 
 ```python
@@ -64,44 +65,55 @@ lastmod: 2023-01-05
   - 즉, (softmax를 적용하여 총 합이 1인) `Key값들과 Value의 값을 곱한 후 모두 더하면` `Attention value`가 되는 원리입니다.
   - Query는 Decoder의 은닉층(hidden state)가 됩니다.
   - Attention에서는 Encoder의 hidden state를 Key와 Value로 사용합니다.
-  <br/>(앞서 말한 self attention) 즉, Key와 Value는 같고 단어의 갯수 만큼 Key 값을 가집니다.
-  
+    <br />
+    (앞서 말한 self attention) 즉, Key와 Value는 같고 단어의 갯수 만큼 Key 값을 가집니다.
+
 원-논문에서 `Compare`는 Fully Connected 방식의 연산을 이용하였고 <br/>
 `Aggregate`의 경우 모든 key-value에 대하여 벡터의 element-wise multiplication 연산을 한 후<br/> element-wise sum을 하여 `Attention Value`를 생성합니다.  
 수식은 아래와 같습니다.
 
-<br/>
+<br />
 
-  >$$ \text{Compare}(q, k_{j}) = q \cdot k_{j} = q^{T}k_{j} $$<br/>
-  >$$ \text{Aggregate}(c, V) = \sum_{j} c_{j}v_{j} $$
-  
+$$ \text{Compare}(q, k*{j}) = q \cdot k*{j} = q^{T}k*{j} $$
+
+$$ \text{Aggregate}(c, V) = \sum*{j} c*{j}v*{j} $$
+
 ## 요약
 
 - 아래 그림들로 요약을 하겠습니다.
 - `Encoder`의 hidden state는 (Key, Value)로 사용됩니다. 아래의 그림에서 h는 Key와 Value로 사용됩니다.
 - `Decoder`의 hidden state는 Query로 사용됩니다.
 
-<br/>
+<br />
 
-- `Decoder`에서 s라는 Query가 입력되고 그 Query와 모든 key 값인 h (아래 그림에서는 $$ h_{0}, h_{1}, h_{2} $$)와 `Comparison` 연산을 통하여 `유사도`를 구합니다. 값은 softmax를 거치기 때문에 확률 값처럼 총 합이 1이 됩니다.
+- `Decoder`에서 s라는 Query가 입력되고 그 Query와 모든 key 값인 h (아래 그림에서는 $$ h*{0}, h*{1}, h\_{2} $$)와 `Comparison` 연산을 통하여 `유사도`를 구합니다. 값은 softmax를 거치기 때문에 확률 값처럼 총 합이 1이 됩니다.
 - 그러면 Value에 해당하는 h와 유사도를 곱하고 결과들을 합하여 최종적으로 `a` 라는 `Attenen value`를 출력합니다.
 - 수식으로 표현하면 다음과 같습니다.
 
-<br/>
+<br />
 
->$$ c_{i} = \text{softmax}(s_{i}^{T}h_{j}) $$<br/>
->$$ a_{i} = \sum_{j}c_{i}h_{j} $$
+$$ c*{i} = \text{softmax}(s*{i}^{T}h*{j}) $$
 
-<br/>
+$$ a*{i} = \sum*{j}c*{i}h\_{j} $$
 
-<MdxImage width="900" alt="qkv 상세 사진" src="https://user-images.githubusercontent.com/111936229/210926682-c8810032-2dc5-4ccb-8f7f-1d737767f423.png"/>
+<br />
 
-<br/>
+<MdxImage
+  width="900"
+  alt="qkv 상세 사진"
+  src="https://user-images.githubusercontent.com/111936229/210926682-c8810032-2dc5-4ccb-8f7f-1d737767f423.png"
+/>
 
-- 그리고 Decoder의 은닉층은 RNN(또는 LSTM)에서 연산하여 $$ s_{i} $$ → $$ s_{i+1} $$로 만듭니다.
-- 그 후 $$ a_{i} $$와 $$ s_{i+1} $$을 합하고 ($$ v_{i} = [s_{i}; a_{i-1}] $$) 하여 $$ v_{i+1} $$을 만듭니다. 이 값을 FC layer와 Softmax를 거쳐서 최종 출력인 $$ y_{i} $$를 출력합니다.
+<br />
 
-<MdxImage width="900" alt="전체적인 사진" src="https://user-images.githubusercontent.com/111936229/210926781-12a00b72-7ab9-42bc-86d6-44d154209871.png"/>
+- 그리고 Decoder의 은닉층은 RNN(또는 LSTM)에서 연산하여 $s_{i} → s_{i+1}$로 만듭니다.
+- 그 후 $$ a*{i} $$와 $$ s*{i+1} $$을 합하고 ($$ v*{i} = [s*{i}; a*{i-1}] $$) 하여 $$ v*{i+1} $$을 만듭니다. 이 값을 FC layer와 Softmax를 거쳐서 최종 출력인 $$ y\_{i} $$를 출력합니다.
+
+<MdxImage
+  width="900"
+  alt="전체적인 사진"
+  src="https://user-images.githubusercontent.com/111936229/210926781-12a00b72-7ab9-42bc-86d6-44d154209871.png"
+/>
 
 > attention에서 Query, Key, Value를 사용하지 않고 다른 방법으로 사용도 가능합니다.
 
@@ -109,23 +121,23 @@ lastmod: 2023-01-05
 
 - 컨텍스트 벡터(context vector)
 
->바다나우: 컨텍스트 벡터를 구할 때 `이전 시점의 은닉 상태`를 사용한다.  
->Dot_Product_Attention: 컨텍스트 벡터를 구할 때 현재 시점의 은닉 상태 st를 사용한다.
+> 바다나우: 컨텍스트 벡터를 구할 때 `이전 시점의 은닉 상태`를 사용한다.  
+> Dot_Product_Attention: 컨텍스트 벡터를 구할 때 현재 시점의 은닉 상태 st를 사용한다.
 
 - 출력
-  
->바다나우: `현재 시점의 은닉 상태로부터 출력`이 나온다.  
->Dot_Product_Attention: 현재 시점의 은닉 상태는 RNN의 은닉 상태 역할만 하고, 새로운 벡터를 사용한다.
+
+> 바다나우: `현재 시점의 은닉 상태로부터 출력`이 나온다.  
+> Dot_Product_Attention: 현재 시점의 은닉 상태는 RNN의 은닉 상태 역할만 하고, 새로운 벡터를 사용한다.
 
 - 계산 속도
-  
->바다나우: 디코더의 은닉 상태를 구할 때 컨텍스트 벡터가 사용되므로 RNN의 재귀 연산이 수행될 때 컨텍스트 벡터가 구해질 때까지 기다려야 한다. `계산이 느림`  
->Dot_Product_Attention: 계산이 빠름
+
+> 바다나우: 디코더의 은닉 상태를 구할 때 컨텍스트 벡터가 사용되므로 RNN의 재귀 연산이 수행될 때 컨텍스트 벡터가 구해질 때까지 기다려야 한다. `계산이 느림`  
+> Dot_Product_Attention: 계산이 빠름
 
 - 인코더의 은닉 상태 사용
-  
->바다나우: `인코더의 모든 은닉 상태의 벡터를 본다.`  
->Dot_Product_Attention: 특정 하이퍼파라미터 D에 대해 (2D+1)개의 부분집합 벡터만 본다.
+
+> 바다나우: `인코더의 모든 은닉 상태의 벡터를 본다.`  
+> Dot_Product_Attention: 특정 하이퍼파라미터 D에 대해 (2D+1)개의 부분집합 벡터만 본다.
 
 ## 셀프 어텐션이란?
 

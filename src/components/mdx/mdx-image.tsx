@@ -16,7 +16,7 @@ export function MdxImage({
   src,
   alt,
   width,
-  layout = "none",
+  layout,
   ...props
 }: MdxImageProps) {
   // 이미지 비율을 유지하기 위한 높이 계산 (16:9 가정)

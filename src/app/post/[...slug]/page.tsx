@@ -12,6 +12,7 @@ import { Calendar } from "lucide-react";
 import { formatDate } from "@/lib/utils";
 import PostFooter from "@/components/post-footer";
 import PostSeries from "@/components/post-series";
+import Head from "next/head";
 
 interface PostPageProps {
   params: {
@@ -51,6 +52,7 @@ export async function generateMetadata({
   ogSearchParams.set("title", post.title);
 
   return {
+    metadataBase: new URL("http://localhost:3000"),
     title: post.title,
     description: post.description,
     authors: { name: siteConfig.author.name },
@@ -94,7 +96,7 @@ export default async function PostPage({ params }: PostPageProps) {
   }
 
   return (
-    <section className="py-6 prose dark:prose-invert max-w-5xl h-full mx-auto container xl:flex xl:justify-center">
+    <section className="py-6 prose dark:prose-invert max-w-5xl h-full mx-auto container xl:flex xl:justify-center">      
       <ReadingProgressBar />
       <article className="w-full h-full mx-auto xl:flex-grow">
         <dl>

@@ -27,7 +27,18 @@ const nextConfig = {
     return config;
   },
   images: {
-    domains: ["github.com", "user-images.githubusercontent.com"],
+    // domains: ["github.com", "user-images.githubusercontent.com"],
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "github.com",
+        pathname: "/InhwanCho/**",
+      },
+      {
+        protocol: "https",
+        hostname: "user-images.githubusercontent.com",
+      },
+    ],
     formats: ["image/avif", "image/webp"],
   },
 };
