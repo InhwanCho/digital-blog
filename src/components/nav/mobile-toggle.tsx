@@ -2,7 +2,7 @@
 
 import { useTheme } from "next-themes";
 
-import { Button } from "./ui/button";
+import { Button } from "../ui/button";
 import { GoSun, GoMoon } from "react-icons/go";
 
 

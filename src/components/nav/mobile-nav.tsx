@@ -1,13 +1,13 @@
 "use client";
 
 import { useState } from "react";
-import { Sheet, SheetContent, SheetTrigger } from "./ui/sheet";
-import { Button } from "./ui/button";
+import { Sheet, SheetContent, SheetTrigger } from "../ui/sheet";
+import { Button } from "../ui/button";
 import { Menu } from "lucide-react";
 import Link, { LinkProps } from "next/link";
 import { useRouter } from "next/navigation";
 import { siteConfig } from "@/config/site";
-import LinkExternal from "./link-external";
+import LinkExternal from "../link-external";
 import { IoLogoGithub } from "react-icons/io";
 
 export function MobileNav() {

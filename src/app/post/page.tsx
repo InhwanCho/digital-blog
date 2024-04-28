@@ -36,7 +36,7 @@ export default async function PostPage({ searchParams }: PostPageParams) {
     <div className="container max-w-5xl py-6 lg:py-10">
       <div className="flex flex-col items-start gap-4 md:flex-row md:justify-between md:gap-8">
         <div className="flex-1 space-y-4">
-          <h1 className="inline-block font-black text-4xl ">All Posts</h1>
+          <h1 className="inline-block font-black text-4xl ">All Blogs</h1>
         </div>
       </div>
       <div className="grid grid-cols-12 gap-3 mt-8">

@@ -100,14 +100,15 @@
 }
 
 .prose .subheading-anchor {
-  @apply invisible absolute -ml-8 pr-6;
+  @apply invisible absolute -ml-8 pr-6 select-none;
   /* margin-left: -1.5em; */
   /* padding-right: 0.5em; */
-  cursor: pointer;
+  /* cursor: pointer; */
+  pointer-events: none;
 }
 
 .prose .subheading-anchor::before {
-  @apply text-gray-400 dark:text-gray-700;
+  @apply text-gray-400 dark:text-gray-700 ;
   content: "";
   display: inline-block; /* 배경 이미지를 표시하기 위해 필요 */
   width: 24px; /* SVG의 너비 */
@@ -120,6 +121,7 @@
 .prose *:hover > .subheading-anchor {
   @apply visible;
 }
+
 
 .prose code::before,
 .prose code::after {

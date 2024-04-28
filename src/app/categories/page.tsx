@@ -14,7 +14,7 @@ export const metadata: Metadata = {
 export default function CategoriesPage() {
   
   return (
-    <div className="container max-w-4xl py-6 lg:py-10">
+    <div className="container max-w-5xl py-6 lg:py-10">
       <div className="flex flex-col items-start gap-4 md:flex-row md:justify-between">
         <div className="flex-1 space-y-4">
           <h1 className="inline-block font-bold text-2xl md:text-3xl">Categories</h1>

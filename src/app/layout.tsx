@@ -1,7 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Inter, Roboto } from "next/font/google";
 import "@/css/globals.css";
-// import "@/css/latex.css";
 import { ThemeProvider } from "@/provider/theme-provider";
 import NavBar from "@/components/site-header";
 import { cn } from "@/lib/utils";
@@ -10,8 +9,6 @@ import localFont from 'next/font/local';
 import { Toaster } from "react-hot-toast";
 import KbarLayout from "@/components/kbar/kbar-layout";
 import { ViewTransitions } from "next-view-transitions";
-import { KaTeXStyles } from "@/provider/katex-styles";
-
 
 
 // const roboto = Roboto({ subsets: ["latin"], weight: "300", variable: "--font-sans" });
@@ -48,23 +45,24 @@ export default function RootLayout({
         <link rel="icon" type="image/png" sizes="32x32" href="/static/favicons/favicon-32x32.png" />
         <link rel="icon" type="image/png" sizes="16x16" href="/static/favicons/favicon-16x16.png" />
         <link rel="manifest" href="/static/favicons/site.webmanifest" />
-        
+
         <body
           className={cn(
             "min-h-dvh bg-background font-sans antialiased",
             pretendard.className
           )}
         >
+
           <ThemeProvider
             attribute="class"
             defaultTheme="system"
             enableSystem
             disableTransitionOnChange
           >
-            <section className="mx-auto max-w-4xl xl:max-w-5xl px-4 sm:px-6  xl:px-0">
-              <div className="relative flex min-h-dvh flex-col bg-background">
-                <KbarLayout >
-                  <NavBar />
+            <KbarLayout >
+              <NavBar />
+              <section className="mx-auto max-w-4xl xl:max-w-5xl px-4 sm:px-6  xl:px-0">
+                <div className="relative flex min-h-dvh flex-col bg-background">
                   <main className="flex-1">{children}</main>
                   <Footer />
                   <Toaster
@@ -72,12 +70,13 @@ export default function RootLayout({
                       position: "bottom-center",
                     }}
                   />
-                </KbarLayout>
-              </div>
-            </section>
+                </div>
+              </section>
+            </KbarLayout>
           </ThemeProvider>
         </body>
       </html>
     </ViewTransitions>
+
   );
 }

@@ -24,7 +24,7 @@ export const siteConfig = {
   },
   menus: [
     {
-      label: "Post",
+      label: "Blog",
       path: "/post",
     },
     {
@@ -35,10 +35,10 @@ export const siteConfig = {
       label: "Categories",
       path: "/categories",
     },
-    {
-      label: "Tags",
-      path: "/tags",
-    },
+    // {
+    //   label: "Tags",
+    //   path: "/tags",
+    // },
   ],
 };
 

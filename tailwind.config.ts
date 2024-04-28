@@ -23,6 +23,7 @@ const config = {
       },
     },
     extend: {
+      scrollBehavior: ["smooth", "auto"],
       textDecorationThickness: { 2: "2px", 3: "3px" },
       lineHeight: {
         11: "2.75rem",
@@ -93,10 +94,12 @@ const config = {
           css: {
             a: {
               color: theme("colors.primary.700"),
+              textUnderlineOffset: "3px",
+              padding: "1px 4px",
               "&:hover": {
-                color: `${theme("colors.primary.800")}`,
+                color: `${theme("colors.primary.900")}`,
               },
-              code: { color: theme("colors.primary.700") },              
+              code: { color: theme("colors.primary.700") },
             },
             "h1,h2": {
               fontWeight: "700",
@@ -127,7 +130,11 @@ const config = {
       }),
     },
   },
-  plugins: [require("@tailwindcss/forms"), require("@tailwindcss/typography"),addVariablesForColors],
+  plugins: [
+    require("@tailwindcss/forms"),
+    require("@tailwindcss/typography"),
+    addVariablesForColors,
+  ],
 } satisfies Config;
 
 export default config;
@@ -138,7 +145,7 @@ function addVariablesForColors({ addBase, theme }: any) {
   let newVars = Object.fromEntries(
     Object.entries(allColors).map(([key, val]) => [`--${key}`, val])
   );
- 
+
   addBase({
     ":root": newVars,
   });

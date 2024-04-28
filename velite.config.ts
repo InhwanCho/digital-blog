@@ -42,8 +42,7 @@ export default defineConfig({
     rehypePlugins: [
       rehypeSlug,
       // [rehypeToc, { nav: true, headings: ["h1", "h2"], position: "afterend" }],
-      rehypeCodeWrap,
-      
+      rehypeCodeWrap,      
       [rehypePrismPlus, { defaultLanguage: "js", ignoreMissing: true }],
       [
         rehypeAutolinkHeadings,
