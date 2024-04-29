@@ -95,9 +95,10 @@ const config = {
             a: {
               color: theme("colors.primary.700"),
               textUnderlineOffset: "3px",
-              padding: "1px 4px",
+              padding: "1px 2px",
               "&:hover": {
-                color: `${theme("colors.primary.900")}`,
+                color: theme("colors.primary.400"),
+                opacity: '0.75'
               },
               code: { color: theme("colors.primary.700") },
             },

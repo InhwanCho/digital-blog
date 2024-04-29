@@ -15,7 +15,7 @@ export function MdxImage({
   location = "default",
   src,
   alt,
-  width,
+  width = 600,
   layout,
   ...props
 }: MdxImageProps) {

@@ -1,8 +1,8 @@
 ---
-title: 'Next.js로 블로그 제작하기 1'
+title: "Next.js로 블로그 제작하기 1"
 tags:
   - nextjs
-description: 'Next.js app-router를 활용하여 템플릿 없이 블로그를 직접 제작하는 이유 및 pnpm을 패키지 매니저로 선택한 배경.'
+description: "Next.js app-router를 활용하여 템플릿 없이 블로그를 직접 제작하는 이유 및 pnpm을 패키지 매니저로 선택한 배경."
 date: 2024-04-20
 ---
 
@@ -16,9 +16,9 @@ Next.js의 강력한 `SEO 지원`과 효율적인 `디렉토리 파싱` 및 `라
 
 ## 패키지 매니저로 pnpm을 선택한 이유
 
-적절한 패키지 매니저를 선택하는 것은 개발 과정의 효율성을 크게 좌우합니다. 
+적절한 패키지 매니저를 선택하는 것은 개발 과정의 효율성을 크게 좌우합니다.
 
-저의 경우 처음에는 `bun`을 사용할 계획이었으나, npm에서 제공하는 최신 버전과 bun의 지원 버전 간의 불일치로 인해 발생하는 버전 오류가 잦았습니다. 
+저의 경우 처음에는 `bun`을 사용할 계획이었으나, npm에서 제공하는 최신 버전과 bun의 지원 버전 간의 불일치로 인해 발생하는 버전 오류가 잦았습니다.
 
 이러한 문제를 해결하기 위해, `안정성과 호환성을 고려하여 pnpm`을 선택하게 되었습니다.
 
@@ -30,7 +30,7 @@ Next.js의 강력한 `SEO 지원`과 효율적인 `디렉토리 파싱` 및 `라
 
 ### 콘텐츠 쿼리란?
 
-`콘텐츠 쿼리`는 데이터를 검색하고 추출하는 데 사용되는 요청입니다. 
+`콘텐츠 쿼리`는 데이터를 검색하고 추출하는 데 사용되는 요청입니다.
 
 이는 일반적으로 데이터베이스에서 정보를 검색하거나, 컨텐츠 관리 시스템(CMS)에서 특정 조건에 맞는 컨텐츠를 불러올 때 사용됩니다.
 
@@ -56,4 +56,93 @@ const tags = getAllTags(posts);
 8. 메타데이터 설정: 페이지별 메타데이터를 설정하여 SEO 친화적인 블로그를 구축하였습니다.
 9. SEO 및 유틸리티 페이지 작성: 검색엔진 최적화를 위해 sitemap과 robots.txt를 생성하고, 사용자 경험을 개선하기 위해 404 Not Found 및 Error 페이지를 생성하였습니다.
 
-자세한 내용은 다음 포스트에 작성하겠습니다.
+---
+
+## 환경 설정하기
+
+- `pnpm` package manager를 이용하여 nextjs 생성
+
+```bash
+# nextjs 설치
+pnpm create next-app
+# dark모드를 위한 theme 라이브러리 설치
+pnpm i next-themes
+# tailwindcss의 3rd party로 사용할 `typography`, `forms`를 설치
+pnpm i -D @tailwindcss/forms @tailwindcss/typography
+# mdx를 html로 parsing할 라이브러리 설치
+pnpm i -D velite
+# html parsing할 rehype 라이브러리들 설치
+pnpm i -D rehype-slug rehype-pretty-code rehype-autolink-headingspnpm rehype-prism-plus
+# 기본 ui로 shadcn-ui 설치
+pnpm dlx shadcn-ui@latest init\n
+pnpm dlx shadcn-ui@latest add button sheet dropdown-menu badge pagination card
+# 코드 문법을 위한 shiki, 경로를 설정을 위한 slugger 설치
+pnpm i shiki github-slugger
+```
+
+- tailwind config 설정
+
+forms 태그의 초기값의 일관화를 위해 forms를 설치하고, 블로그 상세페이지의 css를 위해 typography를 설치하였습니다.
+
+```javascript:tailwind.config.js
+plugins: [require("@tailwindcss/forms"), require('@tailwindcss/typography')],
+...
+// 기타 tailwind 설정
+```
+
+- velite를 사용하면 mdx파일을 `./.velite`에 파싱해주기 때문에 자주 사용되는 paths를 설정했습니다.
+
+```json:tsconfig.json
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./src/*"],
+      "#site/content": ["./.velite"],
+    }
+```
+
+- Next.js 프로젝트에서 Velite 웹팩 플러그인을 설정
+
+```js:next.config.js
+import { build } from "velite";
+
+class VeliteWebpackPlugin {
+  // 플러그인이 이미 시작되었는지 확인
+  static started = false;
+  constructor(options = {}) {
+    this.options = options;
+  }
+  apply(compiler) {
+    // executed three times in nextjs !!!
+    // twice for the server (nodejs / edge runtime) and once for the client
+    compiler.hooks.beforeCompile.tapPromise("VeliteWebpackPlugin", async () => {
+      if (VeliteWebpackPlugin.started) return;
+      VeliteWebpackPlugin.started = true;
+      const dev = compiler.options.mode === "development";
+      this.options.watch = this.options.watch ?? dev;
+      this.options.clean = this.options.clean ?? !dev;
+      await build(this.options); // start velite
+    });
+  }
+}
+
+/** @type {import('next').NextConfig} */
+const nextConfig = {  
+  webpack: (config) => {
+    // 웹팩 설정에 VeliteWebpackPlugin 플러그인을 추가
+    config.plugins.push(new VeliteWebpackPlugin());
+    return config;
+  },
+};
+
+export default nextConfig;
+```
+
+- gitignore에 `.velite`를 추가
+
+```:gitignore
+.env
+# velite
+.velite
+```
+
+`Velite`를 이용한 MDX에서 HTML로의 파싱 과정에 대해서는 다음 블로그 글에서 자세히 다루겠습니다.

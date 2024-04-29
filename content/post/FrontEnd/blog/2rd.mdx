@@ -6,54 +6,13 @@ description: 'Next.js app-router를 활용하여 템플릿 없이 블로그를 �
 date: 2024-04-21
 ---
 
-## 환경 설정하기
+## Velite란?
 
-- `pnpm` package manager를 이용하여 nextjs 생성
+Velite는 정적 사이트 생성기의 일종으로, 특히 MDX 파일을 HTML로 변환하는 데 특화되어 있습니다. 
 
-```bash
-# nextjs 설치
-pnpm create next-app
-# dark모드를 위한 theme 라이브러리 설치
-pnpm i next-themes
-# tailwindcss의 3rd party로 사용할 `typography`, `forms`를 설치
-pnpm i -D @tailwindcss/forms @tailwindcss/typography
-# mdx를 html로 parsing할 라이브러리 설치
-pnpm i -D velite
-# html parsing할 rehype 라이브러리들 설치
-pnpm i -D rehype-slug rehype-pretty-code rehype-autolink-headingspnpm rehype-prism-plus
-# 기본 ui로 shadcn-ui 설치
-pnpm dlx shadcn-ui@latest init\n
-pnpm dlx shadcn-ui@latest add button sheet dropdown-menu badge pagination card
-# 코드 문법을 위한 shiki, 경로를 설정을 위한 slugger 설치
-pnpm i shiki github-slugger
-```
+Next.js와 같은 프레임워크와 연동하여 사용할 수 있으며, 강력한 플러그인 시스템과 높은 커스터마이징 가능성을 제공합니다. 
 
-- config 설정
+Velite를 사용하면 복잡한 구성 없이도 효율적으로 콘텐츠 중심의 웹사이트를 구축할 수 있습니다.
 
-```javascript:tailwind.config.js
-plugins: [require("@tailwindcss/forms"), require('@tailwindcss/typography')],
-```
+## velite.config.ts
 
-```json:tsconfig.json
-    "baseUrl": ".",
-    "paths": {
-      "@/*": ["./src/*"],
-      "contentlayer/generated":["./.contentlayer/generated"],
-    },
-"include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", ".contentlayer/generated"],
-```
-
-```js:next.config.js
-const { withContentlayer } = require('next-contentlayer')
-
-/** @type {import('next').NextConfig} */
-const nextConfig = {reactStrictMode: true,swcMinify: true};
-
-module.exports = withContentlayer(nextConfig);
-```
-
-```:gitignore
-.env
-# velite
-.velite
-```
