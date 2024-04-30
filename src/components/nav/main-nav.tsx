@@ -9,14 +9,14 @@ import { siteConfig } from '@/config/site';
 export default function MainNav() {
   const pathname = usePathname();
   return (
-    <nav className="flex items-center space-x-4 lg:space-x-10">
+    <nav className="hidden sm:flex items-center space-x-4 lg:space-x-10">
       {siteConfig.menus.map((menu) => (
         <Link href={menu.path} key={menu.label}
           className={cn(
-            "underline-link text-sm font-medium transition-colors hover:text-primary hidden sm:inline-block",
+            "underline-link text-sm font-medium transition-colors hover:text-primary sm:inline-block",
             pathname === menu.path ? "text-foreground" : "text-foreground/60"
           )}>
-          {menu.label}
+          {menu.label}  
         </Link>
       ))}
     </nav>

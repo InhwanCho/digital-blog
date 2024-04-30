@@ -6,7 +6,7 @@ import { siteConfig } from "@/config/site";
 import { Tag } from "@/components/tag";
 import Giscus from "@/components/giscus";
 import TocSide from "@/components/toc-side";
-import "@/css/prism.css";
+import "@/styles/prism.css";
 import ReadingProgressBar from "@/components/reading-progress-bar";
 import { Calendar } from "lucide-react";
 import { formatDate } from "@/lib/utils";
@@ -96,8 +96,10 @@ export default async function PostPage({ params }: PostPageProps) {
   }
 
   return (
-    <section className="py-6 prose dark:prose-invert max-w-5xl h-full mx-auto container xl:flex xl:justify-center">      
-      <ReadingProgressBar />
+    <section className="py-6 prose dark:prose-invert max-w-5xl h-full mx-auto container xl:flex xl:justify-center">
+      <aside className="sticky w-full min-w-[240px] max-w-[210px] hidden xl:block ">        
+        <TocSide tableOfContents={post.toc} />
+      </aside>
       <article className="w-full h-full mx-auto xl:flex-grow">
         <dl>
           <dt className="sr-only">Published On</dt>
@@ -121,9 +123,7 @@ export default async function PostPage({ params }: PostPageProps) {
         <hr className="my-4" />
         <Giscus />
       </article>
-      <aside className="relative order-1 xl:grow w-full max-w-[210px] hidden 2xl:block pl-10">
-        <TocSide tableOfContents={post.toc} />
-      </aside>
+
     </section>
   );
 }

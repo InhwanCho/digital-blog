@@ -29,40 +29,36 @@ const TocSide = ({ tableOfContents }: TocSideProps) => {
     return () => observer.disconnect();
   }, []);
 
-
-
   const isActiveToc = (url: string): boolean => {
     const targetId = url.substring(1);
     return activeToc === targetId;
   };
 
-  const renderToc = (toc: TocEntry[]): JSX.Element => (
-    <ul className='content-toc'>
-      {toc.map((item, index) => (
-        <li key={index} className='marker:text-slate-600'>
-          <Link href={item.url} className={`text-sm no-underline ${isActiveToc(item.url) ? 'content-toc-active' : ''}`}>
-            {item.title}
-          </Link>
-          {item.items?.map((subItem, subIndex) => (
-            <ul key={subIndex} className='pl-4'>
-              <li className='marker:text-slate-600'>
-                <Link href={subItem.url} className={`text-sm no-underline ${isActiveToc(subItem.url) ? 'content-toc-active' : ''}`}>
-                  {subItem.title}
-                </Link>
-              </li>
-            </ul>
-          ))}
-        </li>
-      ))}
-    </ul>
-  );
-
   return (
-    <div className='fixed top-4 pt-[80px] w-[240px] h-[calc(100vh-80px)] overflow-x-hidden overflow-y-auto'>
-      <span className='text-slate-800/90 dark:text-slate-300'>On this page</span>
-      {tableOfContents.length > 0 && (
-        <ul className='content-toc mt-0'>{renderToc(tableOfContents)}</ul>
-      )}
+    <div className='fixed top-40 w-[240px] h-[calc(100vh-100px)] overflow-x-hidden overflow-y-auto'>
+      <span className='text-slate-800/90 dark:text-slate-300 font-semibold'>On this page</span>
+      {tableOfContents.length > 0 &&
+
+        (
+          <ul className='content-toc mt-2'>
+            {tableOfContents.map((item, index) => (
+              <li key={index} className={`list-none pl-0`}>
+                <Link href={item.url} className={`text-sm no-underline pl-0 ${isActiveToc(item.url) ? 'content-toc-active' : ''}`}>
+                  {item.title}
+                </Link>
+                {item.items?.map((subItem, subIndex) => (
+                  <ul key={subIndex} className='pl-4'>
+                    <li className='list-none pl-0'>
+                      <Link href={subItem.url} className={`text-sm no-underline pl-0 ${isActiveToc(subItem.url) ? 'content-toc-active' : ''}`}>
+                        {subItem.title}
+                      </Link>
+                    </li>
+                  </ul>
+                ))}
+              </li>
+            ))}
+          </ul>
+        )}
     </div>
   );
 };

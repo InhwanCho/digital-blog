@@ -138,13 +138,9 @@
 }
 
 .content-toc {
-  padding: 0.25rem 0.75rem;
   line-height: 1.1;
   font-size: 0.875rem;
-  max-height: calc(100vh - 128px);
-  overflow-y: auto; /* 스크롤 가능하게 변경 */
-  overflow-x: hidden; /* 가로 스크롤 방지 */
-  @apply text-muted-foreground;
+  @apply text-muted-foreground pt-1 pl-0;
 }
 
 .content-toc a,

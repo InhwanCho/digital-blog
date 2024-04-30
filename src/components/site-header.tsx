@@ -7,14 +7,15 @@ import { Button } from "./ui/button";
 import { siteConfig } from "@/config/site";
 import KBarButton from "@/components/kbar/kbar-button";
 import LogoNav from "./nav/logo-nav";
+import ReadingProgressBar from "./reading-progress-bar";
 
 
 export default function NavBar() {
 
   return (
-    <header className="z-10 sticky top-0 w-full bg-white bg-background/95 dark:bg-background/95 px-40">
-      <div className="container flex h-14 items-center justify-between">
-        <LogoNav/>
+    <header className="z-10 sticky top-0 w-full bg-white bg-background/95 dark:bg-background/95 shadow-sm">
+      <div className="container flex h-16 items-center justify-between max-w-screen-xl ">
+        <LogoNav />
         <MainNav />
         <div className="flex items-center justify-end space-x-3">
           <nav className="sm:flex gap-5 hidden">
@@ -28,7 +29,8 @@ export default function NavBar() {
           </nav>
           {/* 모바일 UI */}
           <ModeToggle />
-          <MobileNav />          
+          <MobileNav />
+          <ReadingProgressBar/>
         </div>
       </div>
     </header>
@@ -36,4 +38,3 @@ export default function NavBar() {
 }
 
 
-        

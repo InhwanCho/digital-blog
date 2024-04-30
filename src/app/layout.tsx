@@ -1,6 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Inter, Roboto } from "next/font/google";
-import "@/css/globals.css";
+import "@/styles/globals.css";
 import { ThemeProvider } from "@/provider/theme-provider";
 import NavBar from "@/components/site-header";
 import { cn } from "@/lib/utils";
