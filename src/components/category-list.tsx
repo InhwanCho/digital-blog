@@ -16,10 +16,10 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { getAllCategories, getCategories, getPostsByCategorySlug, sortCategoryByCount, sortPosts } from '@/lib/utils';
 import { posts } from '#site/content';
-import { Tag } from './tag';
-import { PostItem } from './post-item';
+import { Tag } from '@/components/tag';
+import { PostItem } from '@/components/post-item';
 import { IoFolderOpenOutline } from "react-icons/io5";
-import { QueryPagination } from './query-pagination';
+import { QueryPagination } from '@/components/query-pagination';
 import { useSearchParams } from 'next/navigation';
 
 const POSTS_PER_PAGE = 8;

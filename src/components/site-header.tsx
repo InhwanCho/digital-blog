@@ -1,14 +1,13 @@
 import { MobileNav } from "@/components/nav/mobile-nav";
 import { ModeToggle } from "@/components/nav/mobile-toggle";
-import MainNav from "./nav/main-nav";
+import MainNav from "@/components/nav/main-nav";
 import LinkExternal from "@/components/link-external";
 import { IoLogoGithub } from "react-icons/io";
-import { Button } from "./ui/button";
+import { Button } from "@/components/ui/button";
 import { siteConfig } from "@/config/site";
 import KBarButton from "@/components/kbar/kbar-button";
-import LogoNav from "./nav/logo-nav";
-import ReadingProgressBar from "./reading-progress-bar";
-
+import LogoNav from "@/components/nav/logo-nav";
+import ReadingProgressBar from "@/components/reading-progress-bar";
 
 export default function NavBar() {
 
@@ -18,7 +17,7 @@ export default function NavBar() {
         <LogoNav />
         <MainNav />
         <div className="flex items-center justify-end space-x-3">
-          <nav className="sm:flex gap-5 hidden">
+          <nav className="sm:flex gap-3 md:gap-5 hidden">
             <KBarButton />
             {/* 깃허브 */}
             <LinkExternal href={siteConfig.author.contacts.github}>
@@ -28,6 +27,7 @@ export default function NavBar() {
             </LinkExternal>
           </nav>
           {/* 모바일 UI */}
+          <KBarButton isMobile/>
           <ModeToggle />
           <MobileNav />
           <ReadingProgressBar/>

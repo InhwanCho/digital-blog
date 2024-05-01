@@ -1,18 +1,18 @@
 "use client";
 
 import { useState } from "react";
-import { Sheet, SheetContent, SheetTrigger } from "../ui/sheet";
-import { Button } from "../ui/button";
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { Button } from "@/components/ui/button";
 import { Menu } from "lucide-react";
 import Link, { LinkProps } from "next/link";
 import { useRouter } from "next/navigation";
 import { siteConfig } from "@/config/site";
-import LinkExternal from "../link-external";
+import LinkExternal from "@/components/link-external";
 import { IoLogoGithub } from "react-icons/io";
 
 export function MobileNav() {
   const [open, setOpen] = useState(false);
-
+  
   return (
     <Sheet open={open} onOpenChange={setOpen}>
       <SheetTrigger asChild>
@@ -27,25 +27,19 @@ export function MobileNav() {
           href="/"
           className="flex items-center font-semibold pb-3"
         >
-          {siteConfig.author.name}
+          <span className=" underline-link hover:text-slate-700/95 dark:hover:text-slate-300/90 transition-all">{siteConfig.title}</span>
         </MobileLink>
-        <div className="flex flex-col gap-2.5 mt-3">
-          <MobileLink onOpenChange={setOpen} href="/post">
-            Blog
-          </MobileLink>
-          <MobileLink onOpenChange={setOpen} href="/about">
-            About
-          </MobileLink>
-          <MobileLink onOpenChange={setOpen} href="/categories">
-            Categories
-          </MobileLink>
-          <MobileLink onOpenChange={setOpen} href="/tags">
-            Tags
-          </MobileLink>
-          <LinkExternal href={siteConfig.author.contacts.github} className="flex items-center gap-2">
-            <IoLogoGithub className="size-6" />
+        <div className="flex flex-col gap-3.5 mt-6">
+          {siteConfig.menus.map((menu) => (
+            <MobileLink onOpenChange={setOpen} href={menu.path} key={menu.label}>
+              <span className="underline-link hover:font-semibold transition-all">{menu.label}</span>
+            </MobileLink>
+          ))}
+          <LinkExternal href={siteConfig.author.contacts.github} className="flex items-center gap-3 mt-1">
+            <IoLogoGithub className="size-5" />
             <span className="">Github</span>
           </LinkExternal>
+          
         </div>
       </SheetContent>
     </Sheet>
