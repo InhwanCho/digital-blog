@@ -97,25 +97,32 @@ export default async function PostPage({ params }: PostPageProps) {
 
   return (
     <section className="py-6 prose dark:prose-invert max-w-5xl h-full mx-auto container xl:flex xl:justify-center">
-      <aside className="sticky w-full min-w-[240px] max-w-[210px] hidden xl:block ">        
-        <TocSide tableOfContents={post.toc} />
-      </aside>
+
       <article className="w-full h-full mx-auto xl:flex-grow">
-        <dl>
-          <dt className="sr-only">Published On</dt>
-          <dd className="text-sm sm:text-base font-medium flex items-center gap-2 pl-0">
-            <Calendar className="size-3" />
-            <time className="text-sm" dateTime={post.date}>{formatDate(post.date)}</time>
-          </dd>
-        </dl>
-        <h1 className="mb-3.5">{post.title}</h1>
-        <div className="flex gap-2.5 mb-2">
-          {post.tags?.map((tag) => (
-            <Tag tag={tag} key={tag} />
-          ))}
+        <header>
+          <dl>
+            <dt className="sr-only">Published On</dt>
+            <dd className="text-sm sm:text-base font-medium flex items-center gap-2 pl-0">
+              <Calendar className="size-3" />
+              <time className="text-sm" dateTime={post.date}>{formatDate(post.date)}</time>
+            </dd>
+          </dl>
+          <h1 className="mb-3.5">{post.title}</h1>
+          <div className="flex gap-2.5 mb-2">
+            {post.tags?.map((tag) => (
+              <Tag tag={tag} key={tag} />
+            ))}
+          </div>
+          <hr className="my-4" />
+        </header>
+        <div className="flex flex-row">
+          <div className="flex-1">
+            <MDXContent code={post.body} />
+          </div>
+          <aside className="sticky w-full min-w-[240px] mt-2 max-w-[240px] hidden xl:flex top-[120px] self-start pl-10">
+            <TocSide tableOfContents={post.toc} />
+          </aside>
         </div>
-        <hr className="my-4" />
-        <MDXContent code={post.body} />
         <hr className="my-8" />
         <PostFooter {...postFooterProps} />
         <hr className="my-4" />

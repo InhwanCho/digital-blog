@@ -45,14 +45,12 @@ export default function RootLayout({
         <link rel="icon" type="image/png" sizes="32x32" href="/static/favicons/favicon-32x32.png" />
         <link rel="icon" type="image/png" sizes="16x16" href="/static/favicons/favicon-16x16.png" />
         <link rel="manifest" href="/static/favicons/site.webmanifest" />
-
         <body
           className={cn(
             "min-h-dvh bg-background font-sans antialiased",
             pretendard.className
           )}
         >
-
           <ThemeProvider
             attribute="class"
             defaultTheme="system"

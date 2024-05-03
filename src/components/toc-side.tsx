@@ -35,20 +35,20 @@ const TocSide = ({ tableOfContents }: TocSideProps) => {
   };
 
   return (
-    <div className='fixed top-40 w-[240px] h-[calc(100vh-100px)] overflow-x-hidden overflow-y-auto'>
-      <span className='text-slate-800/90 dark:text-slate-300 font-semibold'>On this page</span>
-      {tableOfContents.length > 0 &&
+    <div className='h-[calc(100vh-100px)] overflow-x-hidden overflow-y-auto '>
 
+      {tableOfContents.length > 0 &&
         (
-          <ul className='content-toc mt-2'>
+          <ul className='content-toc mt-2 border-l-2 pl-3 flex flex-col'>
+            <span className='text-slate-800/90 dark:text-slate-300 font-semibold pb-3'>On this page</span>
             {tableOfContents.map((item, index) => (
-              <li key={index} className={`list-none pl-0`}>
+              <li key={index} className={`list-none pl-0 my-1.5`}>
                 <Link href={item.url} className={`text-sm no-underline pl-0 ${isActiveToc(item.url) ? 'content-toc-active' : ''}`}>
                   {item.title}
                 </Link>
                 {item.items?.map((subItem, subIndex) => (
-                  <ul key={subIndex} className='pl-4'>
-                    <li className='list-none pl-0'>
+                  <ul key={subIndex} className='pl-4 my-px'>
+                    <li className='list-none pl-0 my-1.5'>
                       <Link href={subItem.url} className={`text-sm no-underline pl-0 ${isActiveToc(subItem.url) ? 'content-toc-active' : ''}`}>
                         {subItem.title}
                       </Link>

@@ -140,7 +140,7 @@
 .content-toc {
   line-height: 1.1;
   font-size: 0.875rem;
-  @apply text-muted-foreground pt-1 pl-0;
+  @apply text-muted-foreground pt-1;
 }
 
 .content-toc a,
@@ -154,7 +154,7 @@
 
 .content-toc-active {
   transition: background-color 0.3s ease; /* 배경색 변화에 부드러운 효과 적용 */
-  @apply bg-slate-200/70 pl-0.5 rounded-sm dark:bg-slate-700/90;
+  @apply bg-slate-100 pl-1 rounded-sm dark:bg-slate-700/90 transition-all;
 }
 
 

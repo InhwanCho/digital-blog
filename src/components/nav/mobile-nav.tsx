@@ -29,7 +29,7 @@ export function MobileNav() {
         >
           <span className=" underline-link hover:text-slate-700/95 dark:hover:text-slate-300/90 transition-all">{siteConfig.title}</span>
         </MobileLink>
-        <div className="flex flex-col gap-3.5 mt-6">
+        <nav className="flex flex-col gap-3.5 mt-6">
           {siteConfig.menus.map((menu) => (
             <MobileLink onOpenChange={setOpen} href={menu.path} key={menu.label}>
               <span className="underline-link hover:font-semibold transition-all">{menu.label}</span>
@@ -40,7 +40,7 @@ export function MobileNav() {
             <span className="">Github</span>
           </LinkExternal>
           
-        </div>
+        </nav>
       </SheetContent>
     </Sheet>
   );
