@@ -97,7 +97,6 @@ export default async function PostPage({ params }: PostPageProps) {
 
   return (
     <section className="py-6 prose dark:prose-invert max-w-5xl h-full mx-auto container xl:flex xl:justify-center">
-
       <article className="w-full h-full mx-auto xl:flex-grow">
         <header>
           <dl>
@@ -119,7 +118,7 @@ export default async function PostPage({ params }: PostPageProps) {
           <div className="flex-1">
             <MDXContent code={post.body} />
           </div>
-          <aside className="sticky w-full min-w-[240px] mt-2 max-w-[240px] hidden xl:flex top-[120px] self-start pl-10">
+          <aside className="sticky mt-2 w-[240px] hidden xl:flex top-[120px] self-start pl-10 mb-4 pb-10">
             <TocSide tableOfContents={post.toc} />
           </aside>
         </div>

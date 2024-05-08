@@ -11,7 +11,7 @@ export type PostFooterProps = {
 
 export default function PostFooter({ prevPost, nextPost }: PostFooterProps) {
   return (
-    <div className="-mx-4 flex items-center text-xs font-semibold sm:mx-0 sm:text-base justify-between">
+    <div className="-mx-4 flex items-center text-xs font-semibold sm:mx-0 sm:text-base justify-between w-full">
       {prevPost && (
         <div>
           <p>이전 포스트</p>

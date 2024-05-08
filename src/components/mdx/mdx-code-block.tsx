@@ -41,7 +41,6 @@ export default function CodeBlock({ children, title, className }: React.Componen
 
   return (
     <div className="group relative my-2 -mx-2 overflow-hidden rounded-lg sm:mx-0 sm:my-5">
-
       {title && (
         <div className="bg-slate-700">
           <div className="flex justify-between border-b border-b-slate-200/90 border-r border-r-slate-700/30 px-5 pl-6 pt-3 pb-2 text-sm font-bold text-slate-200/90">
@@ -53,7 +52,7 @@ export default function CodeBlock({ children, title, className }: React.Componen
           </div>
         </div>
       )}
-      <pre ref={ref} className={'m-0 rounded-none'}>
+      <pre ref={ref} className={'m-0 rounded-none overflow-x-auto whitespace-pre-wrap'}>
         {children}
         <button
           className={cn(

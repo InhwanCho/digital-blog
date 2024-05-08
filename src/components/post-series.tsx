@@ -3,6 +3,8 @@ import { Post } from '#site/content';
 import { cn } from '@/lib/utils';
 import { Link } from 'next-view-transitions';
 import React, { useState } from 'react';
+import { ChevronRight } from 'lucide-react';
+
 
 export type PostSeriesProps = {
   series: Post[] | null,
@@ -28,8 +30,8 @@ export default function PostSeries({ series, current }: PostSeriesProps) {
       {open && <div className='mt-4 flex flex-col gap-2 text-sm sm:text-base'>
         {series?.map((post, index) => (
           current?.title === post.title ?
-            <span key={index} className='font-bold text-slate-900 dark:text-slate-100 bg-slate-200/60 dark:bg-slate-900/80 rounded-sm'>
-              {`> ${index + 1}. ${post.title}`}
+            <span key={index} className='flex items-center font-bold text-slate-900 dark:text-slate-100 bg-slate-200/60 dark:bg-slate-900/80 rounded-sm'>
+              <ChevronRight className='size-4 mr-1.5'/>{`${index + 1}. ${post.title}`}
             </span> :
             <Link key={index} href={`/post/${post.slugAsParams}`} className='no-underline hover:underline hover:text-slate-600 dark:hover:text-slate-200'>
               {index + 1}. {post.title}

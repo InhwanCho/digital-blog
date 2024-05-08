@@ -1,4 +1,5 @@
 'use client';
+import { ChevronRight } from 'lucide-react';
 import { Link } from 'next-view-transitions';
 import { useEffect, useState } from 'react';
 
@@ -35,14 +36,13 @@ const TocSide = ({ tableOfContents }: TocSideProps) => {
   };
 
   return (
-    <div className='h-[calc(100vh-100px)] overflow-x-hidden overflow-y-auto '>
-
+    <div className='min-h-[calc(100vh-1000px)] overflow-x-hidden overflow-y-visible whitespace-pre-wrap'>
       {tableOfContents.length > 0 &&
         (
           <ul className='content-toc mt-2 border-l-2 pl-3 flex flex-col'>
             <span className='text-slate-800/90 dark:text-slate-300 font-semibold pb-3'>On this page</span>
             {tableOfContents.map((item, index) => (
-              <li key={index} className={`list-none pl-0 my-1.5`}>
+              <li key={index} className={`list-none pl-0 my-1.5 `}>
                 <Link href={item.url} className={`text-sm no-underline pl-0 ${isActiveToc(item.url) ? 'content-toc-active' : ''}`}>
                   {item.title}
                 </Link>
