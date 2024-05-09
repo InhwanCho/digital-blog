@@ -51,8 +51,7 @@ export async function generateMetadata({
   const ogSearchParams = new URLSearchParams();
   ogSearchParams.set("title", post.title);
 
-  return {
-    metadataBase: new URL("http://localhost:3000"),
+  return {    
     title: post.title,
     description: post.description,
     authors: { name: siteConfig.author.name },

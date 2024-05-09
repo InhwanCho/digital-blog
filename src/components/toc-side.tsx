@@ -34,7 +34,7 @@ const TocSide = ({ tableOfContents }: TocSideProps) => {
     const targetId = url.substring(1);
     return activeToc === targetId;
   };
-
+  
   return (
     <div className='min-h-[calc(100vh-1000px)] overflow-x-hidden overflow-y-visible whitespace-pre-wrap'>
       {tableOfContents.length > 0 &&

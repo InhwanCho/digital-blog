@@ -1,12 +1,22 @@
-// import { NextSeo, DefaultSeo } from "next-seo";
-
 export const headerConfig = {};
 
 export const siteConfig = {
-  url: "https://example.com",
+  url: "http://localhost:3000",
   title: "Inhwan's Digital Blog",
   description: "개발하면서 탐구한 것을 기록하며 정리하는 블로그입니다.",
   copyright: "InhwanCho © All rights reserved.",
+  applicationName: "Digital Blog",
+  generator: "Next.js",
+  // referrer: "origin-when-cross-origin",
+  keywords: ["Next.js", "React", "JavaScript", "Blog", "Web Development"],
+  authors: [{ name: "InhwanCho", url: "https://example.com" }],
+  creator: "InhwanCho",
+  publisher: "InhwanCho",
+  formatDetection: {
+    email: false,
+    address: false,
+    telephone: false,
+  },
   since: 2024,
   googleAnalyticsId: "",
   locale: "ko-KR",

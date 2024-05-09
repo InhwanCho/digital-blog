@@ -9,6 +9,7 @@ import localFont from 'next/font/local';
 import { Toaster } from "react-hot-toast";
 import KbarLayout from "@/components/kbar/kbar-layout";
 import { ViewTransitions } from "next-view-transitions";
+import { siteConfig } from "@/config/site";
 
 
 // const roboto = Roboto({ subsets: ["latin"], weight: "300", variable: "--font-sans" });
@@ -20,8 +21,61 @@ const pretendard = localFont({
 
 
 export const metadata: Metadata = {
-  title: "블로그 생성 중",
-  description: "설명",
+  title: { default: siteConfig.title, template: `%s | ${siteConfig.title}` },
+  metadataBase: new URL(siteConfig.url),
+  applicationName: siteConfig.applicationName,
+  generator: siteConfig.generator,
+  keywords: siteConfig.keywords,
+  authors: siteConfig.authors,
+  creator: siteConfig.creator,
+  publisher: siteConfig.publisher,
+  formatDetection: siteConfig.formatDetection,
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      'max-video-preview': -1,
+      'max-image-preview': 'large',
+      'max-snippet': -1,
+    }
+  },
+  icons: {
+    icon: '/static/favicons/favicon.ico',
+    shortcut: '/static/favicons/favicon-32x32.png',
+    apple: '/static/favicons/apple-touch-icon.png',
+    other: [
+      {
+        rel: 'icon',
+        url: '/static/favicons/android-chrome-192x192.png',
+        sizes: '192x192',
+        type: 'image/png'
+      },
+      {
+        rel: 'icon',
+        url: '/static/favicons/android-chrome-512x512.png',
+        sizes: '512x512',
+        type: 'image/png'
+      },
+      {
+        rel: 'icon',
+        sizes: '16x16',
+        url: '/static/favicons/favicon-16x16.png',
+        type: 'image/png'
+      },
+      {
+        rel: 'apple-touch-icon',
+        url: '/static/favicons/apple-touch-icon.png',
+        sizes: '180x180',
+        type: 'image/png'
+      },
+      {
+        rel: 'manifest',
+        url: '/static/favicons/site.webmanifest'
+      }
+    ]
+  },
 };
 
 export const viewport: Viewport = {
