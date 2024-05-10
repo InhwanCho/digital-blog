@@ -5,11 +5,9 @@ import { Metadata } from 'next';
 import React from 'react';
 
 export const metadata: Metadata = {
-  title: "Category",
+  title: "Blog Category",
   description: "Blog categories I've written",
 };
-
-
 
 export default function CategoriesPage() {
   

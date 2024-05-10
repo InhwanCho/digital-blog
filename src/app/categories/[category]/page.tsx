@@ -2,6 +2,7 @@ import { posts } from "#site/content";
 import { PostItem } from "@/components/post-item";
 import { Tag } from "@/components/tag";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { siteConfig } from "@/config/site";
 import { getAllCategories, sortCategoryByCount, getPostsByCategorySlug, getAllTags } from '@/lib/utils';
 import { slug } from "github-slugger";
 import { Metadata } from "next";
@@ -14,9 +15,11 @@ interface TagPageProps {
 }
 export async function generateMetadata({ params }: TagPageProps): Promise<Metadata> {
   const { category } = params;
+
   return {
-    title: category,
+    title: category.toUpperCase(),
     description: `Posts on the topic of ${category}`,
+    keywords: [...siteConfig.keywords, category],
     category,
   };
 }
@@ -27,7 +30,7 @@ export const generateStaticParams = () => {
 };
 
 export default function CategoryPage({ params }: TagPageProps) {
-  const { category } = params;  
+  const { category } = params;
   const title = category.split('-').join(' ');
   const displayPosts = getPostsByCategorySlug(posts, category);
   const categories = getAllCategories(posts);
@@ -36,7 +39,7 @@ export default function CategoryPage({ params }: TagPageProps) {
     <div className="container max-w-4xl py-6 lg:py-10">
       <div className="flex flex-col items-start gap-4 md:flex-row md:justify-between md:gap-8">
         <div className="flex-1 space-y-4">
-          <h1 className="inline-block font-black text-2xl md:text-3xl capitalize">Selected Category : <span className="text-muted-foreground">{title}</span></h1>
+          <h1 className="inline-block font-black text-2xl md:text-3xl capitalize">Selected Category : <span className="text-muted-foreground">{title.toUpperCase()}</span></h1>
         </div>
       </div>
       <div className="grid grid-cols-12 gap-3 mt-8">
@@ -68,7 +71,7 @@ export default function CategoryPage({ params }: TagPageProps) {
             </CardHeader>
             <CardContent className="flex flex-wrap gap-2">
               {sortedCategories?.map((t) => (
-                <Tag tag={t} key={t} count={categories[t]} current={slug(t) === category} isCategory/>
+                <Tag tag={t} key={t} count={categories[t]} current={slug(t) === category} isCategory />
               ))}
             </CardContent>
           </Card>

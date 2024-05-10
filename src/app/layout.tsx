@@ -41,6 +41,10 @@ export const metadata: Metadata = {
       'max-snippet': -1,
     }
   },
+  openGraph: {
+    locale: siteConfig.locale,
+    type: "article",
+  },
   icons: {
     icon: '/static/favicons/favicon.ico',
     shortcut: '/static/favicons/favicon-32x32.png',
@@ -76,6 +80,10 @@ export const metadata: Metadata = {
       }
     ]
   },
+  twitter: {
+    card: 'summary_large_image',
+    site: siteConfig.twitterHandle,
+  }
 };
 
 export const viewport: Viewport = {
@@ -93,7 +101,7 @@ export default function RootLayout({
 
   return (
     <ViewTransitions>
-      <html lang="en" suppressHydrationWarning className="scroll-smooth scroll-pt-20">
+      <html lang="ko" suppressHydrationWarning className="scroll-smooth scroll-pt-20">
         <link rel="icon" href="/static/favicons/favicon.ico" />
         <link rel="apple-touch-icon" sizes="76x76" href="/static/favicons/apple-touch-icon.png" />
         <link rel="icon" type="image/png" sizes="32x32" href="/static/favicons/favicon-32x32.png" />

@@ -2,6 +2,7 @@ import { posts } from "#site/content";
 import { PostItem } from "@/components/post-item";
 import { Tag } from "@/components/tag";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { siteConfig } from "@/config/site";
 import { getAllTags, getPostsByTagSlug, sortTagsByCount } from "@/lib/utils";
 import { slug } from "github-slugger";
 import { Metadata } from "next";
@@ -13,12 +14,11 @@ interface TagPageProps {
   }
 }
 export async function generateMetadata({ params }: TagPageProps): Promise<Metadata> {
-  const { category } = params;
-  const tag = decodeURIComponent(params.tag);
+  const tag = decodeURIComponent(params.tag);  
   return {
-    title: `tag : ${tag}`,
+    title: tag.toUpperCase(),
     description: `Posts on the topic of ${tag}`,
-    category,
+    keywords: [...siteConfig.keywords, tag],
   };
 }
 
@@ -30,7 +30,7 @@ export async function generateMetadata({ params }: TagPageProps): Promise<Metada
 
 export async function getStaticPaths() {
   const tags = getAllTags(posts);
-  const paths = Object.keys(tags).map(tag => ({ 
+  const paths = Object.keys(tags).map(tag => ({
     params: { tag: encodeURIComponent(slug(tag)) }
   }));
   return { paths, fallback: false };

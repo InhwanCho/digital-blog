@@ -7,12 +7,11 @@ import { Tag } from "@/components/tag";
 import Giscus from "@/components/giscus";
 import TocSide from "@/components/toc-side";
 import "@/styles/prism.css";
-import ReadingProgressBar from "@/components/reading-progress-bar";
 import { Calendar } from "lucide-react";
 import { formatDate } from "@/lib/utils";
 import PostFooter from "@/components/post-footer";
 import PostSeries from "@/components/post-series";
-import Head from "next/head";
+
 
 interface PostPageProps {
   params: {
@@ -43,7 +42,7 @@ export async function generateMetadata({
   params,
 }: PostPageProps): Promise<Metadata> {
   const { post } = await getPostFromParams(params);
-
+  console.log(post?.categories[1]);
   if (!post) {
     return {};
   }
@@ -51,14 +50,14 @@ export async function generateMetadata({
   const ogSearchParams = new URLSearchParams();
   ogSearchParams.set("title", post.title);
 
-  return {    
+  return {
     title: post.title,
     description: post.description,
-    authors: { name: siteConfig.author.name },
+    category: post.categories[1],
+    keywords: [...siteConfig.keywords, ...post.tags!],
     openGraph: {
       title: post.title,
       description: post.description,
-      type: "article",
       url: post.slug,
       images: [
         {
@@ -68,11 +67,8 @@ export async function generateMetadata({
           alt: post.title,
         },
       ],
-      locale: siteConfig.locale
     },
     twitter: {
-      card: 'summary_large_image',
-      site: siteConfig.twitterHandle,
       title: post.title,
       description: post.description,
       images: {
@@ -128,9 +124,6 @@ export default async function PostPage({ params }: PostPageProps) {
         <hr className="my-4" />
         <Giscus />
       </article>
-
     </section>
   );
 }
-
-

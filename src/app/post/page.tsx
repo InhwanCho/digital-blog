@@ -7,8 +7,8 @@ import { getAllCategories, getAllTags, sortCategoryByCount, sortPosts, sortTagsB
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "My blog",
-  description: "This is a description",
+  title: "Blog",
+  description: "This is a Inhwan's Blog page powered by nextjs and velite",
 };
 
 const POSTS_PER_PAGE = 5;
