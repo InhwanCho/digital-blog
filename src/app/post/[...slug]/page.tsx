@@ -42,7 +42,7 @@ export async function generateMetadata({
   params,
 }: PostPageProps): Promise<Metadata> {
   const { post } = await getPostFromParams(params);
-  console.log(post?.categories[1]);
+  
   if (!post) {
     return {};
   }

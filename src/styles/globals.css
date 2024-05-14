@@ -33,6 +33,10 @@
     --ring: 222.2 84% 4.9%;
 
     --radius: 0.5rem;
+
+    /* sub-heading link light version */
+    --link-icon: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="%23718096" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" class="lucide lucide-link"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>');
+
   }
 
   .dark {
@@ -63,6 +67,9 @@
     --border: 217.2 32.6% 17.5%;
     --input: 217.2 32.6% 17.5%;
     --ring: 212.7 26.8% 83.9%;
+
+    /* sub-heading link dark version */
+    --link-icon: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="%23CBD5E0" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" class="lucide lucide-link"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>');
   }
 }
 
@@ -108,12 +115,11 @@
 }
 
 .prose .subheading-anchor::before {
-  @apply text-gray-400 dark:text-gray-700 ;
   content: "";
-  display: inline-block; /* 배경 이미지를 표시하기 위해 필요 */
+  display: inline-block; 
   width: 24px; /* SVG의 너비 */
   height: 24px; /* SVG의 높이 */
-  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" class="lucide lucide-link"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>');
+  background-image: var(--link-icon);
   background-size: cover; /* 또는 contain에 따라 조정 */
 }
 
@@ -121,7 +127,6 @@
 .prose *:hover > .subheading-anchor {
   @apply visible;
 }
-
 
 .prose code::before,
 .prose code::after {
@@ -158,13 +163,65 @@
 }
 
 .content-toc-active::before {
-  content: '> ';
+  content: "> ";
 }
 
-
-@layer utilities{
-  .custom-underline{
+@layer utilities {
+  .custom-underline {
     text-underline-offset: 6px;
-    @apply decoration-slate-400 decoration-1 dark:decoration-slate-300
+    @apply decoration-slate-400 decoration-1 dark:decoration-slate-300;
   }
+}
+
+/* 전체 테이블 스타일 */
+table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  margin: 20px 0;
+  overflow: hidden; 
+}
+
+thead {
+  background-color: #E5E5E5; 
+}
+
+th, td {
+  text-align: left;
+  padding: 12px 15px;
+  border: 0.5px solid #B2B2B2; 
+}
+
+.prose :where(thead th):not(:where([class~="not-prose"],[class~="not-prose"] *)) {
+  @apply font-bold
+}
+
+/* 첫 번째 th 요소에 대한 스타일 */
+th:first-child {
+  padding-left: 20px;
+  border-top-left-radius: 4px; 
+}
+th:last-child {
+  border-top-right-radius: 4px; 
+}
+
+/* 첫 번째 열의 모든 td에 추가 패딩 적용 및 굵은 글씨체 */
+td:first-child {
+  padding-left: 20px;
+  font-weight: bold; /* 첫 번째 열의 텍스트 굵게 */
+}
+
+/* 마지막 행의 첫 번째 td 요소에 대한 스타일 */
+tbody tr:last-child td:first-child {
+  border-bottom-left-radius: 4px; /* 왼쪽 하단 모서리 둥글게 조정 */
+}
+
+/* 마지막 행의 마지막 td 요소에 대한 스타일 */
+tbody tr:last-child td:last-child {
+  border-bottom-right-radius: 4px; /* 오른쪽 하단 모서리 둥글게 조정 */
+}
+
+/* 배경색 구분 없애기 */
+tbody tr {
+  background-color: transparent;
 }
