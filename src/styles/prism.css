@@ -176,25 +176,11 @@
   @apply py-[1px] bg-slate-800 border-l-0;
 }
 .prose code {
-  @apply bg-[#e5e5e5]/70 p-1 px-[5px] rounded-[4px];
+  @apply bg-[#e5e5e5]/70 p-1 px-[5px] rounded-[4px] mr-0.5;
 }
 .dark .prose code {
   @apply bg-slate-800/80;
 }
 .prose pre > code {
-  @apply p-0.5 my-1 
+  @apply p-0.5 my-1
 }
-
-/* 표 */
-div {
-  --tw-prose-th-borders: black;
-  --tw-prose-td-borders: black;
-}
-.dark div {
-  --tw-prose-th-borders: #c0c0c4;
-  --tw-prose-td-borders: #c0c0c4;
-}
-th {
-  white-space: nowrap;
-}
-
