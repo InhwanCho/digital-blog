@@ -39,7 +39,7 @@ export const siteConfig = {
     },
     {
       label: "About",
-      path: "/about",
+      path: "https://political-rotate-326.notion.site/729d9735ee0a4c48b0c7275ceb75dcc0",
     },
     {
       label: "Categories",

@@ -56,7 +56,7 @@ export default function CodeBlock({ children, title, className }: React.Componen
         {children}
         <button
           className={cn(
-            `absolute right-[22px] ${title ? 'top-16 dark:top-14' : 'top-5'} dark:right-3 flex h-6 w-6 items-center justify-center rounded-lg`,
+            `absolute right-[22px] ${title ? 'top-[62px] dark:top-14' : 'top-5'} dark:right-3 flex size-[22px] items-center justify-center rounded-lg`,
             'bg-slate-700 text-xs text-slate-400 hover:text-slate-300 dark:text-slate-300',
             'opacity-0 transition-all group-hover:opacity-100',
           )}

@@ -1,7 +1,5 @@
 import { posts } from "#site/content";
 import { PostItem } from "@/components/post-item";
-import { Tag } from "@/components/tag";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { siteConfig } from "@/config/site";
 import { getAllTags, getPostsByTagSlug, sortTagsByCount } from "@/lib/utils";
 import { slug } from "github-slugger";
@@ -27,14 +25,6 @@ export async function generateMetadata({ params }: TagPageProps): Promise<Metada
 //   const paths = Object.keys(tags).map(tag => ({ tag: slug(tag) }));
 //   return paths;
 // };
-
-export async function getStaticPaths() {
-  const tags = getAllTags(posts);
-  const paths = Object.keys(tags).map(tag => ({
-    params: { tag: encodeURIComponent(slug(tag)) }
-  }));
-  return { paths, fallback: false };
-}
 
 
 export default function TagPage({ params }: TagPageProps) {
