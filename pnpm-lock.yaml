@@ -26,6 +26,9 @@ importers:
       github-slugger:
         specifier: ^2.0.0
         version: 2.0.0
+      katex:
+        specifier: ^0.16.10
+        version: 0.16.10
       kbar:
         specifier: 0.1.0-beta.45
         version: 0.1.0-beta.45(@types/react-dom@18.2.23)(@types/react@18.2.73)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)

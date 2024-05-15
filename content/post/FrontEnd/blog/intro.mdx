@@ -16,11 +16,13 @@ Next.js의 강력한 `SEO 지원`과 효율적인 `디렉토리 파싱` 및 `라
 
 ## 패키지 매니저로 pnpm을 선택한 이유
 
-적절한 패키지 매니저를 선택하는 것은 개발 과정의 효율성을 크게 좌우합니다.
+프로젝트에서 사용할 패키지 매니저 선택은 개발의 효율성과 안정성에 중대한 영향을 미칩니다.
 
-저의 경우 처음에는 `bun`을 사용할 계획이었으나, npm에서 제공하는 최신 버전과 bun의 지원 버전 간의 불일치로 인해 발생하는 버전 오류가 잦았습니다.
+초기에는 `bun`을 고려했으나, bun이 npm의 최신 버전을 지원하지 않아 여러 호환성 문제가 발생했습니다.
 
-이러한 문제를 해결하기 위해, `안정성과 호환성을 고려하여 pnpm`을 선택하게 되었습니다.
+이 문제를 해결하기 위해, 저는 `pnpm`을 선택했습니다.
+
+pnpm은 뛰어난 안정성과 호환성을 제공하며, 특히 프로젝트의 의존성을 효율적으로 관리할 수 있도록 도와줍니다.
 
 ## mdx 파일 파싱으로 velite를 선택한 이유
 
@@ -49,7 +51,7 @@ const tags = getAllTags(posts);
 1. 벤치마킹: 경쟁력 있는 블로그들을 조사하여, 우수한 디자인과 기능을 참고하였습니다.
 2. 디자인 초안: 블로그의 대략적인 디자인 및 레이아웃 구상을 피그마를 통해 진행하였습니다.
 3. 프로젝트 생성: pnpm을 사용하여 Next.js 프로젝트를 생성하였습니다.
-4. 코드 품질 관리: ESLint와 Prettier를 설정하고 적용하였습니다.
+4. 코드 품질 관리: ESLint와 Prettier를 설정 및 vscode의 setting을 변경하고 적용하였습니다.
 5. 콘텐츠 파싱: velite를 활용해 MDX 혹은 마크다운 파일로부터 정적 HTML을 생성하였습니다.
 6. 설정 파일 수정: velite.config.ts 파일을 세부적으로 조정하여 컨텐츠 파싱을 최적화하였습니다.
 7. 스타일링: CSS를 수정하여 블로그의 시각적 요소와 스타일링 하였습니다.
@@ -126,7 +128,7 @@ class VeliteWebpackPlugin {
 }
 
 /** @type {import('next').NextConfig} */
-const nextConfig = {  
+const nextConfig = {
   webpack: (config) => {
     // 웹팩 설정에 VeliteWebpackPlugin 플러그인을 추가
     config.plugins.push(new VeliteWebpackPlugin());
@@ -137,12 +139,63 @@ const nextConfig = {
 export default nextConfig;
 ```
 
-- gitignore에 `.velite`를 추가
+---
 
-```:gitignore
-.env
-# velite
-.velite
+제가 설정한 `.eslintrc.json`, `tsconfig.json`, `vscode setting`은 아래와 같습니다.
+
+```json:.eslintrc.json
+{
+  "extends": "next/core-web-vitals",
+  "rules": {
+    "semi": ["error", "always"], // 코드 끝에 세미콜론이 항상 있어야 함을 나타냅니다.
+    // "no-unused-vars": "warn", // 사용되지 않는 변수가 있을 경우 경고를 표시합니다.
+    "eqeqeq": ["error", "always"], // 항상 === 또는 !==를 사용하여 등가 비교를 수행하도록 강제합니다.
+    "indent": ["error", 2] // 들여쓰기를 스페이스 2개로 설정합니다.
+  }
+}
 ```
+
+```json:tsconfig.json
+{
+  "compilerOptions": {
+    // "baseUrl": ".",
+    "target": "ES6",
+    "lib": ["dom", "dom.iterable", "esnext"],
+    "allowJs": true,
+    "skipLibCheck": true,
+    "strict": true,
+    "noEmit": true,
+    "esModuleInterop": true,
+    "module": "esnext",
+    "moduleResolution": "bundler",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "jsx": "preserve",
+    "incremental": true,
+    "plugins": [
+      {
+        "name": "next"
+      }
+    ],
+    "paths": {
+      "@/*": ["./src/*"],
+      "#site/content": ["./.velite"],
+    }
+  },
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
+  "exclude": ["node_modules"]
+}
+
+```
+
+```file:vscode-setting.json
+{
+  "mdx.validate.validateReferences": "ignore",
+  "typescript.updateImportsOnFileMove.enabled": "always", // mdx []링크 경고 무시
+  "[mdx]": {"editor.quickSuggestions": false }, //mdx 자동완성 비활성화
+}
+```
+
+---
 
 `Velite`를 이용한 MDX에서 HTML로의 파싱 과정에 대해서는 다음 블로그 글에서 자세히 다루겠습니다.

@@ -3,31 +3,32 @@ import rehypeSlug from "rehype-slug";
 import rehypeAutolinkHeadings from "rehype-autolink-headings";
 import rehypePrismPlus from "rehype-prism-plus";
 import remarkMath from "remark-math";
-
+import rehypeKatex from "rehype-katex";
 import rehypeCodeWrap from "@/lib/rehype-code-wrap";
 import rehypeExternalLinks from "@/lib/rehype-external-links";
 
 const computedFields = <T extends { slug: string }>(data: T) => ({
   ...data,
-  slugAsParams: data.slug.split("/").slice(1).join("/"),
-  categories: data.slug.split("/").slice(1, -1),
+  slugAsParams: data.slug.split("/").slice(1).join("/"), // 슬러그를 URL 파라미터 형태로 변환합니다.
+  categories: data.slug.split("/").slice(1, -1), // 슬러그를 사용하여 카테고리 배열을 생성합니다.
 });
 
 const posts = defineCollection({
   name: "Post",
   pattern: "post/**/*.mdx",
+  // 'post' 디렉토리와 그 하위에서 MDX 파일을 찾는 패턴을 정의합니다.
   schema: s
     .object({
-      slug: s.path(),
-      title: s.string().max(99),
-      description: s.string().max(999).optional(),
-      date: s.isodate(),
-      published: s.boolean().default(true),
-      tags: s.array(s.string()).optional(),
-      body: s.mdx(),
-      toc: s.toc(),
+      slug: s.path(), // 파일 경로에서 슬러그를 자동으로 생성합니다.
+      title: s.string().max(99), // 최대 99자의 문자열을 갖는 제목 필드입니다.
+      description: s.string().max(999).optional(), // 최대 999자의 선택적 설명 필드입니다.
+      date: s.isodate(), // ISO 날짜 형식을 갖는 날짜 필드입니다.
+      published: s.boolean().default(true), // 기본값이 true인 게시 상태 필드입니다.
+      tags: s.array(s.string()).optional(), // 문자열 배열로, 선택적 태그 필드입니다.
+      body: s.mdx(), // MDX 컨텐츠를 처리하는 필드입니다.
+      toc: s.toc(), // 목차를 생성하는 필드입니다.
     })
-    .transform(computedFields),
+    .transform(computedFields), // 위에서 정의한 computedFields 함수를 사용하여 추가 필드를 계산합니다.
 });
 export default defineConfig({
   root: "content",
@@ -61,8 +62,9 @@ export default defineConfig({
       ],
       // a태그에 target='_blank' 달기
       rehypeExternalLinks,
+      rehypeKatex,//수학 수식을 html로 파싱(css파일을 추가로 import 해야 제대로 적용)
     ],
-    // $$표시 에러안나게 math로 변환 - 추후 latex 수정해야됨
+    // 수학 수식 $$표시 에러안나게 math로 변환 - 추후 latex 수정해야됨
     remarkPlugins: [remarkMath],
   },
 });

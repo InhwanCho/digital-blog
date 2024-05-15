@@ -1,0 +1,264 @@
+---
+title: "Next.js로 블로그 제작하기 3"
+tags:
+  - nextjs
+description: "Next.js app-router를 활용하여 블로그의 SEO 설정"
+date: 2024-05-15
+---
+
+## SEO란 무엇인가?
+
+SEO(Search Engine Optimization)는 웹사이트의 가시성을 향상시켜 검색 엔진 결과에서 더 높은 순위를 달성할 수 있도록 하는 기술적 및 마케팅 전략입니다. 
+
+이 전략은 웹페이지가 검색 엔진에 의해 더 잘 인덱싱되고, 사용자의 검색 쿼리에 대한 관련 결과로 더 자주 나타나게 함으로써, 사이트의 트래픽을 증가시킵니다.
+
+## Next.js에서의 SEO 기본 설정
+
+Next.js는 서버 사이드 렌더링(SSR) 기능을 통해 구조적으로 SEO에 유리한 조건을 제공합니다. 
+
+이 기능을 통해 웹 페이지는 검색 엔진에 의해 더 효과적으로 인덱싱되고, 검색 결과에서 높은 순위를 달성할 수 있습니다.
+
+## 메타 태그(데이터) 사용하기
+
+메타 태그는 웹 페이지의 메타데이터를 정의하고, 검색 엔진이 페이지를 올바르게 인덱싱하고 랭킹을 매기는 데 중요한 역할을 합니다. 
+
+이 태그들은 페이지의 내용과 관련된 정보를 제공하고, 검색 결과에서 사용자의 클릭을 유도하는 효과적인 수단입니다.
+
+Next.js에서는 메타 데이터를 정적으로 설정할 수 있으며, 필요에 따라 `generateMetadata` 함수를 사용하여 동적으로 설정할 수도 있습니다.
+
+다음은 제가 설정한 정적인 메타데이터 설정입니다.
+
+```tsx:layout.tsx
+// SEO 관련 기본 메타 태그 설정
+export const metadata: Metadata = {
+  title: { default: siteConfig.title, template: `%s | ${siteConfig.title}` },
+  metadataBase: new URL(siteConfig.url),
+  applicationName: siteConfig.applicationName,
+  generator: siteConfig.generator,
+  keywords: siteConfig.keywords,
+  authors: siteConfig.authors,
+  creator: siteConfig.publisher,
+  formatDetection: siteConfig.formatDetection,
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      'max-video-preview': -1,
+      'max-image-preview': 'large',
+      'max-snippet': -1,
+    }
+  },
+  openGraph: {
+    locale: siteConfig.locale,
+    type: "article",
+  },
+  icons: { /* 아이콘 설정 */ },
+  twitter: {
+    card: 'summary_large_image',
+    site: siteConfig.twitterHandle,
+  }
+};
+```
+
+### Next.js의 동적 라우팅과 SEO
+
+Next.js의 동적 라우팅 기능을 활용하면 URL을 통해 다양한 콘텐츠를 동적으로 제공할 수 있습니다. 
+
+이 기능을 통해 각 게시물이나 페이지에 맞춤 SEO 설정을 적용할 수 있습니다.
+
+다음은 동적 라우팅을 활용하여 제가 설정한 각 포스트에 대한 메타데이터를 생성하는 파일입니다.
+
+```tsx:@/post/[...slug]/page.tsx
+export async function generateMetadata({
+  params,
+}: PostPageProps): Promise<Metadata> {
+  const { post } = await getPostFromParams(params);
+  
+  if (!post) {
+    return {};
+  }
+
+  // ogImage에 사용할 title, description을 searchParams을 이용하여 전달
+  const ogSearchParams = new URLSearchParams();
+  ogSearchParams.set("title", post.title);
+  if (post.description) ogSearchParams.set("description", post.description);  
+
+  return {
+    title: post.title,
+    description: post.description,
+    category: post.categories[1],
+    keywords: [...siteConfig.keywords, ...post.tags!],
+    openGraph: {
+      title: post.title,
+      description: post.description,
+      url: post.slug,
+      images: [
+        {
+          url: `/api/og?${ogSearchParams.toString()}`,
+          width: 1200,
+          height: 630,
+          alt: post.title,
+        },
+      ],
+    },
+    twitter: {
+      title: post.title,
+      description: post.description,
+      images: {
+        url: `/api/og?${ogSearchParams.toString()}`,
+        alt: post.title,
+      }
+    }
+  };
+}
+```
+
+### Open Graph 이미지 동적 생성하기
+
+Open Graph 이미지는 소셜 미디어 플랫폼에서 웹 페이지를 공유할 때 표시되는 이미지입니다. 
+
+Next.js의 Edge 함수를 사용하면 요청에 따라 동적으로 이러한 이미지를 생성할 수 있습니다. 
+
+다음 코드는 사용자가 제공한 제목과 설명을 기반으로 Open Graph 이미지를 생성하는 방법을 보여줍니다.
+
+```tsx:@/app/api/og/route.tsx
+/* eslint-disable @next/next/no-img-element */
+
+import { NextRequest } from "next/server";
+import { ImageResponse } from "next/og";
+import { siteConfig } from "@/config/site";
+
+export const runtime = "edge";
+
+const interBold = fetch(
+  new URL('../../../../public/fonts/Inter-Bold.ttf', import.meta.url))
+  .then((res) => res.arrayBuffer());
+
+export async function GET(req: NextRequest) {
+  try {
+    const fontBold = await interBold;
+
+    const { searchParams } = req.nextUrl;
+    const title = searchParams.get("title");
+    const description = searchParams.get("description");
+    
+    if (!title) {
+      return new Response("No title provided", { status: 500 });
+    }
+
+    const heading =
+      title.length > 140 ? `${title.substring(0, 140)}...` : title;
+
+    return new ImageResponse(
+      (
+        <div tw="flex relative flex-col p-12 w-full h-full items-start text-black bg-white">
+          <div tw="flex items-center">            
+            {/* 로고 이미지 */}
+            <img src={`${siteConfig.url}/static/favicons/apple-touch-icon.png`} alt='logo image' width={40} height={40}/>
+            <p tw="ml-2 font-bold text-2xl">{siteConfig.title}</p>
+          </div>
+          <div tw="flex flex-col flex-1 py-10">
+            <div tw="flex text-xl uppercase font-bold tracking-tight font-normal">
+              BLOG POST
+            </div>            
+            <div tw="flex text-[80px] font-bold text-[50px]">{heading}</div>
+            <div tw='uppercase'>
+              {description}
+            </div>
+          </div>
+          <div tw="flex items-center w-full justify-between">
+            <div tw="flex text-xl">{siteConfig.url}</div>
+            <div tw="flex items-center text-xl">
+              <div tw="flex ml-2">{siteConfig.author.contacts.github}</div>
+            </div>
+          </div>
+        </div>
+      ),
+      {
+        width: 1200,
+        height: 630,
+        fonts: [
+          {
+            name: "Inter",
+            data: fontBold,
+            style: "normal",
+            weight: 700,
+          },
+        ],
+      }
+    );
+  } catch (error) {
+    console.error("Error generating image:", error);
+    return new Response("Failed to generate image", { status: 500 });
+  }
+}  
+```
+
+## Sitemap 설정하기
+
+사이트맵은 웹사이트의 구조를 XML 형식으로 표현하여 검색 엔진이 사이트의 구조를 쉽게 이해하고 크롤링할 수 있게 합니다. 
+
+sitemap을 설정하고, `{siteConfig.url}/sitemap.xml`을 입력하면 sitemap이 제대로 생성되었는지 확인 할 수 있습니다.
+
+아래는 제가 설정한 `sitemap.tsx`입니다
+
+```tsx:@/app/sitemap.tsx
+import { siteConfig } from "@/config/site";
+import { MetadataRoute } from "next";
+import { posts } from "#site/content";
+
+export default function sitemap(): MetadataRoute.Sitemap {
+  const siteUrl = siteConfig.url;
+
+  // 메인 메뉴와 블로그 포스트의 URL을 동적으로 사이트맵에 추가
+  const routes = siteConfig.menus.map((menu) => ({
+    url: `${siteUrl}${menu.path}`,
+    lastModified: new Date().toISOString().split("T")[0],
+    changeFrequency: "weekly" as "weekly",
+    priority: 0.5,
+  }));
+
+  const blogRoutes = posts
+    .filter((post) => post.published)
+    .map((post) => ({
+      url: `${siteUrl}/${post.slug}`,
+      lastModified: post.date.split("T")[0],
+      priority: 1,
+    }));
+
+  return [
+    {
+      url: siteUrl,
+      lastModified: new Date().toISOString().split("T")[0],
+      changeFrequency: "monthly",
+      priority: 1,
+    },
+    ...routes,
+    ...blogRoutes,
+  ];
+}
+```
+
+## robots 설정
+
+`robots.tsx` 파일은 웹 크롤러에게 웹 사이트의 어떤 부분을 접근하거나 접근하지 말아야 하는지 지시합니다. 
+
+다음은 제가 설정한 로봇 파일입니다.
+
+```tsx:@/app/robots.tsx
+import { siteConfig } from "@/config/site";
+import { MetadataRoute } from "next";
+
+export default function robots(): MetadataRoute.Robots {
+  return {
+    rules: {
+      userAgent: "*",
+      allow: "/",
+      // disallow: "/private/",
+    },
+    sitemap: `${siteConfig.url}/sitemap.xml`,
+  };
+}
+```

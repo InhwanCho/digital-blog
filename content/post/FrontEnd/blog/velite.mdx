@@ -1,0 +1,187 @@
+---
+title: 'Next.js로 블로그 제작하기 2'
+tags:
+  - nextjs
+description: 'Next.js app-router를 활용하여 템플릿 없이 블로그를 직접 제작하는 2탄, Velite를 사용하여 효과적인 콘텐츠 관리를 실현하는 방법을 알아봅니다.'
+date: 2024-04-21
+---
+
+## Velite란 무엇인가?
+
+[Velite](https://velite.js.org/guide/quick-start 'velite docs')는 정적 사이트 생성기의 일종으로, MDX 파일을 HTML로 변환하는 데 특화된 라이브러리입니다. 
+
+기존에 사용하려 했던 `contentlayer`의 업데이트 중단으로 인해, 더 나은 유지보수와 확장성을 제공하는 `Velite`를 선택하게 되었습니다.
+
+Next.js와 같은 현대적인 웹 프레임워크와 연동이 가능하며, 플러그인 시스템을 통해 높은 수준의 커스터마이징이 가능합니다. 
+
+Velite는 ESM(EcmaScript Module) 패키지만을 지원하므로, Node.js의 `require()` 대신 ES6의 `import` 구문을 사용해야 합니다.
+
+## velite.config.ts 설정하기
+
+`velite.config.ts`는 Velite 라이브러리 설정을 위한 핵심 파일입니다. 이 설정 파일을 통해 개발자는 MDX 파일의 파싱 방법과 데이터 스키마를 자유롭게 정의할 수 있습니다. 
+
+이 파일에서 설정 가능한 주요 옵션을 아래와 같이 설명합니다.
+
+```velite.config.ts
+// 공식사이트의 구성 예시
+import { defineConfig, s } from 'velite'
+
+export default defineConfig({
+  collections: {
+    posts: {
+      name: 'Post',
+      pattern: 'posts/**/*.md',
+      schema: s
+        .object({
+          title: s.string().max(99),
+          slug: s.slug('posts'),
+          date: s.isodate(),
+          cover: s.image(),
+          video: s.file().optional(),
+          metadata: s.metadata(),
+          excerpt: s.excerpt(),
+          content: s.markdown()
+        })
+        .transform(data => ({ ...data, permalink: `/blog/${data.slug}` }))
+    }
+  }
+})
+```
+
+이 설정을 통해 정의된 스키마는 MDX 파일 내 데이터를 검증하고, 웹사이트에 필요한 형태로 변환하여 사용할 수 있도록 도와줍니다.
+
+위의 예시로 `velite.config.ts`를 설정하고, `content/posts/hello-world.md`파일을 작성하면 아래의 구조처럼 `.velite`에 결과물들이 생깁니다.
+
+```text:폴더구조
+root
+├── .velite
+│   ├── posts.json
+│   ├── others.json
+│   ├── index.d.ts
+│   └── index.js
+├── content
+│   ├── posts
+│   │   ├── hello-world.md
+│   │   └── other.md
+│   └── others
+│       └── other.yml
+├── public
+│   ├── static
+│   │   ├── cover-2a4138dh.jpg
+│   │   ├── img-2hd8f3sd.jpg
+│   │   ├── plain-37d62h1s.txt
+│   │   └── video-72hhd9f.mp4
+├── package.json
+└── velite.config.js
+```
+
+위의 구조는 Velite를 사용하여 생성된 콘텐츠의 관리와 배포를 어떻게 지원하는지 보여줍니다. 
+
+추가적으로 `.gitignore` 파일에 `.velite` 디렉토리를 추가하여 버전 관리에서 제외시킬 수 있습니다.
+
+```file:.gitignore
+.velite
+```
+
+그 다음 아래의 경로를 import 하거나, tsconfig.json을 수정하여 파일을 import하면됩니다.
+
+```js:page.tsx
+import { posts } from './.velite'
+//import { posts } from "#site/content";
+
+console.log(posts) // => [{ title: 'Hello world', slug: 'hello-world', ... }, ...]
+```
+
+```json:tsconfig.json
+// 경로 수정 예시
+"paths": {
+      "@/*": ["./src/*"],
+      "#site/content": ["./.velite"],
+    }
+```
+
+---
+
+아래는 제 블로그의 velite.config.ts입니다
+
+```typescript:velite.config.ts
+import { defineConfig, defineCollection, s } from "velite";
+import rehypeSlug from "rehype-slug";
+import rehypeAutolinkHeadings from "rehype-autolink-headings";
+import rehypePrismPlus from "rehype-prism-plus";
+import remarkMath from "remark-math";
+import rehypeKatex from "rehype-katex";
+import rehypeCodeWrap from "@/lib/rehype-code-wrap";
+import rehypeExternalLinks from "@/lib/rehype-external-links";
+
+
+// 기존의 parsing slug와 제가 사용하는 slug가 달라서 slugAsParams으로 수정.
+// categories를 slug를 이용하여 생성.
+const computedFields = <T extends { slug: string }>(data: T) => ({
+  ...data,
+  slugAsParams: data.slug.split("/").slice(1).join("/"), // 슬러그를 URL 파라미터 형태로 변환합니다.
+  categories: data.slug.split("/").slice(1, -1), // 슬러그를 사용하여 카테고리 배열을 생성합니다.
+});
+
+const posts = defineCollection({
+  name: "Post",
+  pattern: "post/**/*.mdx",
+  // 'post' 디렉토리와 그 하위에서 MDX 파일을 찾는 패턴을 정의합니다.
+  schema: s
+    .object({
+      slug: s.path(), // 파일 경로에서 슬러그를 자동으로 생성합니다.
+      title: s.string().max(99), // 최대 99자의 문자열을 갖는 제목 필드입니다.
+      description: s.string().max(999).optional(), // 최대 999자의 선택적 설명 필드입니다.
+      date: s.isodate(), // ISO 날짜 형식을 갖는 날짜 필드입니다.
+      published: s.boolean().default(true), // 기본값이 true인 게시 상태 필드입니다.
+      tags: s.array(s.string()).optional(), // 문자열 배열로, 선택적 태그 필드입니다.
+      body: s.mdx(), // MDX 컨텐츠를 처리하는 필드입니다.
+      toc: s.toc(), // 목차를 생성하는 필드입니다.
+    })
+    .transform(computedFields), // 위에서 정의한 computedFields 함수를 사용하여 추가 필드를 계산합니다.
+});
+export default defineConfig({
+  root: "content",
+  // 'content' 디렉토리를 루트로 설정하여 이 디렉토리 안의 MDX 파일들을 처리합니다.
+  output: {
+    data: ".velite",
+    // 처리된 데이터를 저장할 디렉토리를 '.velite'로 설정합니다.
+    assets: "public/static",
+    // 정적 자산(이미지, 파일 등)을 'public/static' 디렉토리에 저장합니다.
+    base: "/static/",
+    // 웹사이트에서 정적 자산에 접근하기 위한 기본 URL 경로를 '/static/'으로 설정합니다.
+    name: "[name]-[hash:6].[ext]",
+    // 파일 이름 형식을 '원래 이름-6자리 해시.확장자' 형태로 설정합니다. 이는 캐시 관리에 유용합니다.
+    clean: true,
+    // 빌드 시 이전에 생성된 파일들을 정리(삭제)합니다.
+  },
+  collections: { posts },
+  mdx: {
+    rehypePlugins: [
+      // 슬러그(경로)
+      rehypeSlug,
+      // [rehypeToc, { nav: true, headings: ["h1", "h2"], position: "afterend" }],
+      // 코드 커스텀
+      rehypeCodeWrap,
+      // 코드 스타일 prism.css
+      [rehypePrismPlus, { defaultLanguage: "js", ignoreMissing: true }],
+      // link에 id태그와 arialLabel달고, class .subheading-anchor 생성
+      [
+        rehypeAutolinkHeadings,
+        {
+          behavior: "prepend",
+          properties: {
+            className: ["subheading-anchor"],
+            ariaLabel: "Link to section",
+          },
+        },
+      ],
+      // a태그에 target='_blank' 달기
+      rehypeExternalLinks,
+      rehypeKatex,//수학 수식을 html로 파싱(css파일을 추가로 import 해야 제대로 적용)
+    ],
+    // 수학 수식 $$표시 에러안나게 math로 변환 - 추후 latex 수정해야됨
+    remarkPlugins: [remarkMath],
+  },
+});
+```

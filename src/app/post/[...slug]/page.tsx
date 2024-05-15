@@ -11,6 +11,7 @@ import { Calendar } from "lucide-react";
 import { formatDate } from "@/lib/utils";
 import PostFooter from "@/components/post-footer";
 import PostSeries from "@/components/post-series";
+import "katex/dist/katex.min.css";
 
 
 interface PostPageProps {
@@ -42,14 +43,14 @@ export async function generateMetadata({
   params,
 }: PostPageProps): Promise<Metadata> {
   const { post } = await getPostFromParams(params);
-  
+
   if (!post) {
     return {};
   }
 
   const ogSearchParams = new URLSearchParams();
   ogSearchParams.set("title", post.title);
-
+  if (post.description) ogSearchParams.set("description", post.description);  
   return {
     title: post.title,
     description: post.description,
@@ -91,7 +92,7 @@ export default async function PostPage({ params }: PostPageProps) {
   }
 
   return (
-    <section className="py-6 prose dark:prose-invert max-w-5xl h-full mx-auto container xl:flex xl:justify-center">
+    <section className="py-6 prose dark:prose-invert max-w-[950px] xl:max-w-[1200px] h-full mx-auto container xl:flex xl:justify-center">
       <article className="w-full h-full mx-auto xl:flex-grow">
         <header>
           <dl>
@@ -109,14 +110,14 @@ export default async function PostPage({ params }: PostPageProps) {
           </div>
           <hr className="my-4" />
         </header>
-        <div className="flex flex-row">
+        <article className="flex flex-row">
           <div className="flex-1">
             <MDXContent code={post.body} />
           </div>
           <aside className="sticky mt-2 w-[240px] hidden xl:flex top-[120px] self-start pl-10 mb-4 pb-10">
             <TocSide tableOfContents={post.toc} />
           </aside>
-        </div>
+        </article>
         <hr className="my-8" />
         <PostFooter {...postFooterProps} />
         <hr className="my-4" />
