@@ -34,8 +34,8 @@ export default defineConfig({
   root: "content",
   output: {
     data: ".velite", // MDX 파일에서 추출한 메타데이터를 저장할 디렉토리.
-    assets: "public/assets", // 정적 자산을 저장할 디렉토리.
-    base: "/assets/", // 정적 자산에 접근할 기본 경로.
+    assets: "public/static", // 정적 자산을 저장할 디렉토리.
+    base: "/static/", // 정적 자산에 접근할 기본 경로.
     name: "[name]-[hash:6].[ext]",
     clean: true,
   },

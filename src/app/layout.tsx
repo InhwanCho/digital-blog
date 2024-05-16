@@ -46,37 +46,37 @@ export const metadata: Metadata = {
     type: "article",
   },
   icons: {
-    icon: '/static/favicons/favicon.ico',
-    shortcut: '/static/favicons/favicon-32x32.png',
-    apple: '/static/favicons/apple-touch-icon.png',
+    icon: '/assets/favicons/favicon.ico',
+    shortcut: '/assets/favicons/favicon-32x32.png',
+    apple: '/assets/favicons/apple-touch-icon.png',
     other: [      
       {
         rel: 'icon',
-        url: '/static/favicons/android-chrome-192x192.png',
+        url: '/assets/favicons/android-chrome-192x192.png',
         sizes: '192x192',
         type: 'image/png'
       },
       {
         rel: 'icon',
-        url: '/static/favicons/android-chrome-512x512.png',
+        url: '/assets/favicons/android-chrome-512x512.png',
         sizes: '512x512',
         type: 'image/png'
       },
       {
         rel: 'icon',
         sizes: '16x16',
-        url: '/static/favicons/favicon-16x16.png',
+        url: '/assets/favicons/favicon-16x16.png',
         type: 'image/png'
       },
       {
         rel: 'apple-touch-icon',
-        url: '/static/favicons/apple-touch-icon.png',
+        url: '/assets/favicons/apple-touch-icon.png',
         sizes: '180x180',
         type: 'image/png'
       },
       {
         rel: 'manifest',
-        url: '/static/favicons/site.webmanifest'
+        url: '/assets/favicons/site.webmanifest'
       }
     ]
   },
@@ -102,11 +102,11 @@ export default function RootLayout({
   return (
     <ViewTransitions>
       <html lang="ko" suppressHydrationWarning className="scroll-smooth scroll-pt-20">
-        <link rel="icon" href="/static/favicons/favicon.ico" />
-        <link rel="apple-touch-icon" sizes="76x76" href="/static/favicons/apple-touch-icon.png" />
-        <link rel="icon" type="image/png" sizes="32x32" href="/static/favicons/favicon-32x32.png" />
-        <link rel="icon" type="image/png" sizes="16x16" href="/static/favicons/favicon-16x16.png" />
-        <link rel="manifest" href="/static/favicons/site.webmanifest" />
+        <link rel="icon" href="/assets/favicons/favicon.ico" />
+        <link rel="apple-touch-icon" sizes="76x76" href="/assets/favicons/apple-touch-icon.png" />
+        <link rel="icon" type="image/png" sizes="32x32" href="/assets/favicons/favicon-32x32.png" />
+        <link rel="icon" type="image/png" sizes="16x16" href="/assets/favicons/favicon-16x16.png" />
+        <link rel="manifest" href="/assets/favicons/site.webmanifest" />
         <body
           className={cn(
             "min-h-dvh bg-background font-sans antialiased",

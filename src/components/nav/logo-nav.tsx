@@ -7,7 +7,7 @@ export default function LogoNav() {
   return (
     <nav className="flex items-center">
       <Link href="/" className="mr-6 flex items-center space-x-2 font-bold ">
-        <Image alt='logo image' width={30} height={30} src='/static/favicons/apple-touch-icon.png' quality={100} />
+        <Image alt='logo image' width={30} height={30} src='/assets/favicons/apple-touch-icon.png' quality={100} />
         <strong className='inline-block sm:text-base text-sm'>{siteConfig.title}</strong>
       </Link>
     </nav>
