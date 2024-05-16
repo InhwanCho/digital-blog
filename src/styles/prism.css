@@ -43,8 +43,8 @@
 .token.comment,
 .token.prolog,
 .token.cdata {
-  color: rgb(99, 119, 119);
   font-style: italic;
+  @apply text-[#a8bfcf];
 }
 
 .token.punctuation {
