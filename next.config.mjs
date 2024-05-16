@@ -26,6 +26,7 @@ const nextConfig = {
     config.plugins.push(new VeliteWebpackPlugin());
     return config;
   },
+  productionBrowserSourceMaps: true,
   images: {
     // domains: ["github.com", "user-images.githubusercontent.com"],
     remotePatterns: [

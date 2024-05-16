@@ -1,10 +1,11 @@
+import dynamic from 'next/dynamic';
 import { posts } from "#site/content";
 import { MDXContent } from "@/components/mdx/mdx-components";
 import { notFound } from "next/navigation";
 import { Metadata } from "next";
 import { siteConfig } from "@/config/site";
 import { Tag } from "@/components/tag";
-import Giscus from "@/components/giscus";
+
 import TocSide from "@/components/toc-side";
 import "@/styles/prism.css";
 import { Calendar } from "lucide-react";
@@ -85,6 +86,7 @@ export async function generateStaticParams(): Promise<PostPageProps["params"][]>
 }
 
 export default async function PostPage({ params }: PostPageProps) {
+  const Giscus = dynamic(()=> import("@/components/giscus"));
   const { post, postFooterProps, series } = await getPostFromParams(params);
 
   if (!post || !post.published) {
