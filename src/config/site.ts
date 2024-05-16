@@ -9,7 +9,7 @@ export const siteConfig = {
   generator: "Next.js",
   // referrer: "origin-when-cross-origin",
   keywords: ["Next.js", "React", "JavaScript", "Blog", "Web Development"],
-  authors: [{ name: "InhwanCho", url: "https://example.com" }],
+  authors: [{ name: "InhwanCho", url: "http://localhost:3000" }],
   creator: "InhwanCho",
   publisher: "InhwanCho",
   formatDetection: {

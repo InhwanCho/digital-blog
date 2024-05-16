@@ -49,7 +49,7 @@ export const metadata: Metadata = {
     icon: '/static/favicons/favicon.ico',
     shortcut: '/static/favicons/favicon-32x32.png',
     apple: '/static/favicons/apple-touch-icon.png',
-    other: [
+    other: [      
       {
         rel: 'icon',
         url: '/static/favicons/android-chrome-192x192.png',
