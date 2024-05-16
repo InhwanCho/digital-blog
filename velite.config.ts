@@ -33,9 +33,9 @@ const posts = defineCollection({
 export default defineConfig({
   root: "content",
   output: {
-    data: ".velite",
-    assets: "public/static",
-    base: "/static/",
+    data: ".velite", // MDX 파일에서 추출한 메타데이터를 저장할 디렉토리.
+    assets: "public/assets", // 정적 자산을 저장할 디렉토리.
+    base: "/assets/", // 정적 자산에 접근할 기본 경로.
     name: "[name]-[hash:6].[ext]",
     clean: true,
   },
@@ -62,7 +62,7 @@ export default defineConfig({
       ],
       // a태그에 target='_blank' 달기
       rehypeExternalLinks,
-      rehypeKatex,//수학 수식을 html로 파싱(css파일을 추가로 import 해야 제대로 적용)
+      rehypeKatex, //수학 수식을 html로 파싱(css파일을 추가로 import 해야 제대로 적용)
     ],
     // 수학 수식 $$표시 에러안나게 math로 변환 - 추후 latex 수정해야됨
     remarkPlugins: [remarkMath],
