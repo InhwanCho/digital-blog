@@ -25,7 +25,7 @@ export default function Home() {
           </h1>
           <div className="max-w-[42rem] mx-auto text-muted-foreground sm:text-xl text-balance space-y-2">
             <p>개발하면서 학습한 내용을 기록하고 정리하는 블로그입니다.</p>
-            <p>블로그를 제 취향에 맞춰 기획부터 배포까지 직접 제작하였습니다.</p>
+            <p>블로그를 제 취향에 맞춰 기획부터 배포까지 직접 제작하였고,</p>
             <p>Next.js 14 버전의 앱 라우터와 Velite를 사용하여 정적으로 배포하였습니다.</p>
           </div>
           <div className="flex flex-col gap-4 justify-center sm:flex-row">
