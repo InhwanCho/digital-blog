@@ -5,6 +5,12 @@ import { posts } from "#site/content";
 import { Link } from 'next-view-transitions';
 import { PostItem } from "@/components/post-item";
 import { IoLogoGithub } from "react-icons/io";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Blog MainPage",
+  description: siteConfig.description
+};
 
 export default function Home() {
 
@@ -13,13 +19,15 @@ export default function Home() {
     <>
       <section className="space-y-6 pb-8 pt-6 md:pb-12 md:mt-10 lg:py-32">
         <div className="container flex flex-col gap-4 text-center ">
-          
-          <h1 className="text-3xl sm:text-5xl font-black text-balance">
+
+          <h1 className="text-3xl sm:text-5xl font-black text-balance sm:pb-4">
             {siteConfig.title}
           </h1>
-          <p className="max-w-[42rem] mx-auto text-muted-foreground sm:text-xl text-balance">
-            {siteConfig.description}
-          </p>
+          <div className="max-w-[42rem] mx-auto text-muted-foreground sm:text-xl text-balance space-y-2">
+            <p>개발하면서 학습한 내용을 기록하고 정리하는 블로그입니다.</p>
+            <p>블로그를 제 취향에 맞춰 기획부터 배포까지 직접 제작하였습니다.</p>
+            <p>Next.js 14 버전의 앱 라우터와 Velite를 사용하여 정적으로 배포하였습니다.</p>
+          </div>
           <div className="flex flex-col gap-4 justify-center sm:flex-row">
             <Link
               href="/post"
@@ -41,7 +49,7 @@ export default function Home() {
             </Link>
           </div>
         </div>
-      </section>      
+      </section>
       <section className="container max-w-4xl py-6 lg:py-10 flex flex-col space-y-6">
         <h2 className="text-3xl font-black text-center">
           최신 포스트
@@ -59,7 +67,7 @@ export default function Home() {
             </li>
           ))}
         </ul>
-        
+
       </section>
     </>
   );
