@@ -47,6 +47,7 @@ export function PostItem({
           className={cn(buttonVariants({ variant: "link" }), "py-0 gap-2")}
         >
           <span>Read more</span> <MoveRight className="size-3" />
+          <span className="sr-only">navigate to {slug}</span>
         </Link>
       </div>
     </article>
