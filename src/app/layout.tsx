@@ -14,7 +14,7 @@ import { siteConfig } from "@/config/site";
 
 // const roboto = Roboto({ subsets: ["latin"], weight: "300", variable: "--font-sans" });
 const pretendard = localFont({
-  src: './fonts/PretendardVariable.ttf'
+  src: './fonts/PretendardVariable.woff2'
 });
 // const suit = localFont({ src: './fonts/SUIT-Variable.ttf' });
 // const inter = Inter({ weight: ['300', '500'], subsets: ['latin'] });
@@ -49,7 +49,7 @@ export const metadata: Metadata = {
     icon: '/assets/favicons/favicon.ico',
     shortcut: '/assets/favicons/favicon-32x32.png',
     apple: '/assets/favicons/apple-touch-icon.png',
-    other: [      
+    other: [
       {
         rel: 'icon',
         url: '/assets/favicons/android-chrome-192x192.png',
