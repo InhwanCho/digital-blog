@@ -23,14 +23,15 @@ export default function NavBar() {
             <LinkExternal href={siteConfig.author.contacts.github}>
               <Button variant="ghost" className="w-10 px-0" >
                 <IoLogoGithub className="size-6" />
+                <span className="sr-only">깃허브 링크버튼</span>
               </Button>
             </LinkExternal>
           </nav>
           {/* 모바일 UI */}
-          <KBarButton isMobile/>
+          <KBarButton isMobile />
           <ModeToggle />
           <MobileNav />
-          <ReadingProgressBar/>
+          <ReadingProgressBar />
         </div>
       </div>
     </header>

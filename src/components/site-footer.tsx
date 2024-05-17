@@ -22,20 +22,25 @@ export default function Footer() {
         <div className="flex space-x-3">
           <LinkExternal href={`mailto:${siteConfig.author.contacts.email}`}>
             <IoMail className="size-6" />
+            <span className="sr-only">이메일 링크버튼</span>
           </LinkExternal>
           <LinkExternal href={siteConfig.author.contacts.github}>
             <IoLogoGithub className="size-6" />
+            <span className="sr-only">깃허브 링크버튼</span>
           </LinkExternal>
         </div>
         <p>
           <span>© {since} </span>
           <span className="text-primary cursor-pointer transition hover:text-slate-500">{siteConfig.title}</span>
           <span> Powered by </span>
-          <LinkExternal href="https://nextjs.org/">Next.js</LinkExternal>
+          <LinkExternal href="https://nextjs.org/">Next.js
+            <span className="sr-only">nextjs 링크버튼</span></LinkExternal>
           <span>, </span>
-          <LinkExternal href="https://velite.js.org/">Velite</LinkExternal>
+          <LinkExternal href="https://velite.js.org/">Velite
+            <span className="sr-only">velite 링크버튼</span></LinkExternal>
           <span>, </span>
-          <LinkExternal href="https://vercel.com/">Vercel</LinkExternal>          
+          <LinkExternal href="https://vercel.com/">Vercel
+            <span className="sr-only">vercel 링크버튼</span></LinkExternal>
         </p>
         <p>{siteConfig.copyright}</p>
       </div>

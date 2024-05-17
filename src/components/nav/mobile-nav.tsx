@@ -38,6 +38,7 @@ export function MobileNav() {
           <LinkExternal href={siteConfig.author.contacts.github} className="flex items-center gap-3 mt-1">
             <IoLogoGithub className="size-5" />
             <span className="">Github</span>
+            <span className="sr-only">깃허브 링크버튼</span>
           </LinkExternal>
           
         </nav>

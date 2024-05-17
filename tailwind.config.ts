@@ -30,10 +30,7 @@ const config = {
         12: "3rem",
         13: "3.25rem",
         14: "3.5rem",
-      },
-      fontFamily: {
-        sans: ["var(--font-space-grotesk)", ...fontFamily.sans],
-      },
+      },      
       colors: {
         gray: colors.gray,
         border: "hsl(var(--border))",
