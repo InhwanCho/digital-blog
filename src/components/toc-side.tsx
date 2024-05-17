@@ -44,13 +44,13 @@ const TocSide = ({ tableOfContents }: TocSideProps) => {
             {tableOfContents.map((item, index) => (
               <li key={index} className={`list-none pl-0 my-1.5 `}>
                 <Link href={item.url} className={`text-sm no-underline pl-0 ${isActiveToc(item.url) ? 'content-toc-active' : ''}`}>
-                  {item.title}
+                  <span className="sr-only">Navigate to </span>{item.title}
                 </Link>
                 {item.items?.map((subItem, subIndex) => (
                   <ul key={subIndex} className='pl-4 my-px'>
                     <li className='list-none pl-0 my-1.5'>
                       <Link href={subItem.url} className={`text-sm no-underline pl-0 ${isActiveToc(subItem.url) ? 'content-toc-active' : ''}`}>
-                        {subItem.title}
+                        <span className="sr-only">Navigate to </span>{subItem.title}
                       </Link>
                     </li>
                   </ul>
