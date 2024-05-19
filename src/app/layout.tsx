@@ -101,7 +101,7 @@ export default function RootLayout({
 
   return (
     <ViewTransitions>
-      <html lang="ko" suppressHydrationWarning className="scroll-smooth scroll-pt-20">
+      <html lang="ko" suppressHydrationWarning className="scroll-smooth scroll-pt-[84px]">
         <link rel="icon" href="/assets/favicons/favicon.ico" />
         <link rel="apple-touch-icon" sizes="76x76" href="/assets/favicons/apple-touch-icon.png" />
         <link rel="icon" type="image/png" sizes="32x32" href="/assets/favicons/favicon-32x32.png" />
@@ -137,6 +137,5 @@ export default function RootLayout({
         </body>
       </html>
     </ViewTransitions>
-
   );
 }

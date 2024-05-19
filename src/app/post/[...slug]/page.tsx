@@ -116,7 +116,7 @@ export default async function PostPage({ params }: PostPageProps) {
           <div className="flex-1">
             <MDXContent code={post.body} />
           </div>
-          <aside className="sticky mt-2 w-[240px] hidden xl:flex top-[120px] self-start pl-10 mb-4 pb-10">
+          <aside className="sticky mt-2 w-[260px] hidden xl:flex top-[120px] self-start pl-10 mb-4 pb-10">
             <TocSide tableOfContents={post.toc} />
           </aside>
         </article>
