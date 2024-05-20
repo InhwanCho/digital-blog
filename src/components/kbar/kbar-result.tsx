@@ -1,5 +1,4 @@
 import { KBarResults, useMatches } from "kbar";
-import ResultItem from "@/components/kbar/kbar-res-item";
 import { cn } from "@/lib/utils";
 
 export default function RenderResults() {
@@ -52,8 +51,3 @@ the UI. */
     />
   );
 }
-
-// <ResultItem
-//   action={item}
-//   active={active}
-// />;

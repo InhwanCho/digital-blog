@@ -105,7 +105,8 @@ export default function KbarLayout({ children }: { children: React.ReactNode }) 
         <KBarPositioner className="pointer-events-none fixed inset-0 h-full w-full bg-white/60 backdrop-blur-sm dark:bg-black/50">
           <KBarAnimator className="max-w-3xl w-full sm:w-1/2 overflow-hidden rounded-lg shadow-xl border bg-slate-100 dark:bg-slate-900"
             style={{ boxShadow: '0 16px 70px rgb(0 0 0 / 20%)' }}>
-            <KBarSearch className="bg-slate-100 dark:bg-slate-900 w-full border-none px-6 py-4  text-slate-600 dark:text-slate-400 outline-none placeholder:text-slate-300" />
+            <KBarSearch className="bg-slate-100 dark:bg-slate-900 w-full border-none px-6 py-4  text-slate-600 outline-none placeholder:text-slate-400" 
+              defaultPlaceholder="검색어를 입력해주세요."/>
             <div className="kbar-scrollbar pb-4 mt-2">
               <RenderResults />
             </div>
