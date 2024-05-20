@@ -1,0 +1,312 @@
+---
+title: "Next.js로 블로그 제작하기 4"
+tags:
+  - nextjs
+description: "Next.js 블로그의 검색 기능을 kbar를 이용하여 구현하는 방법에 대해 자세히 알아보겠습니다."
+date: 2024-05-20
+---
+
+[Kbar docs](https://kbar.vercel.app/docs/overview 'kbar docs')
+
+이번 포스트에서는 Next.js 블로그에 Kbar를 이용하여 검색 기능을 구현하는 방법에 대해 자세히 알아보겠습니다. 
+
+kbar는 `Command + k` 로 더욱 잘 알려져있습니다.
+
+Kbar는 빠르고 직관적인 명령 팔레트(Command Palette)를 제공하여 사용자가 키보드 단축키를 통해 다양한 작업을 수행할 수 있게 해줍니다. 이를 통해 사용자 경험을 크게 향상시킬 수 있습니다.
+
+
+## Kbar 레이아웃 구성
+
+```bash
+npm install kbar
+```
+
+Kbar 레이아웃을 설정하기 위해 `KbarLayout` 컴포넌트를 작성합니다. 
+
+이 Layout에 필요한 기능에 대해 살펴보겠습니다.
+
+|컴포넌트 / 기능|	설명|
+|---|---|
+|KBarProvider	|Kbar의 모든 설정과 상태를 제공하는 컴포넌트입니다. 여기에서 actions를 전달하여 Kbar가 사용할 수 있게 합니다.|
+|KBarPortal	|Kbar의 모달을 렌더링하는 컴포넌트입니다. 사용자 인터페이스(UI)의 다른 부분과 겹치지 않도록 보장합니다.|
+|KBarPositioner	|Kbar 모달의 위치를 설정합니다. 화면 중앙에 고정되고, 배경을 블러 처리하여 포커스를 맞추는 역할을 합니다.|
+|KBarAnimator|	Kbar 모달의 애니메이션과 스타일을 정의하는 컴포넌트입니다. 모달의 크기, 색상, 그림자 등을 설정합니다.|
+|KBarSearch	|Kbar 검색 입력 필드입니다. defaultPlaceholder를 통해 검색 필드의 안내 문구를 설정할 수 있습니다.|
+|RenderResults|	Kbar의 검색 결과를 렌더링하는 컴포넌트입니다. 검색어에 따른 결과를 동적으로 표시합니다.|
+|액션|	actions 배열은 사용자가 Kbar를 통해 수행할 수 있는 다양한 동작을 정의합니다. 각 액션은 ID, 이름, 키워드, 섹션, 실행 함수, 아이콘, 단축키 등을 포함합니다.|
+
+---
+
+제가 작성한 `KbarLayout.tsx`는 테마 변경, 네비게이션을 포함한 액션과 검색 기능을 제공하게 코딩하였습니다.
+
+액션이 기본적인 기능을 하고 검색 인덱스를 액션과 더하여 기능을 수행합니다.
+
+제 경우 searchIndex를 velite로 생성한 데이터를 기반으로 정적으로 생성, 기본 액션과 concat하였습니다.
+
+```javascript:KbarLayout.tsx
+'use client';
+
+import { KBarAnimator, KBarPortal, KBarPositioner, KBarSearch, KBarProvider, Action } from "kbar";
+import RenderResults from "@/components/kbar/kbar-result";
+import { useRouter } from "next/navigation";
+import { useTheme } from 'next-themes';
+import toast from "react-hot-toast";
+import {
+  FaHome,
+  FaBook,
+  FaSun,
+  FaMoon,
+  FaSearch,
+} from "react-icons/fa";
+import { posts } from "#site/content";
+import { formatDate } from "@/lib/utils";
+
+// KbarLayout 컴포넌트 정의
+export default function KbarLayout({ children }: { children: React.ReactNode }) {
+  const { setTheme } = useTheme(); // 테마 변경을 위한 훅
+  const router = useRouter(); // 페이지 이동을 위한 라우터 훅
+
+  // 포스트 데이터를 기반으로 검색 인덱스 생성
+  const searchIndex = posts.map(post => ({
+    id: post.slug,
+    name: post.title,
+    subtitle: formatDate(post.date),
+    perform: () => router.push('/' + post.slug), // 클릭 시 해당 포스트로 이동
+    parent: "post",
+    section: 'post',
+  }));
+
+  // Kbar 액션 정의
+  const actions: Action[] = [
+    {
+      id: "homeAction",
+      name: "Home",
+      shortcut: ["h"],
+      keywords: "back",
+      section: "Navigation",
+      perform: () => router.push("/"), // 메인페이지로 이동
+      icon: <FaHome className="w-6 h-6 mx-3" />,
+      subtitle: "메인페이지로 이동하기",
+    },
+    {
+      id: "aboutAction",
+      name: "About",
+      shortcut: ["a"],
+      keywords: "about",
+      section: "Navigation",
+      icon: <FaBook className="w-6 h-6 mx-3" />,
+      perform: () => router.push("/about"), // About 페이지로 이동
+      subtitle: "About 페이지로 이동하기",
+    },
+    {
+      id: "post",
+      name: "Search Post",
+      keywords: "search articles",
+      section: "post",
+      icon: <FaSearch className="w-6 h-6 mx-3" />,
+      subtitle: "포스트 살펴보기",
+    },
+    {
+      id: "darkTheme",
+      name: "Dark",
+      keywords: "dark theme",
+      shortcut: ["d"],
+      section: "Theme",
+      perform: () => {
+        setTheme("dark"); // 다크모드로 변경
+        toast.success(`테마가 다크모드로 변경되었습니다.`, {
+          icon: "👏",
+          style: {
+            borderRadius: "10px",
+            background: "#333",
+            color: "#fff",
+          },
+        });
+      },
+      icon: <FaMoon className="w-6 h-6 mx-3" />,
+      subtitle: "다크모드로 변경하기",
+    },
+    {
+      id: "lightTheme",
+      name: "Light",
+      keywords: "light theme",
+      shortcut: ["l"],
+      section: "Theme",
+      perform: () => {
+        setTheme("light"); // 라이트모드로 변경
+        toast.success(`테마가 라이트모드로 변경되었습니다.`, {
+          icon: "👏",
+          style: {
+            borderRadius: "10px",
+            background: "#333",
+            color: "#fff",
+          },
+        });
+      },
+      icon: <FaSun className="w-6 h-6 mx-3" />,
+      subtitle: "라이트모드로 변경하기",
+    },
+  ];
+
+  // 액션과 검색 인덱스를 결합
+  const combinedActions = actions.concat(searchIndex);
+
+  return (
+    <KBarProvider actions={combinedActions}>
+      <KBarPortal>
+        <KBarPositioner className="pointer-events-none fixed inset-0 h-full w-full bg-white/60 backdrop-blur-sm dark:bg-black/50">
+          <KBarAnimator className="max-w-3xl w-full sm:w-1/2 overflow-hidden rounded-lg shadow-xl border bg-slate-100 dark:bg-slate-900"
+            style={{ boxShadow: '0 16px 70px rgb(0 0 0 / 20%)' }}>
+            <KBarSearch
+              className="bg-slate-100 dark:bg-slate-900 w-full border-none px-6 py-4 text-slate-600 outline-none placeholder:text-slate-400"
+              defaultPlaceholder="검색어를 입력해주세요." // placeholder 설정
+            />
+            <div className="kbar-scrollbar pb-4 mt-2">
+              <RenderResults />
+            </div>
+          </KBarAnimator>
+        </KBarPositioner>
+      </KBarPortal>
+      {children}
+    </KBarProvider>
+  );
+}
+```
+
+검색 버튼 구현
+
+다음은 Kbar를 여는 검색 버튼을 구현한 KBarButton 컴포넌트입니다. Kbar를 열고 닫는 기능이 있습니다.
+
+```javascript:KbarButton.tsx
+'use client';
+import { cn } from '@/lib/utils';
+import { useKBar } from 'kbar';
+import { Search } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+
+interface KBarButtonProps {
+  isMobile?: boolean
+}
+
+export default function KBarButton({ isMobile = false }: KBarButtonProps) {
+  const { query } = useKBar();
+
+  return (
+    <>
+      {isMobile ?
+        <Button variant="ghost" className="w-10 px-0 flex sm:hidden" onClick={query.toggle} >
+          <span className="sr-only">Mobile search button</span>
+          <Search className="size-5" />
+        </Button>
+        :
+        <>
+          <button
+            className={cn(
+              'hidden md:flex cursor-pointer items-center rounded-lg p-1 text-xs ',
+              'bg-secondary transition-colors dark:bg-slate-800 dark:hover:bg-slate-800/70 hover:bg-slate-200/80',
+            )}
+            onClick={query.toggle}
+          >
+            <span className="sr-only">Search button</span>
+            <span className="px-3">Search...</span>
+            <div
+              className={cn(
+                'ml-auto rounded-lg px-2 py-1',
+                'bg-slate-300/80 dark:bg-slate-700 border transition-colors dark:border-neutral-800',
+              )}
+            >
+              ⌘ + K
+            </div>
+          </button>
+          <Button variant="ghost" className="w-10 px-0 flex md:hidden" onClick={query.toggle} >
+            <span className="sr-only">Mobile search button</span>
+            <Search className="size-5" />
+          </Button>
+        </>
+      }
+    </>
+  );
+}
+
+```
+
+## 결과 렌더링 컴포넌트
+
+검색 결과를 렌더링하는 RenderResults 컴포넌트를 작성합니다. 이 컴포넌트는 Kbar의 useMatches 훅을 사용하여 검색 결과를 얻고, 이를 화면에 렌더링합니다.
+
+```javascript:KbarResult.tsx
+import { KBarResults, useMatches } from "kbar";
+import { cn } from "@/lib/utils";
+
+export default function RenderResults() {
+  const { results } = useMatches();
+
+  return (
+    <KBarResults
+      items={results}
+      onRender={({ item, active }) =>
+        typeof item === 'string' ? (
+          <div className="text-slate-700 dark:text-slate-300 mx-3 py-2 text-sm">{item}</div>
+        ) : (
+          <div
+            className={cn(
+              'mx-3 flex cursor-pointer items-center gap-3 rounded-lg p-3 text-sm transition-colors',
+              active && 'bg-slate-200/70 dark:bg-slate-800',
+            )}
+          >
+            {item.icon && item.icon}
+            <div className="flex flex-col font-medium">
+              <div>{item.name}</div>
+              {item.subtitle && (
+                <span className="text-slate-700 dark:text-slate-300 text-xs font-normal">{item.subtitle}</span>
+              )}
+            </div>
+            {item.shortcut?.length && (
+              <div className="ml-auto flex gap-2">
+                {item.shortcut.map((sc) => (
+                  <kbd
+                    key={sc}
+                    className="rounded-md px-2 py-1 text-xs"
+                    style={{
+                      background: 'rgba(0 0 0 / .2)',
+                    }}
+                  >
+                    {sc}
+                  </kbd>
+                ))}
+              </div>
+            )}
+          </div>
+        )
+      }
+    />
+  )
+}
+
+```
+
+## 레이아웃에 Kbar 적용하기
+
+`layout.tsx` 파일에 Kbar 레이아웃을 적용합니다. `KbarLayout`을 추가하고 원하는 위치에 `KBarButton`을 추가하고, 검색 기능을 사용할 수 있도록 설정합니다.
+
+- KbarButton은 KbarLayout 안에 위치해야 합니다.
+
+- 알림 기능을 사용하지 않으려면 Toaster를 사용하지 않아도 됩니다.
+
+```javascript:layout.tsx
+import KbarLayout from "@/components/kbar/kbar-layout";
+import { Toaster } from "react-hot-toast";
+
+...
+
+  <KbarLayout >
+    <KBarButton />
+        <main>{children}</main>
+        <Toaster
+          toastOptions={{
+            position: "bottom-center",
+          }}
+        />
+  </KbarLayout>
+```
+
