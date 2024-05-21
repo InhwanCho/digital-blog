@@ -187,7 +187,7 @@ th {
 
 th,
 td {
-  @apply text-left py-3 px-4 border-[0.5px] border-[#B2B2B2];
+  @apply text-left py-3 px-4 border-[#B2B2B2];
 }
 
 .prose :where(thead th):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
@@ -220,19 +220,19 @@ table {
 }
 
 thead th, tbody td {
-  border-width: 1px 0 0 1px; /* 위와 왼쪽에만 보더를 적용 */
+  border-width: 0.5px 0 0 0.5px; /* 위와 왼쪽에만 보더를 적용 */
 }
 
 thead th:first-child, tbody td:first-child {
-  border-left-width: 1px; /* 첫 번째 셀의 왼쪽 보더를 유지 */
+  border-left-width: 0.5px; /* 첫 번째 셀의 왼쪽 보더를 유지 */
 }
 
 thead th:last-child, tbody td:last-child {
-  border-right-width: 1px; /* 마지막 셀의 오른쪽 보더를 유지 */
+  border-right-width: 0.5px; /* 마지막 셀의 오른쪽 보더를 유지 */
 }
 
 tbody tr:last-child td {
-  border-bottom-width: 1px; /* 마지막 행의 아래쪽 보더를 유지 */
+  border-bottom-width: 0.5px; /* 마지막 행의 아래쪽 보더를 유지 */
 }
 
 thead th:first-child {

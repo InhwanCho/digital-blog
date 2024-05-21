@@ -12,7 +12,7 @@ export default function SiteHero() {
         <h1 className="text-3xl sm:text-5xl font-black text-balance sm:pb-4">
           {siteConfig.title}
         </h1>
-        <div className="max-w-[42rem] mx-auto text-slate-800 sm:text-lg text-balance space-y-2">
+        <div className="max-w-[42rem] mx-auto text-slate-800 dark:text-slate-300 sm:text-lg text-balance space-y-2">
           <p>안녕하세요! <span className='text-blue-700/90'>지속적으로 성장하는 개발자</span> 조인환입니다.</p>
           <p>이 블로그는 개발하면서 학습한 내용을 기록하고 정리하는 공간입니다.</p>
           <p>기획부터 제작, 배포까지 모두 제 손으로 직접 만들었습니다.</p>
