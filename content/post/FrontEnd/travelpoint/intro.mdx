@@ -1,11 +1,11 @@
 ---
-title: "Travel Point - 기획부터 개발까지"
+title: "Travel Point - 기획부터 개발까지 1탄"
 
 tags:
   - travel-point
   - project
 description: "국내 여행 추천 사이트를 기획부터 개발까지 진행한 과정을 정리한 글 입니다."
-date: 2024-04-25
+date: 2024-05-28
 ---
 
 이번 프로젝트는 프론트엔드 개발자인 저와 백엔드 개발자 두 명이 함께 진행하게 되었습니다.
@@ -61,56 +61,50 @@ Sitemap은 [Relume](https://www.relume.io/ "relume")이라는 sitemap 작성을 
 
 작선한 사이트 맵은 아래와 같습니다.
 
-TODO:이미지 첨부
+<MdxImage
+  width="600"
+  alt="sitemap"
+  src="https://github-production-user-asset-6210df.s3.amazonaws.com/111936229/334398056-5d6993db-7590-4638-b23d-f22ef0bd20ea.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAVCODYLSA53PQK4ZA%2F20240528%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20240528T120855Z&X-Amz-Expires=300&X-Amz-Signature=dff7246ac1a2ab73af2154b961081568fedf6c646b205e15b7fa046c7aed7cba&X-Amz-SignedHeaders=host&actor_id=111936229&key_id=0&repo_id=780308333"
+/>
 
 ## 명세서
 
-사이트맵을 확정한 후, 요구사항 명세서와 기능 명세서를 작성할 예정이었습니다.
+사이트맵을 확정한 후, 요구사항 명세서와 기능 명세서를 작성할 예정이었습니다. 
 
-하지만 프로젝트의 규모가 크지 않아 요구사항 명세서와 기능 명세서 사이에 중복되는 내용이 많았습니다.
+하지만 프로젝트의 규모가 크지 않아 요구사항 명세서와 기능 명세서 사이에 중복되는 내용이 많았습니다. 
 
-이에 따라, 기능 명세서만을 작성하기로 결정했습니다.
+이에 따라, 기능 명세서만을 작성하기로 결정했습니다. 
 
 또한, 기능 명세서를 작성할때 기준점이 모호하였기 때문에 페이지 별로 필요한 기능을 정리해 보았습니다.
 
-기능 명세서는 아래와 같이 작성했습니다.
+사진으로는 텍스트가 흐릿하여 생략하였습니다.
 
-## 화면 설계서
 
-기능 명세서를 작성한 후 기능들을 바탕으로 화면의 대략적인 구성을 설계해 보았습니다.
+## I.A
 
-TODO : 이미지 첨부
+<MdxImage
+  width="650"
+  alt="IA"
+  src="https://github-production-user-asset-6210df.s3.amazonaws.com/111936229/334396487-5e487ced-594e-4b86-bb4c-7f36ef269633.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAVCODYLSA53PQK4ZA%2F20240528%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20240528T120749Z&X-Amz-Expires=300&X-Amz-Signature=57406e7111cf72b44fd1ad3c4e4aafc0d4a8a77c51eb280cfeb17a1410baea36&X-Amz-SignedHeaders=host&actor_id=111936229&key_id=0&repo_id=780308333"
+/>
+
+I.A, 화면 정의서를 작성하였습니다. (화면 정의서는 사진 생략)
+
+## 요구 API 요청서
+
+| API Name               | Data Type                                                                                                                                                                                                                                  | Parameters                                               |
+| ---------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | -------------------------------------------------------- |
+| **관광 데이터**        | location, title, firstimage, destinationDescription, contentId, contentTypeId, areaCode                                                                                                                                                    | areaName, count, page, filter (후기순)                   |
+| **관광지 상세 데이터** | destinationId, location, areaCode, cat1, cat2, cat3, firstImage, firstImage2, firstImage3, firstImage4, firstImage5, locationNumber, contentId, contentTypeId, title, mapX, mapY, homepage, parking, use_time, tel, destinationDescription | contentId, contentTypeId                                 |
+| **축제 데이터**        | location, title, firstimage, destinationDescription, contentId, contentTypeId, areaCode, festivalStart, festivalEnd                                                                                                                        | areaName, page, count, filter (후기순)                   |
+| **테마 데이터**        | location, title, firstimage, destinationDescription, contentId, contentTypeId, areaCode                                                                                                                                                    | areaName, page, count, filter (후기순), cat1, cat2, cat3 |
+| **주간 인기 여행지**   | location, title, firstimage, destinationDescription, contentId, contentTypeId, areaCode                                                                                                                                                    | count                                                    |
+| **주변 여행지**        | location, title, firstimage, destinationDescription, contentId, contentTypeId, areaCode                                                                                                                                                    | latitude (위도), longitude (경도), count                 |
+| **연관 여행지**        | location, title, firstimage, destinationDescription, contentId, contentTypeId, areaCode                                                                                                                                                    | cat3, count                                              |
+
 
 ## 디자인 시안
 
-TODO : 내용 작성하기
+- 모든 페이지를 제작하였으나 메인페이지만 올립니다.
 
-| 번호 | 요청 타입                                        | 데이터 개수 | 필요 데이터 타입                                                                    | 비고                           |
-| ---- | ------------------------------------------------ | ----------- | ----------------------------------------------------------------------------------- | ------------------------------ |
-| 1    | location                                         | 10개        | location, title, destinationDescription, contentId, contentTypeId,imageSrc          | -                              |
-| 2    | locationNumber === '부산'                        | 10개        | location, title, destinationDescription, contentId, contentTypeId                   | -                              |
-| 3    | locationNumber === (전체-세종 제외 17개)         | 50개        | location, title, destinationDescription, contentId, contentTypeId                   | 전체, 후기순                   |
-| 4    | 테마 휴양 cat1-A02, cat2-A0202                   | 8개         | location, title, destinationDescription, contentId, contentTypeId, cat1, cat2, cat3 | -                              |
-| 5    | 테마 역사 cat1-A02, cat2-A0201                   | 8개         | location, title, destinationDescription, contentId, contentTypeId, cat1, cat2, cat3 | -                              |
-| 6    | 테마 자연 cat1-A01, cat2-A0101                   | 50개        | location, title, destinationDescription, contentId, contentTypeId                   | 전체, 후기순                   |
-| 7    | 테마 휴양 cat1-A02, cat2-A0202                   | 50개        | location, title, destinationDescription, contentId, contentTypeId                   | 전체, 후기순                   |
-| 8    | 테마 역사 cat1-A02, cat2-A0201                   | 50개        | location, title, destinationDescription, contentId, contentTypeId                   | 전체, 후기순                   |
-| 9    | 테마 체험 cat1-A02, cat2-A0203                   | 50개        | location, title, destinationDescription, contentId, contentTypeId                   | 전체, 후기순                   |
-| 10   | 테마 엑티비티 cat1-A03, cat2-0303 & 0304         | 50개        | location, title, destinationDescription, contentId, contentTypeId                   | 전체, 후기순                   |
-| 11   | 축제 cat1-A02, cat2-A0207, cat3-A02070100        | 16개        | location, title, destinationDescription, contentId, contentTypeId, 시작일, 종료일   | -                              |
-| 12   | 축제 (전체) cat1-A02, cat2-A0207, cat3-A02070100 | 65개        | location, title, destinationDescription, contentId, contentTypeId, 시작일, 종료일   | 전체, 진행중, 진행예정, 후기순 |
-| 13   | 주간 인기 여행지                                 | 16개        | location, title, destinationDescription, contentId, contentTypeId, 시작일, 종료일   | 후기 평점이나 개수 높은 데이터 |
-| 14   | 주변 여행지                                      | 16개        | location, title, destinationDescription, contentId, contentTypeId                   | 위경도 ±0.1 범위 내 데이터     |
-| 15   | 연관 여행지                                      | 16개        | location, title, destinationDescription, contentId, contentTypeId                   | cat3가 일치하는 여행지 데이터  |
-| 16   | 상세 페이지 여행지                               | 1개         | 모든 필요 데이터 타입                                                               | -                              |
-
-
-| API Name | Data Type | Parameters |
-| --- | --- | --- |
-| **관광 데이터** | location, title, firstimage, destinationDescription, contentId, contentTypeId, areaCode | areaName, count, page, filter (후기순) |
-| **관광지 상세 데이터** | destinationId, location, areaCode, cat1, cat2, cat3, firstImage, firstImage2, firstImage3, firstImage4, firstImage5, locationNumber, contentId, contentTypeId, title, mapX, mapY, homepage, parking, use_time, tel, destinationDescription | contentId, contentTypeId |
-| **축제 데이터** | location, title, firstimage, destinationDescription, contentId, contentTypeId, areaCode, festivalStart, festivalEnd | areaName, page, count, filter (후기순) |
-| **테마 데이터** | location, title, firstimage, destinationDescription, contentId, contentTypeId, areaCode | areaName, page, count, filter (후기순), cat1, cat2, cat3 |
-| **주간 인기 여행지** | location, title, firstimage, destinationDescription, contentId, contentTypeId, areaCode | count |
-| **주변 여행지** | location, title, firstimage, destinationDescription, contentId, contentTypeId, areaCode | latitude (위도), longitude (경도), count |
-| **연관 여행지** | location, title, firstimage, destinationDescription, contentId, contentTypeId, areaCode | cat3, count |
+<MdxImage width='900' alt='메인페이지 디자인시안' src='https://github-production-user-asset-6210df.s3.amazonaws.com/111936229/334399611-1f97700b-f3ec-4bd6-8e76-e706e8c09642.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAVCODYLSA53PQK4ZA%2F20240528%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20240528T120806Z&X-Amz-Expires=300&X-Amz-Signature=0b52309fb53eea9ebb97cd5fd034604afdd58c42765ff364bd0ae4401d3ca217&X-Amz-SignedHeaders=host&actor_id=111936229&key_id=0&repo_id=780308333'/>

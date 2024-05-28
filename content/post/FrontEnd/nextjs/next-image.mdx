@@ -1,0 +1,217 @@
+---
+title: 'Next.js Image 컴포넌트'
+tags:
+  - nextjs
+  - 이미지 최적화
+  - 웹 퍼포먼스
+description: 'Next.js의 Image 컴포넌트를 사용하여 이미지 최적화 및 다양한 속성 활용 방법을 알아봅니다.'
+date: 2024-05-27
+---
+
+Next.js의 `Image 컴포넌트`는 이미지 최적화 및 성능 향상을 위해 강력한 기능을 제공합니다. 
+
+이 글에서는 Image 컴포넌트의 기본 사용법과 다양한 속성에 대해 설명하겠습니다.
+
+## 기본 사용법
+
+Next.js에서 Image 컴포넌트를 사용하려면 `next/image`에서 가져와야 합니다. 
+
+기본적인 사용 예시는 다음과 같습니다:
+
+```tsx
+import Image from 'next/image'
+
+export default function Profile() {
+  return (
+    <Image
+      src="/profile.png"
+      alt="Profile Picture"
+      width={500}
+      height={500}
+    />
+  )
+}
+```
+
+## 필수 속성
+
+`src`: 이미지의 경로를 지정합니다. URL 문자열 형태로 입력해야 합니다.
+`width`: 이미지의 너비를 지정합니다. 픽셀 단위의 정수로 입력합니다.
+`height`: 이미지의 높이를 지정합니다. 픽셀 단위의 정수로 입력합니다.
+`alt`: 이미지의 대체 텍스트를 지정합니다. 접근성을 위해 필수적으로 작성해야 합니다.
+
+## 선택 속성
+
+### loader
+
+loader 속성을 사용하면 이미지 URL을 생성하는 방법을 커스터마이징할 수 있습니다. - next.config에서 loaderFile을 설정해야됩니다.
+
+주로 CDN(Content Delivery Network)이나 사용자 정의 이미지 최적화 서버를 사용할 때 유용합니다. 로더 함수는 이미지의 src, width, quality를 입력으로 받아 URL을 반환합니다.
+
+```javascript:page.tsx
+import Image from 'next/image'
+
+const imageLoader = ({ src, width, quality }) => {
+  return `https://example.com/${src}?w=${width}&q=${quality || 75}`
+}
+
+export default function CustomLoaderImage() {
+  return (
+    <Image
+      loader={imageLoader}
+      src="me.png"
+      alt="Picture of the author"
+      width={500}
+      height={500}
+    />
+  )
+}
+```
+
+
+
+- 일반적인 width, sizes, quality 옵션을 사용하는 경우와의 차이는 아래와 같습니다.
+
+width, sizes, quality 옵션을 직접 사용하는 경우, Next.js의 기본 이미지 최적화 로직이 적용됩니다. 이 경우 Next.js는 다음과 같이 동작합니다:
+
+width: 지정된 너비에 맞춰 이미지를 자동으로 최적화합니다.
+sizes: 반응형 이미지를 위해 여러 크기의 이미지를 미리 생성하고, 브라우저가 적절한 크기의 이미지를 선택하도록 돕습니다.
+quality: 이미지의 품질을 조절하여 최적화된 파일 크기를 생성합니다.
+
+
+### fill
+
+fill 속성은 부모 요소의 크기에 맞춰 이미지를 자동으로 채웁니다. 부모 요소에는 position: relative, position: fixed 또는 position: absolute 스타일이 적용되어야 합니다.
+
+```javascript:page.tsx
+export default function FillImage() {
+  return (
+    <div style={{ position: 'relative', width: '100%', height: '500px' }}>
+      <Image
+        src="/example.png"
+        alt="Example Image"
+        fill
+        style={{ objectFit: 'cover' }}
+      />
+    </div>
+  )
+}
+```
+
+### sizes
+sizes 속성은 반응형 이미지의 크기를 지정합니다. 이 속성은 성능 최적화에 중요한 역할을 합니다.
+
+```javascript:page.tsx
+<Image
+  src="/example.png"
+  alt="Responsive Image"
+  fill
+  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+/>
+```
+
+### quality
+
+quality 속성은 이미지의 품질을 조절합니다. 1에서 100 사이의 정수로 입력하며, 기본값은 75입니다.
+
+```javascript:page.tsx
+<Image
+      src="/example.png"
+      alt="High Quality Image"
+      width={500}
+      height={500}
+      quality={90}
+/>
+```
+
+### priority
+
+priority 속성은 중요도가 높은 이미지를 지정하여 미리 로드할 수 있습니다. 주로 Largest Contentful Paint (LCP) 요소로 감지된 이미지에 사용합니다.
+
+```javascript:page.tsx
+<Image
+      src="/hero.png"
+      alt="Hero Image"
+      width={1200}
+      height={800}
+      priority
+/>
+```
+
+placeholder
+placeholder 속성은 이미지 로드 중에 보여줄 플레이스홀더를 지정합니다. 
+
+`blur`, `empty`, `data:image/...` 형식의 값을 가질 수 있습니다.
+
+```javascript:page.tsx
+<Image
+      src="/example.png"
+      alt="Blurred Placeholder Image"
+      width={500}
+      height={500}
+      placeholder="blur"
+      blurDataURL="data:image/jpeg;base64,..."
+/>
+```
+
+---
+
+## Next.js Image 컴포넌트 추가 설정
+
+Next.js의 Image 컴포넌트는 기본적인 사용법 외에도 다양한 설정을 통해 더 나은 성능과 보안을 제공할 수 있습니다. 
+
+`next.config.js` 파일을 통해 Image 컴포넌트를 구성하는 방법과 고급 설정 옵션에 대해 살펴보겠습니다.
+
+## 기본 설정
+
+Next.js에서 외부 이미지를 사용하는 경우, 보안을 위해 `next.config.ts` 파일에 외부 이미지의 도메인을 명시해야 합니다. 
+
+이를 통해 허용된 도메인에서만 이미지를 불러올 수 있습니다.
+
+### remotePatterns 설정
+
+`remotePatterns` 속성을 사용하면 특정 프로토콜, 호스트명, 경로 패턴에 맞는 외부 이미지를 허용할 수 있습니다.
+
+#### 예시 1: 특정 경로 패턴 허용
+
+```javascript
+// next.config.js
+module.exports = {
+  images: {
+    remotePatterns: [
+      // protocol, hostname만 필수 설정입니다.
+      {
+        protocol: 'https',
+        hostname: 'example.com',
+        port: '',
+        pathname: '/account123/**',
+      },
+    ],
+  },
+}
+```
+
+### deviceSizes 설정
+
+imageSizes 설정과 deviceSizes속성을 사용하여 기기 너비의 중단점을 지정할 수 있습니다.
+
+```javascript:next.config.js
+module.exports = {
+  images: {
+    imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
+    deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048, 3840],
+  },
+}
+```
+
+### formats 설정
+
+브라우저에서 지원하는 이미지 형식을 자동으로 감지하려면 formats 속성을 설정할 수 있습니다.
+
+```javascript:next.config.js
+module.exports = {
+  images: {
+    formats: ['image/avif', 'image/webp'],
+  },
+}
+```
