@@ -2,7 +2,6 @@ import { posts } from "#site/content";
 import { PostItem } from "@/components/post-item";
 import { siteConfig } from "@/config/site";
 import { getAllTags, getPostsByTagSlug, sortTagsByCount } from "@/lib/utils";
-import { slug } from "github-slugger";
 import { Metadata } from "next";
 
 interface TagPageProps {
