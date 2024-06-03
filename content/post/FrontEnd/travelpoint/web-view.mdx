@@ -1,0 +1,24 @@
+---
+title: "Travel Point - 기획부터 개발까지 3"
+
+tags:
+  - travel-point
+  - project
+description: "국내 여행 추천 사이트를 기획부터 개발까지 진행한 과정을 정리한 글입니다."
+date: 2024-06-03
+---
+
+[expo docs](https://docs.expo.dev/ 'expo docs')
+
+## 설치
+
+```bash
+# expo project 설치
+npx create-expo-app@latest
+
+# 실행
+npx expo start
+
+# 만약 limit 에러 날 경우. 한도 추가(재부팅 시 초기화 - 필요 시 .zshrc 수정)
+sudo launchctl limit maxfiles 524288 524288 && ulimit -n 524288
+```

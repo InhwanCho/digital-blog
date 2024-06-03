@@ -1,0 +1,131 @@
+---
+title: "Expo의 폴더 구조 자세히 살펴보기"
+tags:
+  - expo
+description: "Expo 프로젝트의 폴더 구조 및 각 폴더의 역할을 상세히 설명합니다."
+date: 2024-06-02
+---
+
+[expo docs](https://docs.expo.dev/ 'expo docs')
+
+## expo 설치
+
+```bash
+# expo project 설치
+npx create-expo-app@latest
+
+# 실행
+npx expo start
+
+# 만약 limit 에러 날 경우. 한도 추가(재부팅 시 초기화 - 필요 시 .zshrc 수정)
+sudo launchctl limit maxfiles 524288 524288 && ulimit -n 524288
+```
+
+## 폴더 구조
+
+```text
+my-expo-project/
+├── .expo/
+├── .expo-shared/
+├── assets/
+│   └── ...
+├── node_modules/
+├── .gitignore
+├── app/
+│   ├── _layout.js
+│   ├── index.js
+│   └── ... (더 많은 페이지 및 구성 요소)
+├── app.json
+├── babel.config.js
+├── package.json
+├── README.md
+└── package-lock.json
+```
+
+### .expo/
+
+Expo CLI에 의해 생성된 디렉토리로, 개발 서버와 관련된 설정 및 캐시 파일들이 저장됩니다. 일반적으로 이 디렉토리를 직접 수정할 필요는 없습니다.
+
+### .expo-shared/
+
+Expo 프로젝트를 공유하거나 협업할 때 사용되는 설정 파일들이 저장됩니다. 이는 주로 Expo Go 앱을 사용할 때 필요합니다.
+
+### app.json
+
+Expo 프로젝트의 구성 파일입니다. 앱의 이름, 아이콘, 버전, 플랫폼별 설정(iOS, Android) 등을 정의합니다. 앱의 전반적인 설정을 관리하는 중요한 파일입니다.
+
+```json
+{
+  "expo": {
+    "name": "MyApp",  // 애플리케이션의 이름
+    "slug": "myapp",  // 애플리케이션의 슬러그, URL 경로나 앱 스토어에 표시될 이름
+    "version": "1.0.0",  // 애플리케이션의 버전
+    "orientation": "portrait",  // 앱의 기본 화면 방향 (portrait, landscape 등)
+    "icon": "./assets/icon.png",  // 앱 아이콘 경로
+    "splash": {  // 스플래시 화면 설정
+      "image": "./assets/splash.png",  // 스플래시 이미지 경로
+      "resizeMode": "contain",  // 스플래시 이미지 리사이즈 모드 (contain, cover, stretch 등)
+      "backgroundColor": "#ffffff"  // 스플래시 화면 배경색
+    },
+    "updates": {
+      "fallbackToCacheTimeout": 0  // 새 업데이트가 없을 때 캐시된 콘텐츠로 폴백할 시간 (밀리초)
+    },
+    "assetBundlePatterns": [
+      "**/*"  // 애셋 번들링 패턴 (모든 파일 포함)
+    ],
+    "ios": {
+      "supportsTablet": true  // iOS에서 태블릿 지원 여부
+    },
+    "android": {
+      "adaptiveIcon": {  // 안드로이드 적응형 아이콘 설정
+        "foregroundImage": "./assets/adaptive-icon.png",  // 전경 아이콘 이미지 경로
+        "backgroundColor": "#FFFFFF"  // 배경색
+      }
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"  // 웹 파비콘 경로
+    }
+  }
+}
+```
+
+### app/
+
+Expo 라우터를 사용한 애플리케이션의 페이지 및 레이아웃 파일들이 저장되는 폴더입니다. 
+
+이 폴더 내에서 앱의 구조와 네비게이션을 정의할 수 있습니다.
+
+```text
+app/
+├── _layout.tsx          # 앱의 공통 레이아웃을 정의하는 파일
+├── index.tsx            # 기본 페이지를 정의하는 파일
+├── (admin)
+│   ├── _layout.tsx      # 관리자 관련 페이지의 공통 레이아웃을 정의하는 파일
+│   ├── index.tsx        # 관리자 대시보드 페이지
+│   ├── users/
+│   │   ├── _layout.tsx  # 사용자 관리 페이지의 공통 레이아웃을 정의하는 파일
+│   │   └── index.tsx    # 사용자 목록 페이지
+│   └── settings/
+│       └── index.tsx    # 관리자 설정 페이지
+├── settings/
+│   └── index.tsx        # 설정 페이지를 정의하는 파일
+└── profile/
+    ├── _layout.tsx      # 프로필 관련 페이지의 공통 레이아웃
+    └── index.tsx        # 프로필 페이지를 정의하는 파일
+```
+
+- 폴더에 괄호
+
+|폴더 유형|	설명	|예시|
+|---|---|---|
+|괄호가 없는 폴더	|페이지를 정의하는 폴더입니다.| 이 폴더 내의 index.tsx 파일은 해당 폴더의 기본 페이지로 사용됩니다.	|settings/index.tsx - 설정 페이지|
+|괄호가 들어간 폴더|	공통 레이아웃이나 특정 설정을 적용하는 폴더입니다.| 이 폴더 내의 _layout.tsx 파일은 하위 페이지들에 공통 레이아웃을 적용합니다.|	profile/_layout.tsx - 프로필 관련 페이지의 공통 레이아웃|
+
+ 
+- +html, +not-found
+
+expo에서는 `+html.tsx`와 `+not-found.tsx` 같은 파일들이 기본적으로 필요하지 않습니다. 
+
+Expo는 React Native 기반의 프로젝트로, 웹과 달리 HTML 구조나 404 페이지를 별도로 관리하지 않습니다. 
+
+따라서, 이런 파일들이 없다고 해서 프로젝트에 문제가 생기지 않습니다.(삭제해도 됩니다.)
