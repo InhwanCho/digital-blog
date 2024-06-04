@@ -1,5 +1,5 @@
 ---
-title: "Travel Point - 기획부터 개발까지 3"
+title: "Travel Point - 기획부터 개발까지 3 - 웹뷰로 apk파일 배포"
 
 tags:
   - travel-point
@@ -13,12 +13,162 @@ date: 2024-06-03
 ## 설치
 
 ```bash
-# expo project 설치
+# Expo 프로젝트 설치
 npx create-expo-app@latest
 
-# 실행
+# 프로젝트 실행
 npx expo start
 
-# 만약 limit 에러 날 경우. 한도 추가(재부팅 시 초기화 - 필요 시 .zshrc 수정)
+# 파일 한도 에러 발생 시 한도 추가 (재부팅 시 초기화 - 필요 시 .zshrc 수정)
 sudo launchctl limit maxfiles 524288 524288 && ulimit -n 524288
+
+# 필수 패키지 설치
+npx expo install react-native-webview
+npx expo install expo-status-bar
+expo install react-native-safe-area-context
+
+# Android 빌드
+eas build --platform android --profile preview
+```
+
+## _layout.tsx
+
+```javascript:app/_layout.tsx
+import React, { useEffect } from 'react';
+import { StyleSheet } from 'react-native';
+import { WebView } from 'react-native-webview';
+import { StatusBar } from 'expo-status-bar';
+import { useFonts } from 'expo-font';
+import * as SplashScreen from 'expo-splash-screen';
+import { SafeAreaView } from 'react-native-safe-area-context';
+
+// 앱의 모든 에셋이 로딩되기 전에 스플래시 화면이 자동으로 숨겨지는 것을 방지합니다.
+SplashScreen.preventAutoHideAsync();
+
+export default function RootLayout() {
+  // 'useFonts' 훅을 사용하여 커스텀 폰트를 로드합니다.
+  const [loaded] = useFonts({
+    SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
+  });
+
+  // 'loaded' 상태가 변경될 때마다 실행되는 효과 훅을 설정합니다.
+  useEffect(() => {
+    // 폰트가 로드되었을 때 스플래시 화면을 숨깁니다.
+    if (loaded) {
+      SplashScreen.hideAsync();
+    }
+  }, [loaded]);
+
+  // 폰트가 로드되지 않았다면 아무 것도 렌더링하지 않습니다.
+  if (!loaded) {
+    return null;
+  }
+
+  return (
+    // 'SafeAreaView'를 사용하여 화면 상단 노치나 하단 홈 버튼 영역을 침범하지 않도록 합니다.
+    <SafeAreaView style={styles.container}>
+      {/* 상태 표시줄 스타일을 설정합니다. */}
+      <StatusBar style="auto" />
+      {/* 웹뷰를 사용하여 특정 URL을 로드합니다. */}
+      <WebView source={{ uri: 'https://travel-point-umber.vercel.app/' }} style={styles.webview} />
+    </SafeAreaView>
+  );
+}
+
+// 스타일시트를 사용하여 스타일을 정의합니다.
+const styles = StyleSheet.create({
+  // 컨테이너 스타일을 설정합니다.
+  container: {
+    flex: 1, // 컨테이너가 화면 전체를 차지하도록 합니다.
+    backgroundColor: '#fff', // 배경색을 흰색으로 설정합니다.
+  },
+  // 웹뷰 스타일을 설정합니다.
+  webview: {
+    flex: 1, // 웹뷰가 컨테이너 전체를 차지하도록 합니다.
+  },
+});
+```
+
+- `SafeAreaView`를 이용하여 휴대폰 기종에 따른 padding 설정을 자동으로 합니다.
+
+- 제 휴대폰의 경우 윗부분 노치 부분에 네비게이션바 이미지가 걸리기 때문에 이를 `SafeAreaView`를 통해 해결했습니다.
+
+- `StatusBar`는 상태 표시줄 스타일을 설정합니다.
+
+- `WebView`를 이용하여 컨텐츠를 Next.js로 만든 앱을 불러오는 형식을 취했습니다.
+
+## app.json
+
+- 앱의 환경설정 파일로, `assets` 폴더의 파일을 변경하고 JSON 파일을 아래와 같이 수정했습니다.
+
+
+```json:app.json
+{
+  "expo": {
+    "name": "Travel-Point",
+    "slug": "travel-point",
+    "version": "1.0.0",
+    "scheme": "travel-point",
+    "platforms": [
+      "ios",
+      "android",
+      "web"
+    ],
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.inhwancho.travelpoint"
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/images/android-chrome-512x512.png",
+        "backgroundColor": "#FFFFFF"
+      },
+      "package": "com.inhwancho.travelpoint"
+    },
+    "web": {
+      "favicon": "./assets/images/apple-touch-icon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "2f1a1775-7cf1-40d8-befe-a7d9be153dc0"
+      }
+    }
+  }
+}
+```
+
+## eas.json
+
+- eas 배포 환경 설정 파일은 아래와 같이 설정했습니다.
+
+```json:eas.json
+{
+  "build": {
+    "development": {
+      "developmentClient": true,
+      "distribution": "internal"
+    },
+    "preview": {
+      "distribution": "internal",
+      "android": {
+        "buildType": "apk"
+      },
+      "ios": {
+        "simulator": true
+      }
+    },
+    "production": {
+      "ios": {
+        "simulator": false,
+        "image": "latest"
+      },
+      "android": {
+        "buildType": "app-bundle"
+      }
+    }
+  }
+}
 ```
