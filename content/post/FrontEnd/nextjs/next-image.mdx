@@ -1,35 +1,34 @@
 ---
-title: 'Next.js Image 컴포넌트'
+title: "Next.js Image 컴포넌트"
 tags:
   - nextjs
   - 이미지 최적화
-  - 웹 퍼포먼스
-description: 'Next.js의 Image 컴포넌트를 사용하여 이미지 최적화 및 다양한 속성 활용 방법을 알아봅니다.'
+
+description: "Next.js의 Image 컴포넌트를 사용하여 이미지 최적화 및 다양한 속성 활용 방법을 알아봅니다."
 date: 2024-05-27
 ---
 
-Next.js의 `Image 컴포넌트`는 이미지 최적화 및 성능 향상을 위해 강력한 기능을 제공합니다. 
+[Nextjs 공식문서](https://nextjs.org/docs/app/building-your-application/optimizing/images "docs")
+
+Next.js의 `Image 컴포넌트`는 이미지 최적화 및 성능 향상을 위해 강력한 기능을 제공합니다.
 
 이 글에서는 Image 컴포넌트의 기본 사용법과 다양한 속성에 대해 설명하겠습니다.
 
+- 단, Image 컴포넌트는 강력한 최적화 기능을 지원해주나, 사용량이 많아지면 비용이 많이 들기 때문에, 다른 방법(ex- `cloudflare`로 이미지 최적화)으로 최적화를 하는걸 추천드립니다.
+
 ## 기본 사용법
 
-Next.js에서 Image 컴포넌트를 사용하려면 `next/image`에서 가져와야 합니다. 
+Next.js에서 Image 컴포넌트를 사용하려면 `next/image`에서 가져와야 합니다.
 
 기본적인 사용 예시는 다음과 같습니다:
 
 ```tsx
-import Image from 'next/image'
+import Image from "next/image";
 
 export default function Profile() {
   return (
-    <Image
-      src="/profile.png"
-      alt="Profile Picture"
-      width={500}
-      height={500}
-    />
-  )
+    <Image src="/profile.png" alt="Profile Picture" width={500} height={500} />
+  );
 }
 ```
 
@@ -68,8 +67,6 @@ export default function CustomLoaderImage() {
 }
 ```
 
-
-
 - 일반적인 width, sizes, quality 옵션을 사용하는 경우와의 차이는 아래와 같습니다.
 
 width, sizes, quality 옵션을 직접 사용하는 경우, Next.js의 기본 이미지 최적화 로직이 적용됩니다. 이 경우 Next.js는 다음과 같이 동작합니다:
@@ -77,7 +74,6 @@ width, sizes, quality 옵션을 직접 사용하는 경우, Next.js의 기본 �
 width: 지정된 너비에 맞춰 이미지를 자동으로 최적화합니다.
 sizes: 반응형 이미지를 위해 여러 크기의 이미지를 미리 생성하고, 브라우저가 적절한 크기의 이미지를 선택하도록 돕습니다.
 quality: 이미지의 품질을 조절하여 최적화된 파일 크기를 생성합니다.
-
 
 ### fill
 
@@ -99,6 +95,7 @@ export default function FillImage() {
 ```
 
 ### sizes
+
 sizes 속성은 반응형 이미지의 크기를 지정합니다. 이 속성은 성능 최적화에 중요한 역할을 합니다.
 
 ```javascript:page.tsx
@@ -139,7 +136,7 @@ priority 속성은 중요도가 높은 이미지를 지정하여 미리 로드�
 ```
 
 placeholder
-placeholder 속성은 이미지 로드 중에 보여줄 플레이스홀더를 지정합니다. 
+placeholder 속성은 이미지 로드 중에 보여줄 플레이스홀더를 지정합니다.
 
 `blur`, `empty`, `data:image/...` 형식의 값을 가질 수 있습니다.
 
@@ -158,13 +155,13 @@ placeholder 속성은 이미지 로드 중에 보여줄 플레이스홀더를 �
 
 ## Next.js Image 컴포넌트 추가 설정
 
-Next.js의 Image 컴포넌트는 기본적인 사용법 외에도 다양한 설정을 통해 더 나은 성능과 보안을 제공할 수 있습니다. 
+Next.js의 Image 컴포넌트는 기본적인 사용법 외에도 다양한 설정을 통해 더 나은 성능과 보안을 제공할 수 있습니다.
 
 `next.config.js` 파일을 통해 Image 컴포넌트를 구성하는 방법과 고급 설정 옵션에 대해 살펴보겠습니다.
 
 ## 기본 설정
 
-Next.js에서 외부 이미지를 사용하는 경우, 보안을 위해 `next.config.ts` 파일에 외부 이미지의 도메인을 명시해야 합니다. 
+Next.js에서 외부 이미지를 사용하는 경우, 보안을 위해 `next.config.ts` 파일에 외부 이미지의 도메인을 명시해야 합니다.
 
 이를 통해 허용된 도메인에서만 이미지를 불러올 수 있습니다.
 
@@ -181,14 +178,14 @@ module.exports = {
     remotePatterns: [
       // protocol, hostname만 필수 설정입니다.
       {
-        protocol: 'https',
-        hostname: 'example.com',
-        port: '',
-        pathname: '/account123/**',
+        protocol: "https",
+        hostname: "example.com",
+        port: "",
+        pathname: "/account123/**",
       },
     ],
   },
-}
+};
 ```
 
 ### deviceSizes 설정
@@ -204,6 +201,31 @@ module.exports = {
 }
 ```
 
+### placeholder
+
+이미지 렌더링이 로딩 중일때의 이미지를 표시하고 싶다면, placeholder, blurDataURL을 사용할 수 있습니다.
+
+단, `blurDataURL`은 base64의 data(web type)으로 변환한 값을 입력하셔야 됩니다.
+
+```javascript
+import Image from "next/image";
+import profilePic from "./me.png";
+
+export default function Page() {
+  return (
+    <Image
+      src={profilePic}
+      alt="Picture of the author"
+      width={500}
+      height={500}
+      blurDataURL="data:..........." 
+      placeholder="blur" // Optional blur-up while loading
+    />
+  );
+}
+```
+
+
 ### formats 설정
 
 브라우저에서 지원하는 이미지 형식을 자동으로 감지하려면 formats 속성을 설정할 수 있습니다.
@@ -215,3 +237,4 @@ module.exports = {
   },
 }
 ```
+

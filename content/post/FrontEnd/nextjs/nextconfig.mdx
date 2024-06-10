@@ -1,61 +1,147 @@
 ---
-title: 'Nextjs config'
-
+title: "Next.js Configuration: next.config.mjs"
 tags:
   - nextjs
+  - configuration
 
-date: 2023-12-31
+date: 2024-06-10
 ---
 
-## redirects
+`next.config.mjs`는 Next.js 애플리케이션의 설정 파일로, 빌드 및 런타임 동작을 커스터마이즈할 수 있습니다. Next.js 14 버전에서는 다양한 기능이 포함되어 있습니다. 이번 글에서는 주요 기능 및 설정 옵션들에 대해 자세히 살펴보겠습니다.
 
-fetch 주소에 API_KEY가 있을때 숨길때는 rewrites를 사용해서 숨길 수 있습니다.
+## 주요 기능 및 설정 옵션들
 
-nextjs root 폴더에 `next.config.js` 파일이 있습니다.
+### Custom Webpack Config
 
-이 파일을 설정하면 됩니다.
+Webpack 설정을 확장하거나 수정할 수 있습니다.
 
-```js:next.config.js
-const nextConfig = {
-  reactStrictMode: true,
-  async redirects(){
-      return [
-        {
-          source: '/old-one/:path*',
-          destination:'/new-one/path*',
-          permanent:false,
-        },
-      ]
-    },
-  async rewrites(){
-    return [
-      {
-        source:'api/api-key',
-        destination:`https://api.newmovies.com/${API_KEY}`,
-      }
-    ]
+```javascript:next.config.mjs
+export default {
+  webpack(config, options) {
+    // custom webpack configurations
+    return config;
   }
-}
+};
 ```
 
-`redirects()`는 단순히 주소를 redirect해주고,
-`rewrites()`는 주소는 source 그대로이지만 실제로는 destination을 실행합니다.
+예를 들어, 특정 파일 형식을 처리하기 위한 로더를 추가할 수 있습니다.
 
-## 외부의 이미지를 추가할때
+```javascript:next.config.mjs
+export default {
+  webpack(config, options) {
+    config.module.rules.push({
+      test: /\.mdx$/,
+      use: [
+        options.defaultLoaders.babel,
+        '@mdx-js/loader'
+      ]
+    });
 
-허용된 주소를 아래와 같이 추가해줘야됩니다.
+    return config;
+  }
+};
+```
 
-```config:next.config.mjs
-const nextConfig = {
-  reactStrictMode: true,
-  images: {
-    remotePatterns: [
+### 다국어 지원
+
+- Internationalization (i18n)
+
+이 설정을 통해 다양한 언어로 웹사이트를 제공할 수 있으며, Next.js는 언어별 경로를 자동으로 처리해줍니다.
+
+```javascript:next.config.mjs
+export default {
+  i18n: {
+    locales: ['en', 'fr', 'de'],
+    defaultLocale: 'en',
+  }
+};
+```
+
+### Redirects
+
+URL 리다이렉트를 설정할 수 있습니다.
+
+리다이렉트는 사용자가 특정 URL로 접근할 때 다른 URL로 이동시키는 데 사용됩니다.
+
+```javascript:next.config.mjs
+export default {
+  async redirects() {
+    return [
       {
-        protocol: "https",
-        hostname: "imagedelivery.net",
-        pathname: "**",
+        source: '/old-url',
+        destination: '/new-url',
+        permanent: true,
       },
-    ],
-  },
+    ];
+  }
+};
+```
+
+### Rewrites
+
+URL 재작성 설정.
+
+리라이트는 URL을 변경하지 않고 내부적으로 다른 경로로 연결합니다.
+
+```javascript:next.config.mjs
+export default {
+  async rewrites() {
+    return [
+      {
+        source: '/about',
+        destination: '/about-us',
+      },
+    ];
+  }
+};
+```
+
+### Headers
+
+커스텀 HTTP 헤더 설정.
+
+특정 경로에 대해 HTTP 헤더를 추가할 수 있습니다.
+
+```javascript:next.config.mjs
+export default {
+  async headers() {
+    return [
+      {
+        source: '/(.*)',
+        headers: [
+          {
+            key: 'X-Custom-Header',
+            value: 'my custom header value',
+          },
+        ],
+      },
+    ];
+  }
+};
+```
+
+### Image Optimization
+
+이미지 최적화 설정.
+
+```javascript:next.config.mjs
+export default {
+  images: {
+    domains: ['example.com'],
+  }
+};
+```
+
+### React Strict Mode
+
+React의 엄격 모드를 활성화하여 잠재적인 문제를 조기에 발견합니다.
+
+- 기본값은 true이며, 개발모드에서만 실핼되며, console.log()가 두 번씩 나오는 원인입니다.
+
+- false로 설정 시 console.log()가 1번만 나오나, 디버깅에 불리하여 추천드리진 않습니다.
+
+```javascript:next.config.mjs
+export default {
+  reactStrictMode: true,
 };
 ```

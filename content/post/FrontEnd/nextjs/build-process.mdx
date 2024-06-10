@@ -1,0 +1,105 @@
+---
+title: 'Next.js 빌드 과정과 Webpack, Babel'
+
+tags:
+  - nextjs
+  - webpack
+  - babel
+  - mjs
+description: 'Next.js 빌드 과정과 Webpack, Babel, mjs vs js 파일에 대해 설명하겠습니다.'
+date: 2024-06-10
+---
+
+Next.js의 빌드 과정과 함께 Webpack 및 Babel이 어떻게 통합되어 사용되는지 설명합니다.
+
+## Next.js 빌드 과정
+
+Next.js의 빌드 과정은 여러 단계로 이루어지며, 각 단계는 애플리케이션의 성능 최적화와 개발자 편의성을 위해 중요합니다. 
+
+### 1. Dependency Resolution
+
+Next.js 프로젝트를 시작할 때, `package.json` 파일에 정의된 모든 종속성을 설치합니다. 이는 일반적으로 `npm install` 명령어를 통해 이루어집니다.
+
+### 2. Compilation
+
+TypeScript 및 최신 JavaScript 코드는 Babel을 통해 구형 브라우저에서도 호환 가능하도록 컴파일됩니다. 이는 코드의 호환성을 유지하면서 최신 언어 기능을 사용할 수 있게 합니다.
+
+### 3. Webpack Bundling
+
+Next.js는 Webpack을 사용하여 애플리케이션의 코드와 자산을 번들링합니다. 
+
+이 과정에서 다양한 파일 형식(CSS, 이미지 등)을 처리하기 위해 설정된 로더와 플러그인을 사용합니다.
+
+- **Entry Points**: Next.js는 파일 시스템 기반 라우팅(app)을 사용하여 페이지 엔트리 포인트를 자동으로 설정합니다.
+- **Loaders & Plugins**: `babel-loader`, `css-loader` 등 다양한 로더와 `HtmlWebpackPlugin`과 같은 플러그인을 사용하여 파일을 처리하고 번들링합니다.
+
+### 4. Optimizations
+
+Next.js는 코드 스플리팅, 트리 쉐이킹, 미니파잉(minifying) 등을 통해 번들 크기를 줄이고 성능을 최적화합니다. 
+
+이를 통해 사용자에게 더 빠른 로딩 속도를 제공합니다.
+
+### 5. Static Generation (SSG)
+
+정적 사이트 생성(Static Site Generation, SSG)을 통해 빌드 시 HTML 파일을 사전 렌더링합니다. 
+
+이는 성능과 SEO를 향상시키는 중요한 단계입니다.
+
+### 6. Server-Side Rendering (SSR)
+
+SSR을 사용하여 서버에서 페이지를 렌더링합니다. 이는 초기 로딩 시간을 줄이고 SEO를 개선하는 데 도움이 됩니다.
+
+### 7. Output
+
+최종 빌드 결과물은 `.next` 디렉토리에 생성됩니다. 여기에는 정적 파일, 번들된 코드, 프리렌더된 페이지 등이 포함됩니다.
+
+### 8. Deployment
+
+Next.js 애플리케이션은 Vercel과 같은 호스팅 서비스에 배포되어 라이브로 제공됩니다. 
+
+`next build` 명령어를 통해 빌드하고, `next start`를 통해 프로덕션 모드로 애플리케이션을 시작할 수 있습니다.
+
+## Webpack
+
+Webpack은 모듈 번들러로, Next.js의 핵심 도구 중 하나입니다. Webpack은 여러 개의 JavaScript 파일을 하나의 번들 파일로 묶어줍니다. 
+
+- **Entry Point**: 번들링을 시작할 파일. 기본값은 `src/index.js`.
+- **Output**: 번들된 파일이 저장될 위치와 파일 이름을 지정. 기본값은 `dist/main.js`.
+- **Loaders**: Webpack이 JavaScript 외의 파일(CSS, 이미지 등)을 처리할 수 있게 해줌. 예: `babel-loader`, `css-loader`.
+- **Plugins**: 번들링 과정에서 추가 기능을 제공. 예: `HtmlWebpackPlugin`, `MiniCssExtractPlugin`.
+- **Tree Shaking**: 사용되지 않는 코드(데드 코드)를 제거하여 번들 크기를 줄이는 과정.
+
+## Babel
+
+Babel은 최신 JavaScript 코드를 구형 브라우저에서도 호환 가능하도록 트랜스파일링해주는 도구입니다. 
+
+- **Presets**: 특정 환경에서 Babel이 변환할 수 있는 플러그인 세트. 예: `@babel/preset-env`, `@babel/preset-react`.
+- **Plugins**: Babel이 특정 기능을 추가로 처리할 수 있게 해줌. 예: `@babel/plugin-transform-arrow-functions`.
+- **Polyfill**: 새로운 JavaScript 기능을 구형 브라우저에서도 사용할 수 있게 해주는 코드. 예: `@babel/polyfill`.
+- **Transpiling**: 최신 JavaScript 코드를 구형 브라우저에서도 호환되게 변환하는 과정.
+
+## Next.js의 `next.config.mjs`
+
+Next.js의 `next.config.mjs` 파일은 빌드 및 런타임 동작을 커스터마이즈할 수 있게 해줍니다. 
+
+[Next.js config options](https://digital-blog-eosin.vercel.app/post/FrontEnd/nextjs/nextconfig 'nextjs config options')
+
+## mjs vs js
+
+- mjs 확장자는 ECMAScript 모듈(ES 모듈)을 명시적으로 사용하는 파일을 나타냅니다.
+
+- ES 모듈은 JavaScript의 최신 표준 모듈 시스템으로, import와 export 구문을 사용합니다.
+
+|특징	|.mjs 파일	|.js 파일|
+|---|---|---|
+|모듈 시스템	|ES 모듈 (ECMAScript Modules)	|CommonJS 모듈 시스템|
+|사용 구문	|import / export|	require / module.exports|
+|로드 방식	|비동기 로드	|동기 로드|
+|엄격 모드	|기본적으로 엄격 모드 적용 (strict mode)|	기본적으로 엄격 모드가 적용되지 않음|
+|Node.js 설정|	Node.js에서 사용하려면 --experimental-modules 플래그 또는 package.json에 type: "module" 설정 필요	|별도의 설정 없이 기본적으로 지원|
+|파일 확장자	|.mjs|	.js|
+|브라우저 호환성|	브라우저에서 직접 사용 가능	|브라우저에서 직접 사용하려면 번들링 필요|
+|스코프	|모듈 스코프|	모듈 스코프|
+|사용 사례	|최신 JavaScript 표준을 따르는 모듈 시스템 필요 시|	전통적인 Node.js 환경에서 널리 사용|
+|기능 공유 방법|	export로 내보내고, import로 가져옴	|module.exports로 내보내고, require로 가져옴|
+|모듈 해석 방식|	파일 경로에서 확장자를 명시해야 함|	확장자를 명시하지 않아도 자동으로 해석 가능|
