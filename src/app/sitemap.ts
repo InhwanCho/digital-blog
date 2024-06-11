@@ -5,12 +5,12 @@ import { posts } from "#site/content";
 export default function sitemap(): MetadataRoute.Sitemap {
   const siteUrl = siteConfig.url;
 
-  const routes = siteConfig.menus.map((menu) => ({
-    url: `${siteUrl}${menu.path}`,
-    lastModified: new Date().toISOString().split("T")[0],
-    changeFrequency: "weekly" as "weekly",
-    priority: 0.5,
-  }));
+  // const routes = siteConfig.menus.map((menu) => ({
+  //   url: `${siteUrl}${menu.path}`,
+  //   lastModified: new Date().toISOString().split("T")[0],
+  //   changeFrequency: "weekly" as "weekly",
+  //   priority: 0.5,
+  // }));
 
   const blogRoutes = posts
     .filter((post) => post.published)
@@ -27,7 +27,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: "monthly",
       priority: 1,
     },
-    ...routes,
+    // ...routes,
     ...blogRoutes,
   ];
 }
