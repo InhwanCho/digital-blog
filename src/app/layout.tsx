@@ -107,6 +107,8 @@ export default function RootLayout({
         <link rel="icon" type="image/png" sizes="32x32" href="/assets/favicons/favicon-32x32.png" />
         <link rel="icon" type="image/png" sizes="16x16" href="/assets/favicons/favicon-16x16.png" />
         <link rel="manifest" href="/assets/favicons/site.webmanifest" />
+        {/* 구글 서치 콘솔 소유권 확인 */}
+        <meta name="google-site-verification" content="nyC3lHXmyNFN_1SnXGGwy8rqHk2qvwoUQOUTQQAIY-8" />
         <body
           className={cn(
             "min-h-dvh bg-background font-sans antialiased",
