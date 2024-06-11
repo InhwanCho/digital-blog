@@ -1,0 +1,181 @@
+---
+title: "타입스크립트 주요 타입 정리"
+tags:
+  - typescript
+description: "타입스크립트에서 사용되는 주요 타입들에 대해 자세히 알아봅니다."
+date: 2024-06-11
+---
+
+TypeScript는 JavaScript의 상위 집합으로, 정적 타입 시스템을 추가하여 코드의 안정성과 가독성을 높입니다. 
+
+이 글에서는 TypeScript에서 자주 사용되는 주요 타입들에 대해 알아보겠습니다.
+
+### 왜 타입스크립트를 사용해야 하는가?
+
+1. **타입 안정성**: 코드 작성 중 타입 오류를 미리 잡아내어 런타임 오류를 줄일 수 있습니다.
+2. **코드 가독성 및 유지보수성**: 명확한 타입 정의로 인해 코드의 의도를 쉽게 파악할 수 있어 유지보수가 용이합니다.
+3. **도구 지원**: TypeScript는 VSCode와 같은 현대적인 IDE에서 강력한 자동 완성 및 리팩토링 도구를 제공합니다.
+
+### Type과 Typeof, Interface의 차이점
+
+- **Type**: TypeScript에서 타입 별칭을 정의할 때 사용됩니다. 복잡한 타입 구조를 간단하게 표현할 수 있습니다.
+
+```typescript
+type Point = {
+  x: number;
+  y: number;
+};
+```
+
+- **TypeOf**: JavaScript에서 값의 타입을 확인하는 연산자입니다. TypeScript에서는 변수의 타입을 추론하는 데도 사용됩니다.
+
+```typescript
+let num = 42;
+let numType: typeof num; // numType은 number 타입
+```
+
+- **Interface**: 객체의 구조를 정의할 때 사용되며, 클래스와의 상호 작용이 가능합니다. 인터페이스는 확장이 가능하여 유연성을 제공합니다.
+
+```typescript
+interface Person {
+  name: string;
+  age: number;
+}
+
+let person: Person = {
+  name: "John",
+  age: 30,
+};
+```
+
+- 결론 type 대신 `interface`가 많이 사용되며, `typeof`는 `keyof`와 같이 많이 사용됩니다.
+
+```typescript
+const person = {
+    name: "John",
+    age: 30,
+    address: "123 Main St"
+};
+
+type PersonKeys = keyof typeof person; // "name" | "age" | "address"
+
+function getValue(obj: typeof person, key: PersonKeys) {
+    return obj[key];
+}
+
+const name = getValue(person, "name"); // "John"
+const age = getValue(person, "age"); // 30
+const address = getValue(person, "address"); // "123 Main St"
+```
+
+| 구분        | Type                                                                                         | Typeof                                         | Interface                            |
+|-------------|----------------------------------------------------------------------------------------------|------------------------------------------------|--------------------------------------|
+| **설명**    | 타입 별칭을 정의할 때 사용합니다. 복잡한 타입 구조를 간단하게 표현할 수 있습니다.            | 값의 타입을 추론하는 데 사용됩니다.            | 객체의 구조를 정의할 때 사용됩니다. |
+| **확장성**  | 다른 타입과 조합하여 사용할 수 있습니다.                                                      | 주로 타입 추론에 사용됩니다.                   | 확장 가능 (`extends` 키워드 사용)   |
+| **주요 용도** | 복잡한 타입을 간결하게 표현하고 재사용성을 높입니다.                                         | 런타임 값의 타입을 추론하거나 정의하는 데 사용됩니다. | 클래스와의 상호작용이 가능합니다.  |
+
+## Object, Record, Map의 차이점
+
+### Object
+
+JavaScript의 기본 객체 타입입니다. 모든 JavaScript 객체는 기본적으로 Object 타입을 가집니다.
+
+```typescript
+let obj: { [key: string]: number } = {};
+obj["one"] = 1;
+obj["two"] = 2;
+
+console.log(obj["one"]); // 1
+```
+
+### Record
+
+TypeScript에서 제공하는 유틸리티 타입으로, 특정 키 타입과 값 타입을 가지는 객체를 정의할 때 사용됩니다.
+
+```typescript
+type PageInfo = {
+  title: string;
+};
+
+type Page = "home" | "about" | "contact";
+
+const pageInfo: Record<Page, PageInfo> = {
+  home: { title: "Home Page" },
+  about: { title: "About Us" },
+  contact: { title: "Contact Us" },
+};
+
+console.log(pageInfo.home.title); // "Home Page"
+```
+
+### Map
+
+ES6에서 도입된 데이터 구조로, 키-값 쌍을 저장하며, 키와 값 모두 임의의 타입을 가질 수 있습니다.
+
+```typescript
+let map = new Map<string, number>();
+map.set("one", 1);
+map.set("two", 2);
+
+console.log(map.get("one")); // 1
+console.log(map.has("two")); // true
+map.delete("one");
+console.log(map.size); // 1
+```
+
+| 특징    | Object                                   | Record                          | Map                         |
+| ------- | ---------------------------------------- | ------------------------------- | --------------------------- |
+| 키 타입 | 문자열, 심볼                             | 문자열 리터럴 타입, 유니온 타입 | 임의의 타입                 |
+| 값 타입 | 임의의 타입                              | 타입이 고정된 값                | 임의의 타입                 |
+| 순서    | 일부 순서 보장 (ES6 이후)                | 순서 보장되지 않음              | 삽입된 순서 유지            |
+| 메서드  | 기본 메서드 (Object.keys, Object.values) | 없음                            | set, get, has, delete, size |
+| 용도    | 일반적인 객체 관리                       | 특정 키-값 타입의 객체 정의     | 동적으로 키-값 쌍 관리      |
+
+---
+
+## React프로젝트 주요 타입
+
+### HTMLInputElement
+
+HTMLInputElement는 HTML `<input/>` 요소를 타입으로 정의할 때 사용됩니다. 
+
+주로 폼에서 입력 값을 처리할 때 사용됩니다.
+
+### React.ReactNode
+
+React.ReactNode는 React에서 렌더링할 수 있는 모든 유형의 자식을 나타냅니다.
+
+이는 문자열, 숫자, React 요소, null, 또는 배열을 포함할 수 있습니다.
+
+`children props`가 React.ReactNode에 해당합니다.
+
+### Mouse, KeyboardEvent
+
+이벤트 핸들러를 정의할 때 특정 이벤트 타입을 지정할 수 있습니다.
+
+```javascript
+import React from 'react';
+
+const ButtonComponent: React.FC = () => {
+    const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+        console.log('Button clicked');
+    };
+
+    const handleKeyPress = (event: React.KeyboardEvent<HTMLInputElement>) => {
+        if (event.key === 'Enter') {
+            console.log('Enter key pressed');
+        }
+    };
+
+    return (
+        <div>
+            <button onClick={handleClick}>Click Me</button>
+            <input type="text" onKeyPress={handleKeyPress} />
+        </div>
+    );
+};
+
+export default ButtonComponent;
+```
+
+단, 이러한 타입들은 전부 외우기에는 수가 많기 때문에 그때 그때 찾아서 입력하는게 좋습니다.
