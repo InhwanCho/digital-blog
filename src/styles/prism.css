@@ -43,7 +43,7 @@
 .token.comment,
 .token.prolog,
 .token.cdata {
-  font-style: italic;
+  /* font-style: italic; */
   @apply text-[#a8bfcf];
 }
 

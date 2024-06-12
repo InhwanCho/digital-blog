@@ -13,7 +13,7 @@ date: 2023-11-13
 
 > ORM이란? DB데이터를 객체로 매핑해 주는 역할을 하는 것입니다.
 
-> 즉, SQL문법을 사용하지 않고, 다른 언어(파이썬,자바스크립트 ...)를 사용하여 데이터베이스를 수정할 수 있도록 연결해주는(번역 역할) 서비스입니다.
+즉, SQL문법을 사용하지 않고, 다른 언어(파이썬,자바스크립트 ...)를 사용하여 데이터베이스를 수정할 수 있도록 연결해주는(번역 역할) 서비스입니다.
 
 ## 사용 방법
 
@@ -31,7 +31,7 @@ npx prisma init
 
 # prisma schema 설정하기 - 아래 글 Prisma Schema 참조
 # 모델을 적용하기(db마다 다름)
-npx prisma init --datasource-provider sqlite
+npx prisma init
 
 # 만든 schema를 sqlite로 생성하기 - lite가 아닌 실제 db를 사용하는 경우 생략.
 npx prisma migrate dev --name init
