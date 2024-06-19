@@ -1,5 +1,4 @@
 'use client';
-import { ChevronRight } from 'lucide-react';
 import { Link } from 'next-view-transitions';
 import { useEffect, useState } from 'react';
 
