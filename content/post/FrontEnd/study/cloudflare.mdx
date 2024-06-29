@@ -1,5 +1,5 @@
 ---
-title: 'CloudFlare'
+title: "CloudFlare"
 
 tags:
   - cloudflare
@@ -9,9 +9,9 @@ date: 2024-01-31
 
 ## Cloudflare - image
 
-[Cloudflare](https://dash.cloudflare.com/ '클라우드플레어')
+[Cloudflare](https://dash.cloudflare.com/ "클라우드플레어")
 
-클라우드플레어는 웹서비스를 제공해주는 회사이며, image나 stream가 대표적인 서비스 입니다.
+클라우드플레어는 웹서비스를 제공해주는 회사이며, vercel처럼 배포를 도와주며, image나 stream가 서비스도 제공합니다 입니다.
 
 일반적인 `파일 업로드의 프로세스`는 `DCU`라고 불리며 프로세스는 다음과 같습니다.
 
@@ -32,11 +32,13 @@ Direct Creator Upload (DCU)
 
 이미지 서비스는 유료이며 직접 사이트에서 업로드하는 방법과 API를 활용하여 업로드를 하는 방법이 있습니다.
 
+- 2024년 기준 100,000 이미지에 5달러입니다.
+
 ### API를 활용하여 업로드
 
-[Docs](https://developers.cloudflare.com/images/upload-images/direct-creator-upload/ '공식문서')
+[Docs](https://developers.cloudflare.com/images/upload-images/direct-creator-upload/ "공식문서")
 
-1. [토큰 생성](https://dash.cloudflare.com/profile/api-tokens 'token generate')을 합니다.
+1. [토큰 생성](https://dash.cloudflare.com/profile/api-tokens "token generate")을 합니다.
 2. curl 혹은 js를 통해 요청
 
 ```js:api.js
@@ -89,42 +91,41 @@ await (
 
 ```js
 // 예시
-// 백엔드에서 id, 빈 uploadURL을 받습니다. 
-const { id, uploadURL } = await (await fetch(`/api/files`)).json()
+// 백엔드에서 id, 빈 uploadURL을 받습니다.
+const { id, uploadURL } = await (await fetch(`/api/files`)).json();
 
 // 빈 formData를 만듭니다
-const form = new FormData()
+const form = new FormData();
 
-// 예시에서는 파일을 1개만 첨부가 가능해서 
+// 예시에서는 파일을 1개만 첨부가 가능해서
 // 'file'이라는 이름의 form에 avatar[0]을 -사진 포맷
 // user.id라는 이름으로 append합니다
-form.append('file', avatar[0], user.id.toString())
+form.append("file", avatar[0], user.id.toString());
 
 // 백엔드에서 받은 uploadURL을 CF(cloudFlare)에 body값에 form(사진)을 넣고 보냅니다.
 const request = await (
   await fetch(uploadURL, {
-    method: 'POST',
+    method: "POST",
     body: form,
   })
-).json()
+).json();
 
 // id값(추후에 이미지 불러올때 사용)을 db에 저장합니다.
 editProfile({
   avatarId: id,
-})
+});
 ```
 
 ## Variants
 
 `Resize images -> 사이즈 별로 이미지를 저장` 하는것을 의미합니다
 
-Cloudflare 이미지는 다양한 이미지의 사용을 고려하여 
-이미지 크기를 조정하는 방법을 지정하는 variants을 지원합니다. 
+Cloudflare 이미지는 다양한 이미지의 사용을 고려하여
+이미지 크기를 조정하는 방법을 지정하는 variants을 지원합니다.
 기본적으로 최대 20개의 variants을 구성할 수 있으며,
 각 variants에는 크기가 조정된 이미지의 너비와 높이를 포함한 속성이 있습니다.
 
 Resize하는 방법은 4가지가 있으며 다음과 같습니다.
-
 
 ```
 Scale down
@@ -139,4 +140,3 @@ Cover
 Crop
 너비와 높이로 지정된 영역에 맞게 이미지가 축소되고 잘립니다.
 ```
-
