@@ -28,6 +28,7 @@ export function MdxImage({
       {...props}
     >
       <Image
+        unoptimized
         src={src}
         alt={alt}
         width={width}
