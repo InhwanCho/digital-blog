@@ -10,7 +10,7 @@ date: 2024-07-03
 
 ## JWT란?
 
-JSON Web Token (JWT)은 JSON 객체를 사용하여 양 당사자 간에 정보를 안전하게 전송하기 위한 컴팩트하고 독립적인 방법입니다. 
+JSON Web Token (JWT)은 JSON 객체를 사용하여 양 당사자 간에 정보를 안전하게 전송하기 위한 컴팩트하고 독립적인 방법입니다.
 
 이 정보는 디지털 서명되어 있어 인증 및 정보 교환에 유용합니다. JWT는 주로 다음 세 가지 부분으로 구성됩니다.
 
@@ -26,13 +26,11 @@ const jwt = header.payload.signature;
 
 헤더와 페이로드는 보안에 취약하니 보안이 필요한 정보는 Signature에 넣어야 합니다.
 
-일반적으로 인증에는 두 종류의 JWT(accessToken, refreshToken)가 필요합니다. 
+일반적으로 인증에는 두 종류의 JWT(accessToken, refreshToken)가 필요합니다.
 
-accessToken의 페이로드에 유저 정보를 넣고 인코딩하여 클라이언트 측의 쿠키에 저장합니다. 
+accessToken의 페이로드에 유저 정보를 넣고 인코딩하여 클라이언트 측의 쿠키에 저장합니다.
 
 refreshToken은 서버에서 httpOnly 옵션을 사용하여 쿠키에 저장합니다.
-
-
 
 ## 쿠키(cookie)?
 
@@ -41,18 +39,18 @@ refreshToken은 서버에서 httpOnly 옵션을 사용하여 쿠키에 저장합
 쿠키에는 다양한 옵션을 설정할 수 있으며, 이러한 옵션들은 쿠키의 보안과 사용성을 결정하는 데 중요한 역할을 합니다.
 
 | 옵션         | 설명                                                                                       | 예제                                         | 클라이언트에서 설정 |
-| ------------ | ------------------------------------------------------------------------------------------ | -------------------------------------------- | ------------------------ |
-| name         | 쿠키의 이름                                                                                | name=myCookie                                | 가능                     |
-| value        | 쿠키의 값                                                                                  | value=myValue                                | 가능                     |
-| expires      | 쿠키의 만료 날짜를 설정. Date 객체를 사용.                                                 | expires=Tue, 19 Jun 2024 12:00:00 UTC        | 가능                     |
-| max-age      | 쿠키의 유효 기간을 초 단위로 설정.                                                         | max-age=3600 (1시간)                         | 가능                     |
-| path         | 쿠키가 유효한 URL 경로를 지정.                                                             | path=/shop/                                  | 가능                     |
-| domain       | 쿠키가 유효한 도메인을 지정.                                                               | domain=example.com                           | 가능                     |
-| secure       | 쿠키가 HTTPS 연결에서만 전송되도록 설정.                                                   | secure                                       | 가능                     |
-| sameSite     | 쿠키가 크로스 사이트 요청과 함께 전송되는 방식을 제어.                                     | SameSite=Strict, SameSite=Lax, SameSite=None | 가능                     |
-| partitionKey | 특정 도메인에 쿠키를 제한하여 서드파티 트래커의 사용자 추적을 방지.                        | partitionKey=example.com                     | **불가능**               |
-| `httpOnly`     | 클라이언트 측 자바스크립트에서 쿠키에 접근할 수 없도록 설정.                               | HttpOnly                                     | **불가능**               |
-| priority     | 쿠키의 우선순위를 설정. 브라우저가 자원 소모를 줄이기 위해 쿠키를 삭제할 때 우선순위 결정. | priority=Low, priority=Medium, priority=High | **불가능**               |
+| ------------ | ------------------------------------------------------------------------------------------ | -------------------------------------------- | ------------------- |
+| name         | 쿠키의 이름                                                                                | name=myCookie                                | 가능                |
+| value        | 쿠키의 값                                                                                  | value=myValue                                | 가능                |
+| expires      | 쿠키의 만료 날짜를 설정. Date 객체를 사용.                                                 | expires=Tue, 19 Jun 2024 12:00:00 UTC        | 가능                |
+| max-age      | 쿠키의 유효 기간을 초 단위로 설정.                                                         | max-age=3600 (1시간)                         | 가능                |
+| path         | 쿠키가 유효한 URL 경로를 지정.                                                             | path=/shop/                                  | 가능                |
+| domain       | 쿠키가 유효한 도메인을 지정.                                                               | domain=example.com                           | 가능                |
+| secure       | 쿠키가 HTTPS 연결에서만 전송되도록 설정.                                                   | secure                                       | 가능                |
+| sameSite     | 쿠키가 크로스 사이트 요청과 함께 전송되는 방식을 제어.                                     | SameSite=Strict, SameSite=Lax, SameSite=None | 가능                |
+| partitionKey | 특정 도메인에 쿠키를 제한하여 서드파티 트래커의 사용자 추적을 방지.                        | partitionKey=example.com                     | **불가능**          |
+| `httpOnly`   | 클라이언트 측 자바스크립트에서 쿠키에 접근할 수 없도록 설정.                               | HttpOnly                                     | **불가능**          |
+| priority     | 쿠키의 우선순위를 설정. 브라우저가 자원 소모를 줄이기 위해 쿠키를 삭제할 때 우선순위 결정. | priority=Low, priority=Medium, priority=High | **불가능**          |
 
 ## 인증 시스템 구현
 
@@ -60,53 +58,13 @@ JWT와 쿠키를 사용하여 인증 시스템을 구현하는 방법을 단계�
 
 ### 클라이언트에서 JWT 쿠키 설정
 
-JWT를 사용하여 사용자가 로그인할 때 Access Token과 Refresh Token을 발급받고 이를 쿠키에 저장합니다. 
+JWT를 사용하여 사용자가 로그인할 때 Access Token과 Refresh Token을 발급받고 이를 쿠키에 저장합니다.
 
 단, 보안을 위해 Refresh Token은 서버에서(클라이언트측 코드 없음) httpOnly 옵션을 통해 저장하고 클라이언트 측에서는 사용을 제한해야 합니다.
 
-Access Token을 다루기 위해 setCookie, getCookie, deleteCookie 함수를 사용합니다. 
+Access Token을 다루기 위해 cookie관련 함수를 사용하였습니다.
 
-보통 Access Token의 경우 로컬 쿠키에 짧은 시간 만료로 저장하고, Refresh Token은 보안을 위해 서버 측에서 긴 시간 만료로 httpOnly를 통해 저장합니다.
-
-```typescript:libs/cookie.ts
-// libs/cookie.ts
-interface CookieOptions {
-  name: string;
-  value: string;
-  days?: number;
-  hours?: number;
-  secure?: boolean;
-}
-
-export function setCookie({
-  name,
-  value,
-  days = 0,
-  hours = 0,
-  secure = false,
-}: CookieOptions) {
-  const expires = new Date();  // 만료 날짜를 설정하기 위해 현재 날짜를 가져옵니다.
-  // days 매개변수가 0보다 크면 일 단위로 만료 날짜를 설정합니다.
-  if (days > 0) {
-    expires.setTime(expires.getTime() + days * 24 * 60 * 60 * 1000);  // days를 밀리초로 변환하여 만료 날짜를 설정합니다.
-  }
-  // hours 매개변수가 0보다 크면 시간 단위로 만료 날짜를 설정합니다.
-  else if (hours > 0) {
-    expires.setTime(expires.getTime() + hours * 60 * 60 * 1000);  // hours를 밀리초로 변환하여 만료 날짜를 설정합니다.
-  }
-
-  // 쿠키 문자열을 구성합니다.
-  let cookieString = `${name}=${value};expires=${expires.toUTCString()};path=/;SameSite=Strict`;
-
-  // secure 매개변수가 true이면 secure 속성을 추가합니다.
-  if (secure) {
-    cookieString += ";secure";
-  }
-
-  // 구성된 쿠키 문자열을 문서의 쿠키로 설정합니다.
-  document.cookie = cookieString;
-}
-```
+Access Token의 경우 로컬 쿠키에 짧은 시간 만료로 저장하고, Refresh Token은 보안을 위해 서버 측에서 긴 시간 만료로 httpOnly를 통해 저장합니다.
 
 ## 로그인 처리 및 쿠키 설정
 
@@ -170,4 +128,120 @@ export default function LoginSection({ toggleForm }: LoginSectionProps) {
 }
 ```
 
-Access Token과 Refresh Token을 사용하여 사용자 세션을 관리하고, 쿠키를 통해 이를 안전하게 저장할 수 있습니다. 
+## AccessToken 갱신
+
+Access Token은 유효기간이 짧기 때문에 주기적으로 갱신해야 합니다. 
+
+Refresh Token은 서버에서 관리되며, 클라이언트는 Access Token이 만료되기 전에 서버에 Refresh Token을 사용해 새로운 Access Token을 요청해야 합니다.
+
+다음은 AuthProvider를 생성하여 Access Token을 갱신하는 방법입니다.
+
+```javascript:authProvider.tsx
+'use client';
+import React, { createContext, useContext, useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+import { setCookie } from '@/libs/cookie';
+import { useUserStore } from '@/store/userStore';
+import { useQuery } from '@tanstack/react-query';
+import { jwtDecode } from '@/libs/utils';
+import { hasRefreshToken, newAccessToken } from '@/services/fetch-auth';
+
+interface AuthContextType {
+  token: string | null;
+  setToken: React.Dispatch<React.SetStateAction<string | null>>;
+  tokenExpiry: number | null;
+  setTokenExpiry: React.Dispatch<React.SetStateAction<number | null>>;
+}
+
+const AuthContext = createContext<AuthContextType | undefined>(undefined);
+
+const fetchUserData = async () => {
+  const response = await newAccessToken();
+  if (response.response) {
+    const newAccessToken = response.result.accessToken;
+    const expiresIn = 2 * 60 * 60 * 1000; // 2 hours
+    setCookie({ name: 'accessToken', value: newAccessToken, hours: 2, secure: true });
+    const user = jwtDecode(newAccessToken);
+    return {
+      token: newAccessToken,
+      tokenExpiry: Date.now() + expiresIn,
+      user: user,
+    };
+  } else {
+    throw new Error('Failed to refresh token');
+  }
+};
+
+export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
+  const [token, setToken] = useState<string | null>(null);
+  const [tokenExpiry, setTokenExpiry] = useState<number | null>(null);
+  const setUser = useUserStore((state) => state.setUser);
+  const clearUser = useUserStore((state) => state.clearUser);
+  const router = useRouter();
+
+  useEffect(() => {
+    const checkAuth = async () => {
+      if (await hasRefreshToken()) {
+        refetch();
+
+      } else {
+        clearUser();
+        router.push('/auth');
+      }
+    };
+
+    checkAuth();
+  }, [setUser, clearUser, router]);
+
+  const { refetch } = useQuery({
+    queryKey: ['refreshToken'],
+    queryFn: fetchUserData,
+    enabled: false,
+  });
+
+  useEffect(() => {
+    const refreshUserData = async () => {
+      try {
+        const data = await refetch();
+        if (data.data) {
+          setToken(data.data.token);
+          setTokenExpiry(data.data.tokenExpiry);
+          if (data.data.user) {
+            setUser(data.data.user);
+          } else {
+            clearUser();
+            router.push('/auth');
+          }
+        } else {
+          clearUser();
+          router.push('/auth');
+        }
+      } catch (error) {
+        console.error('Error fetching user data:', error);
+        clearUser();
+        router.push('/auth');
+      }
+    };
+
+    refreshUserData();
+  }, [refetch, setUser, clearUser, router]);
+
+  useEffect(() => {
+    if (tokenExpiry) {
+      const timeout = setTimeout(() => {
+        refetch();
+      }, tokenExpiry - Date.now() - 60 * 1000);
+
+      return () => clearTimeout(timeout);
+    }
+  }, [tokenExpiry, refetch]);
+
+  return (
+    <AuthContext.Provider value={{ token, setToken, tokenExpiry, setTokenExpiry }}>
+      {children}
+    </AuthContext.Provider>
+  );
+};
+```
+
+AuthProvider는 사용자의 인증 상태를 관리하고, Access Token의 만료 시간이 다가오면 자동으로 새로운 Access Token을 요청하여 쿠키에 저장합니다.
