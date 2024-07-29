@@ -23,6 +23,9 @@ const config = {
       },
     },
     extend: {
+      boxShadow:{
+        'right-only': '10px 0 15px -3px rgba(0, 0, 0, 0.1), 10px 0 6px -2px rgba(0, 0, 0, 0.05)',
+      },
       scrollBehavior: ["smooth", "auto"],
       textDecorationThickness: { 2: "2px", 3: "3px" },
       lineHeight: {

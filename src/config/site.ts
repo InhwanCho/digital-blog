@@ -3,13 +3,16 @@ export const headerConfig = {};
 export const siteConfig = {
   url: "https://digital-blog-eosin.vercel.app",
   title: "Inhwan's Digital Blog",
-  description: "개발 탐구와 학습 내용을 기록하고 정리하는 블로그입니다. Next.js 14 버전의 앱 라우터와 Velite를 이용하여 정적으로 배포하였습니다.",
+  description:
+    "개발 탐구와 학습 내용을 기록하고 정리하는 블로그입니다. Next.js 14 버전의 앱 라우터와 Velite를 이용하여 정적으로 배포하였습니다.",
   copyright: "InhwanCho © All rights reserved.",
   applicationName: "Digital Blog",
   generator: "Next.js",
   // referrer: "origin-when-cross-origin",
   keywords: ["Next.js", "React", "JavaScript", "Blog", "Web Development"],
-  authors: [{ name: "InhwanCho", url: "https://digital-blog-eosin.vercel.app" }],
+  authors: [
+    { name: "InhwanCho", url: "https://digital-blog-eosin.vercel.app" },
+  ],
   creator: "InhwanCho",
   publisher: "InhwanCho",
   formatDetection: {
@@ -44,6 +47,10 @@ export const siteConfig = {
     {
       label: "Categories",
       path: "/categories",
+    },
+    {
+      label: "Puppies",
+      path: "/gallery",
     },
     // {
     //   label: "Tags",

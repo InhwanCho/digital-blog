@@ -98,7 +98,6 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-
   return (
     <ViewTransitions>
       <html lang="ko" suppressHydrationWarning className="scroll-smooth scroll-pt-[84px]">
@@ -123,7 +122,7 @@ export default function RootLayout({
           >
             <KbarLayout >
               <NavBar />
-              <section className="mx-auto  px-4 sm:px-6  xl:px-0">
+              <section className="mx-auto px-4 sm:px-6  xl:px-0">
                 <div className="relative flex min-h-dvh flex-col bg-background">
                   <main className="flex-1">{children}</main>
                   <Footer />
