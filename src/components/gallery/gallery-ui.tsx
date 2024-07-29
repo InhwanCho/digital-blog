@@ -66,7 +66,7 @@ const Gallery: React.FC<GalleryProps> = ({ items }) => {
               등록일역순
             </button>
             <Link href="">
-              <button className="ml-4 p-2 border rounded-full bg-red-500 text-white">로그인</button>
+              <button className="ml-5 p-2 border rounded-full bg-red-500 text-white">로그인</button>
             </Link>
           </div>
           <div className="flex flex-wrap gap-2 justify-center pb-3">
