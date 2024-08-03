@@ -3,13 +3,13 @@
 
 import { GalleryType } from "@/types/gallery-type";
 import React, { useState } from "react";
-import Link from 'next/link';
+import GithubLogin from "./github-login";
 
-type GalleryProps = {
+type ClientGalleryProps = {
   items: GalleryType[];
 };
 
-const Gallery: React.FC<GalleryProps> = ({ items }) => {
+export default function ClientGallery({ items }: ClientGalleryProps) {
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
   const [sortOption, setSortOption] = useState('created_at_desc');
 
@@ -65,9 +65,8 @@ const Gallery: React.FC<GalleryProps> = ({ items }) => {
             >
               등록일역순
             </button>
-            <Link href="">
-              <button className="ml-5 p-2 border rounded-full bg-red-500 text-white">로그인</button>
-            </Link>
+            {/* <LoginButton /> */}
+            <GithubLogin />
           </div>
           <div className="flex flex-wrap gap-2 justify-center pb-3">
             {Array.from(new Set(items.flatMap((item) => item.tags))).map((tag) => (
@@ -112,10 +111,8 @@ const Gallery: React.FC<GalleryProps> = ({ items }) => {
             </div>
           </div>
         ))}
-
       </div>
     </div>
   );
 };
 
-export default Gallery;

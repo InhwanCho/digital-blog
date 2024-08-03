@@ -8,6 +8,7 @@ import { siteConfig } from "@/config/site";
 import KBarButton from "@/components/kbar/kbar-button";
 import LogoNav from "@/components/nav/logo-nav";
 import ReadingProgressBar from "@/components/reading-progress-bar";
+import LoginButton from "./gallery/login-button";
 
 export default function NavBar() {
 
@@ -18,6 +19,7 @@ export default function NavBar() {
         <MainNav />
         <div className="flex items-center justify-end space-x-3">
           <nav className="sm:flex gap-3 md:gap-5 hidden">
+            <LoginButton/>
             <KBarButton />
             {/* 깃허브 */}
             <LinkExternal href={siteConfig.author.contacts.github}>

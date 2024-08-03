@@ -1,7 +1,16 @@
 // @/app/admin/page.tsx
+import { createClient } from '@/lib/supabase';
+import { createServerComponentClient } from '@supabase/auth-helpers-nextjs';
+import { cookies } from 'next/headers';
+import { redirect } from 'next/navigation';
 import React from 'react';
 
-const AdminPage = () => {
+export default async function AdminPage() {
+  const supabase = createServerComponentClient({ cookies });
+  const { data: { session } } = await supabase.auth.getSession();
+  if (!session) {
+    redirect('/');
+  }
   return (
     <div className="min-h-screen bg-gray-100 flex">
       <aside className="w-64 bg-white shadow-right-only h-screen">
@@ -48,5 +57,3 @@ const AdminPage = () => {
     </div>
   );
 };
-
-export default AdminPage;

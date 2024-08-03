@@ -1,11 +1,9 @@
-// @/app/gallery/page.tsx
+import ClientGallery from "@/components/gallery/client-gallery";
+import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 
-import Gallery from "@/components/gallery/gallery-ui";
-import { createClient } from "@/lib/supabase";
-
-const GalleryPage = async () => {
-  const supabase = createClient();
-
+export default async function GalleryPage() {
+  const supabase = createClientComponentClient();
+  // 나중에 태그 생성 시 match()로 불러오기
   const { data: galleryItems, error } = await supabase
     .from('gallery')
     .select('*')
@@ -16,7 +14,11 @@ const GalleryPage = async () => {
     return <p>Failed to load gallery items.</p>;
   }
 
-  return <Gallery items={galleryItems} />;
+  return (
+    <div className="px-4">
+      {/* <p>hello, {session?.user.email}</p> */}
+      <ClientGallery items={galleryItems} />
+    </div>
+  );
 };
 
-export default GalleryPage;
