@@ -25,8 +25,9 @@ export default function Login() {
     await supabase.auth.signInWithPassword({
       email,
       password,
-    });    
+    });
     router.push('/admin');
+    router.refresh();
   };
 
   const handleSignOut = async () => {
@@ -75,12 +76,12 @@ export default function Login() {
           >
             Sign In
           </button>
-          <button
+          {/* <button
             className="w-full px-4 py-2 font-semibold text-white bg-gray-800 rounded hover:bg-gray-900"
             onClick={handleGitHubSignIn}
           >
             Sign In with GitHub
-          </button>
+          </button> */}
           <button
             className="w-full px-4 py-2 font-semibold text-white bg-red-500 rounded hover:bg-red-700"
             onClick={handleSignOut}

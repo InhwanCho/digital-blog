@@ -64,7 +64,7 @@ export default defineConfig({
       rehypeExternalLinks,
       rehypeKatex, //수학 수식을 html로 파싱(css파일을 추가로 import 해야 제대로 적용)
     ],
-    // 수학 수식 $$표시 에러안나게 math로 변환 - 추후 latex 수정해야됨
+    // 수학 수식 $$표시 에러안나게 math로 변환
     remarkPlugins: [remarkMath],
   },
 });
