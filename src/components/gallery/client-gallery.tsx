@@ -2,14 +2,17 @@
 'use client';
 
 import { GalleryType } from "@/types/gallery-type";
+import { Link } from "next-view-transitions";
+import { useRouter } from "next/navigation";
+
 import React, { useState } from "react";
-import GithubLogin from "./github-login";
 
 type ClientGalleryProps = {
   items: GalleryType[];
 };
 
 export default function ClientGallery({ items }: ClientGalleryProps) {
+  const router = useRouter();
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
   const [sortOption, setSortOption] = useState('created_at_desc');
 
@@ -48,25 +51,27 @@ export default function ClientGallery({ items }: ClientGalleryProps) {
     }
   });
 
+
   return (
-    <div className="px-4">
+    <div className="px-4 dark:bg-gray-900">
       <nav id="filter-ui" className="flex justify-center sticky top-16 z-50">
-        <div className="flex flex-col items-center my-4 bg-white shadow-lg border rounded-full w-full">
+        <div className="flex flex-col items-center my-4 bg-white dark:bg-gray-800 shadow-lg border rounded-full w-full">
           <div className="flex items-center my-4">
             <button
               onClick={() => handleSortChange('created_at_asc')}
-              className={`px-4 py-2 mx-2 border rounded-full ${sortOption === 'created_at_asc' ? 'bg-blue-500 text-white' : 'bg-gray-300'}`}
+              className={`px-4 py-2 mx-2 border rounded-full ${sortOption === 'created_at_asc' ? 'bg-blue-500 text-white' : 'bg-gray-300 dark:bg-gray-700 dark:text-gray-300'}`}
             >
               등록일순
             </button>
             <button
               onClick={() => handleSortChange('created_at_desc')}
-              className={`px-4 py-2 mx-2 border rounded-full ${sortOption === 'created_at_desc' ? 'bg-blue-500 text-white' : 'bg-gray-300'}`}
+              className={`px-4 py-2 mx-2 border rounded-full ${sortOption === 'created_at_desc' ? 'bg-blue-500 text-white' : 'bg-gray-300 dark:bg-gray-700 dark:text-gray-300'}`}
             >
               등록일역순
             </button>
-            {/* <LoginButton /> */}
-            <GithubLogin />
+            <Link href='/login' className="ml-5 p-2 border rounded-full bg-red-500 text-white">
+              로그인
+            </Link>
           </div>
           <div className="flex flex-wrap gap-2 justify-center pb-3">
             {Array.from(new Set(items.flatMap((item) => item.tags))).map((tag) => (
@@ -75,7 +80,7 @@ export default function ClientGallery({ items }: ClientGalleryProps) {
                 onClick={() => handleTagClick(tag)}
                 className={`px-2 py-1 cursor-pointer rounded-full ${selectedTags.includes(tag)
                   ? "bg-blue-500 text-white"
-                  : "bg-gray-300"
+                  : "bg-gray-300 dark:bg-gray-700 dark:text-gray-300"
                 }`}
               >
                 {tag}
@@ -87,7 +92,7 @@ export default function ClientGallery({ items }: ClientGalleryProps) {
 
       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
         {sortedItems.map((item) => (
-          <div key={item.id} className="relative group rounded overflow-hidden shadow-lg">
+          <div key={item.id} className="relative group rounded overflow-hidden shadow-lg dark:shadow-gray-800">
             <img
               src={item.image_url}
               alt={item.description}
@@ -100,8 +105,11 @@ export default function ClientGallery({ items }: ClientGalleryProps) {
                   {item.tags.map((tag) => (
                     <span
                       key={tag}
-                      onClick={() => handleTagClick(tag)}
-                      className="px-2 py-1 bg-gray-700 rounded-full cursor-pointer"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleTagClick(tag);
+                      }}
+                      className="px-2 py-1 bg-gray-700 dark:bg-gray-600 rounded-full cursor-pointer"
                     >
                       {tag}
                     </span>
@@ -115,4 +123,3 @@ export default function ClientGallery({ items }: ClientGalleryProps) {
     </div>
   );
 };
-

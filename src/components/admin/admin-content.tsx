@@ -47,7 +47,7 @@ export default function AdminContent() {
   }, []);
 
   return (
-    <div className="flex-1 p-10 bg-gray-100">
+    <div className="flex-1 my-10 bg-gray-100 dark:bg-gray-700/90">
       {renderComponent()}
     </div>
   );

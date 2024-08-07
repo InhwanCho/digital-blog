@@ -1,9 +1,11 @@
+// src/components/admin/dashboard.tsx
 'use client';
 import { useState } from 'react';
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer
 } from 'recharts';
 import { posts } from '#site/content';
+import AdminLayout from '@/components/admin/admin-layout';
 
 interface MonthlyData {
   month: string;
@@ -42,8 +44,7 @@ export default function Dashboard() {
   const monthlyData = getMonthlyData(posts, selectedYear);
 
   return (
-    <div className="space-y-8">
-      <h1 className="text-3xl font-bold text-purple-700 mb-4">DashBoard</h1>
+    <AdminLayout title="Dashboard">
       <div className="grid grid-cols-4 gap-6">
         <div className="bg-purple-500 text-white p-4 rounded-lg shadow flex flex-col justify-center items-center">
           <h3 className="text-lg font-semibold">Total Blogs</h3>
@@ -62,9 +63,9 @@ export default function Dashboard() {
           <p className="text-2xl mt-auto">{draftBlogs}</p>
         </div>
       </div>
-      <div className="bg-white p-4 rounded-lg shadow">
+      <div className="bg-white p-4 mt-10 dark:bg-gray-700/85">
         <h3 className="text-lg font-semibold mb-4">Year Overview</h3>
-        <div className="flex space-x-4 mb-4">
+        <div className="flex space-x-4 mb-10">
           {years.map(year => (
             <button
               key={year}
@@ -75,7 +76,7 @@ export default function Dashboard() {
             </button>
           ))}
         </div>
-        <ResponsiveContainer width="100%" height={300}>
+        <ResponsiveContainer width="100%" height={300} className='p-2'>
           <BarChart data={monthlyData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
             <CartesianGrid strokeDasharray="3 3" />
             <XAxis dataKey="month" />
@@ -86,6 +87,6 @@ export default function Dashboard() {
           </BarChart>
         </ResponsiveContainer>
       </div>
-    </div>
+    </AdminLayout>
   );
 }

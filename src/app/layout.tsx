@@ -95,8 +95,10 @@ export const viewport: Viewport = {
 
 export default function RootLayout({
   children,
+  modal
 }: Readonly<{
   children: React.ReactNode;
+  modal: React.ReactNode;
 }>) {
   return (
     <ViewTransitions>
@@ -124,7 +126,10 @@ export default function RootLayout({
               <NavBar />
               <section className="mx-auto px-4 sm:px-6  xl:px-0">
                 <div className="relative flex min-h-dvh flex-col bg-background">
-                  <main className="flex-1">{children}</main>
+                  <main className="flex-1">
+                    <div>{modal}</div>
+                    <div>{children}</div>
+                  </main>
                   <Footer />
                   <Toaster
                     toastOptions={{

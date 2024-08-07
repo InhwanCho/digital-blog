@@ -39,7 +39,7 @@ export default async function AdminPage() {
           </li>
         </ul>
       </nav>
-      <main className="flex-1 px-10 bg-gray-100">
+      <main className="flex-1 px-10 bg-gray-100 dark:bg-gray-700/90">
         <AdminContent />
       </main>
     </div>

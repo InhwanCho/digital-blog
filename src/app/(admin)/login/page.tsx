@@ -42,9 +42,9 @@ export default function Login() {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen py-2">
+    <div className="flex flex-col items-center justify-center py-20 mt-10">
       <div className="w-full max-w-md p-8 space-y-6 bg-white rounded shadow-md">
-        <h2 className="text-2xl font-bold text-center">Sign In</h2>
+        <h2 className="text-2xl font-bold text-center">관리자 로그인</h2>
         <div className="space-y-4">
           <input
             className="w-full px-3 py-2 border rounded"
@@ -64,17 +64,17 @@ export default function Login() {
           />
         </div>
         <div className="flex flex-col space-y-2">
-          <button
+          {/* <button
             className="w-full px-4 py-2 font-semibold text-white bg-blue-500 rounded hover:bg-blue-700"
             onClick={handleSignUp}
           >
             Sign Up
-          </button>
+          </button> */}
           <button
             className="w-full px-4 py-2 font-semibold text-white bg-green-500 rounded hover:bg-green-700"
             onClick={handleSignIn}
           >
-            Sign In
+            관리자 로그인
           </button>
           {/* <button
             className="w-full px-4 py-2 font-semibold text-white bg-gray-800 rounded hover:bg-gray-900"
@@ -82,12 +82,12 @@ export default function Login() {
           >
             Sign In with GitHub
           </button> */}
-          <button
+          {/* <button
             className="w-full px-4 py-2 font-semibold text-white bg-red-500 rounded hover:bg-red-700"
             onClick={handleSignOut}
           >
             Sign Out
-          </button>
+          </button> */}
         </div>
       </div>
     </div>
