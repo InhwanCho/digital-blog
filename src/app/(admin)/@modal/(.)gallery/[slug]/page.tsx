@@ -1,37 +1,27 @@
-'use client';
+import { X } from 'lucide-react';
 
-import GalleryDetail from '@/components/gallery/gallery-detail';
-import { useEffect, useState } from 'react';
-
-export default function InterceptPage() {
-  const [isSmallScreen, setIsSmallScreen] = useState(false);
-
-  useEffect(() => {
-    // 초기 화면 크기 설정
-    if (typeof window !== 'undefined') {
-      const handleResize = () => {
-        setIsSmallScreen(window.innerWidth <= 640); // 'sm' 사이즈 이하
-      };
-
-      handleResize(); // 초기 실행
-      window.addEventListener('resize', handleResize); // 윈도우 리사이즈 이벤트 리스너 추가
-
-      return () => {
-        window.removeEventListener('resize', handleResize); // 정리
-      };
-    }
-  }, []);
-
-  useEffect(() => {
-    if (isSmallScreen) {
-      window.location.href = '/auth'; // 'sm' 사이즈 이하일 때 auth 페이지로 강제 리다이렉트
-    }
-  }, [isSmallScreen]);
-
-  if (isSmallScreen) {
-    return null; // 리다이렉트 중에 아무것도 렌더링하지 않음
-  }
+export default function InterceptPage({ params }: { params: { slug: string } }) {  
+  const isModal = true;
+  console.log(params.slug);
   return (
-    <GalleryDetail isModal={true} />
+    <div className='absolute w-full h-full bg-black z-50'>1123123123</div>
+    // <section className='w-full absolute -left-6 h-full min-h-dvh bg-red-200'>
+    //   <div className="flex flex-col flex-1">
+    //     <div className={`w-full h-full pt-7 sm:pt-10 ${isModal ? 'fixed z-50 bg-opacity-70 backdrop-blur-sm overflow-auto bg-gray-500 sm:py-10' : ''} `}>
+    //       <div className={`${isModal ? 'sticky top-40' : ''} flex justify-center`}>
+    //         <div
+    //           className={` max-w-md w-full h-auto flex flex-col text-gray-900 space-y-8 bg-white rounded-lg p-8 ${isModal ? 'shadow-lg' : ''}`}
+    //         >
+    //           <div className='relative'>
+    //             <div className={`${isModal ? 'absolute top-0 right-0' : 'hidden'}`}>
+    //               <X className="size-5 text-gray-900" />
+    //             </div>
+    //             <div>here is the contents</div>
+    //           </div>
+    //         </div>
+    //       </div>
+    //     </div>
+    //   </div>
+    // </section>
   );
 }

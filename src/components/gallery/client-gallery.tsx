@@ -3,8 +3,6 @@
 
 import { GalleryType } from "@/types/gallery-type";
 import { Link } from "next-view-transitions";
-import { useRouter } from "next/navigation";
-
 import React, { useState } from "react";
 
 type ClientGalleryProps = {
@@ -12,7 +10,7 @@ type ClientGalleryProps = {
 };
 
 export default function ClientGallery({ items }: ClientGalleryProps) {
-  const router = useRouter();
+  
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
   const [sortOption, setSortOption] = useState('created_at_desc');
 
@@ -92,7 +90,7 @@ export default function ClientGallery({ items }: ClientGalleryProps) {
 
       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
         {sortedItems.map((item) => (
-          <div key={item.id} className="relative group rounded overflow-hidden shadow-lg dark:shadow-gray-800">
+          <Link href={`/gallery/${item.id}`} key={item.id} className="relative group rounded overflow-hidden shadow-lg dark:shadow-gray-800">
             <img
               src={item.image_url}
               alt={item.description}
@@ -117,7 +115,7 @@ export default function ClientGallery({ items }: ClientGalleryProps) {
                 </div>
               </div>
             </div>
-          </div>
+          </Link>
         ))}
       </div>
     </div>

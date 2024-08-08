@@ -127,8 +127,8 @@ export default function RootLayout({
               <section className="mx-auto px-4 sm:px-6  xl:px-0">
                 <div className="relative flex min-h-dvh flex-col bg-background">
                   <main className="flex-1">
-                    <div>{modal}</div>
-                    <div>{children}</div>
+                    {modal}
+                    {children}
                   </main>
                   <Footer />
                   <Toaster

@@ -48,8 +48,7 @@ export default function GalleryDetail({ isModal }: GalleryDetailProps) {
           <div className='relative'>
             <button className={`${isModal ? 'absolute top-0 right-0' : 'hidden'}`} onClick={backbtn}>
               <X className="size-5 text-gray-900" />
-            </button>
-            123
+            </button>            
             {/* <AuthForm isModal={isModal} /> */}
           </div>
         </div>
