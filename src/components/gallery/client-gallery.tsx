@@ -3,15 +3,14 @@
 
 import { GalleryType } from "@/types/gallery-type";
 import { Link } from "next-view-transitions";
-import { useRouter } from "next/navigation";
 import React, { useState } from "react";
+import GalleryItems from "@/components/gallery/gallery-items";
 
 type ClientGalleryProps = {
   items: GalleryType[];
 };
 
 export default function ClientGallery({ items }: ClientGalleryProps) {
-  const router = useRouter();
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
   const [sortOption, setSortOption] = useState('created_at_desc');
 
@@ -29,7 +28,7 @@ export default function ClientGallery({ items }: ClientGalleryProps) {
 
   const filteredItems = selectedTags.length
     ? items.filter((item) =>
-      selectedTags.every((tag) => item.tags.includes(tag))
+      selectedTags.every((tag) => item.tags?.includes(tag))
     )
     : items;
 
@@ -50,30 +49,26 @@ export default function ClientGallery({ items }: ClientGalleryProps) {
     }
   });
 
-
   return (
     <div className="px-4 dark:bg-gray-900">
-      <nav id="filter-ui" className="flex justify-center sticky top-16 z-50">
+      <nav id="filter-ui" className="flex justify-center sticky top-16 z-10">
         <div className="flex flex-col items-center my-4 bg-white dark:bg-gray-800 shadow-lg border rounded-full w-full">
           <div className="flex items-center my-4">
             <button
-              onClick={() => handleSortChange('created_at_asc')}
-              className={`px-4 py-2 mx-2 border rounded-full ${sortOption === 'created_at_asc' ? 'bg-blue-500 text-white' : 'bg-gray-300 dark:bg-gray-700 dark:text-gray-300'}`}
+              onClick={() => {
+                handleSortChange(sortOption === 'created_at_asc' ? 'created_at_desc' : 'created_at_asc');
+              }}
+              className={`px-4 py-2 mx-2 border rounded-full ${sortOption === 'created_at_asc' ? 'bg-blue-500/95 text-white' : 'bg-blue-500/95 text-white dark:bg-gray-700 dark:text-gray-300'}`}
             >
-              등록일순
+              {sortOption === 'created_at_asc' ? '최신 순' : '오래된 순'}
             </button>
-            <button
-              onClick={() => handleSortChange('created_at_desc')}
-              className={`px-4 py-2 mx-2 border rounded-full ${sortOption === 'created_at_desc' ? 'bg-blue-500 text-white' : 'bg-gray-300 dark:bg-gray-700 dark:text-gray-300'}`}
-            >
-              등록일역순
-            </button>
+
             <Link href='/login' className="ml-5 p-2 border rounded-full bg-red-500 text-white">
               로그인
             </Link>
           </div>
           <div className="flex flex-wrap gap-2 justify-center pb-3">
-            {Array.from(new Set(items.flatMap((item) => item.tags))).map((tag) => (
+            {Array.from(new Set(items?.flatMap((item) => item.tags))).map((tag) => (
               <span
                 key={tag}
                 onClick={() => handleTagClick(tag)}
@@ -88,37 +83,7 @@ export default function ClientGallery({ items }: ClientGalleryProps) {
           </div>
         </div>
       </nav>
-
-      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
-        {sortedItems.map((item) => (
-          <button onClick={() => { router.push(`/gallery/${item.id}`); }} key={item.id} className="relative group rounded overflow-hidden shadow-lg dark:shadow-gray-800">
-            <img
-              src={item.image_url}
-              alt={item.description}
-              className="object-cover w-full h-full"
-            />
-            <div className="absolute inset-0 bg-black bg-opacity-50 opacity-0 group-hover:opacity-100 transition-opacity">
-              <div className="absolute bottom-0 p-4 text-white">
-                <p>{item.description}</p>
-                <div className="flex flex-wrap gap-1 mt-2">
-                  {item.tags.map((tag) => (
-                    <span
-                      key={tag}
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleTagClick(tag);
-                      }}
-                      className="px-2 py-1 bg-gray-700 dark:bg-gray-600 rounded-full cursor-pointer"
-                    >
-                      {tag}
-                    </span>
-                  ))}
-                </div>
-              </div>
-            </div>
-          </button>
-        ))}
-      </div>
+      <GalleryItems items={sortedItems} handleTagClick={handleTagClick} selectedTags={selectedTags} />
     </div>
   );
 };
