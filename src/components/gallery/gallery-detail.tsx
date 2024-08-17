@@ -64,10 +64,7 @@ export default function GalleryDetail({ isModal }: GalleryDetailProps) {
                       src={selectedItem.image_url}
                       alt={selectedItem.description}
                       className="w-full h-auto rounded-lg"
-                    />
-                    <div>
-                      
-                    </div>
+                    />                    
                     <div className="mt-4">
                       <p>{selectedItem.description}</p>
                       <p className="text-gray-600">태그:</p>
