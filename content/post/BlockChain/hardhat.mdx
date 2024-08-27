@@ -1,0 +1,107 @@
+---
+title: "HardHat 이란?"
+tags:
+  - blockchain
+  - DeFi
+  - hardhat
+
+description: "Hardhat의 개념과 디렉토리 구조에 대해 알아보는 글입니다. Hardhat을 활용한 스마트 계약 개발의 기초를 살펴보겠습니다."
+
+date: 2024-08-25
+---
+
+[HardHat 공식문서](https://hardhat.org/hardhat-runner/docs/getting-started "공식문서")를 참고하여 작성하였습니다.
+
+## Hardhat이란?
+
+`Hardhat`은 이더리움 스마트 컨트렉트(계약) 개발을 위한 강력한 개발 환경입니다.
+
+개발자들은 Hardhat을 사용해 Solidity로 작성된 스마트 계약을 컴파일하고, 테스트하며, 블록체인 네트워크 상에 배포할 수 있습니다.
+
+특히, `디버깅`과 `테스트`가 용이하도록 설계되어 있어, 개발 효율성을 크게 높여주는 도구로 각광받고 있습니다.
+
+Hardhat은 다음과 같은 주요 기능을 제공합니다.
+
+- **Solidity 컴파일러**: Solidity 스마트 계약을 자동으로 컴파일하여 배포할 수 있습니다.
+- **테스트 프레임워크**: 스마트 계약의 테스트를 손쉽게 수행할 수 있습니다.
+- **디버깅**: 스마트 계약이 실행 중일 때 문제를 쉽게 찾을 수 있는 강력한 디버깅 기능을 제공합니다.
+- **플러그인 시스템**: 필요한 기능을 확장할 수 있는 플러그인들을 제공합니다. 대표적인 플러그인으로는 Ethers.js, Waffle 등이 있습니다.
+
+### 설치
+
+```bash
+npx hardhat init
+
+# 아래와 같은 선택지들 선택
+✔ What do you want to do? · Create a TypeScript project
+✔ Hardhat project root: · /...
+✔ Do you want to add a .gitignore? (Y/n) · y
+✔ Do you want to install this sample project's dependencies with npm (hardhat @nomicfoundation/hardhat-toolbox)? (Y/n) · y
+```
+
+## Hardhat 디렉토리 구조
+
+```text
+my-hardhat-project/
+├── contracts/
+│ └── Lock.sol
+├── scripts/
+│ └── deploy.ts
+├── test/
+│ └── Lock.ts
+├── hardhat.config.ts
+├── package.json
+└── node_modules/
+```
+
+### `contracts/`
+
+이 디렉토리에는 스마트 계약 파일들이 위치합니다. 프로젝트 초기화 시 기본적으로 `Lock.sol`이라는 예제 스마트 계약이 생성됩니다.
+
+이 디렉토리에서 Solidity로 스마트 계약을 작성하게 됩니다.
+
+### `scripts/`
+
+`deploy.ts` 파일은 스마트 계약을 이더리움 네트워크(로컬 네트워크나 메인넷 등)에 배포하는 스크립트를 담고 있습니다.
+
+이 파일을 수정하여 스마트 계약 배포 과정을 커스터마이즈할 수 있습니다.
+
+### `test/`
+
+`test/` 디렉토리는 스마트 계약을 테스트하기 위한 파일을 담고 있습니다. 기본적으로 `Lock.ts` 파일이 생성되며, Mocha 및 Chai를 이용해 작성된 테스트 코드가 포함되어 있습니다.
+
+이곳에서 스마트 계약의 동작을 검증하는 테스트 코드를 작성하게 됩니다.
+
+### `hardhat.config.ts`
+
+이 파일은 Hardhat 프로젝트의 핵심 설정 파일입니다. Solidity 컴파일러 버전, 네트워크 설정, 플러그인 사용 여부 등을 이곳에서 정의합니다.
+
+```javascript
+require("@nomiclabs/hardhat-waffle");
+
+module.exports = {
+  solidity: "0.8.24",
+  networks: {
+    localhost: {
+      url: "http://127.0.0.1:8545",
+    },
+  },
+};
+```
+
+## Solidity란?
+
+Solidity는 이더리움 플랫폼에서 스마트 계약을 작성하기 위한 프로그래밍 언어입니다.
+
+이 언어는 JavaScript, Python과 유사한 문법을 사용하며, 주로 이더리움 가상 머신(EVM)에서 실행되는 계약을 작성하는 데 사용됩니다.
+
+Solidity는 이더리움 네트워크 상에서 자동으로 실행되는 프로그램인 스마트 계약을 구현하기에 최적화되어 있습니다.
+
+스마트 계약은 분산형 애플리케이션(DApps)에서 중요한 역할을 하며, 금융 서비스, 공급망 관리, 디지털 자산 관리 등 다양한 분야에서 사용됩니다.
+
+| **비교 항목**     | **Solidity**                  | **JavaScript**                            | **Python**                     |
+| ----------------- | ----------------------------- | ----------------------------------------- | ------------------------------ |
+| **용도**          | 스마트 계약 개발              | 웹, 서버, 다양한 애플리케이션             | 데이터 분석, 웹 개발, 머신러닝 |
+| **문법**          | JavaScript 및 Python과 유사   | 동적 타입 언어                            | 동적 타입 언어                 |
+| **타입**          | 정적 타입                     | 동적 타입                                 | 동적 타입                      |
+| **네트워크 실행** | 이더리움 네트워크 상에서 실행 | 일반적으로 웹 브라우저 또는 서버에서 실행 | 로컬 머신 또는 서버에서 실행   |
