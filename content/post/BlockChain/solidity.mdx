@@ -1,0 +1,107 @@
+---
+title: "Solidity와 JavaScript 비교"
+tags:
+  - blockchain
+  - DeFi
+  - hardhat
+  - solidity
+
+description: "Solidity의 문법을 JavaScript와 비교하여 설명합니다."
+date: 2024-08-30
+---
+
+Solidity는 Ethereum 가상 머신(EVM)에서 실행되는 스마트 계약을 개발하기 위해 설계된 `정적 타입 프로그래밍 언어`입니다.
+
+`Solidity` 문법을 `JavaScript`와 비교하여 설명하겠습니다.
+
+## 1. 데이터 타입
+
+Solidity는 다양한 기본 데이터 타입을 지원합니다. JavaScript와 유사한 타입도 있지만, 블록체인 환경에 특화된 타입도 있습니다.
+
+| 데이터 타입 | Solidity                            | JavaScript                       |
+| ----------- | ----------------------------------- | -------------------------------- |
+| 정수        | `int`, `uint` (고정 크기 사용 가능) | `Number` (기본적으로 부동소수점) |
+| 불리언      | `bool`                              | `Boolean`                        |
+| 문자열      | `string`                            | `String`                         |
+| 주소        | `address` (블록체인 전용)           | N/A                              |
+| 배열        | 고정 크기 또는 동적 배열            | 배열 (동적)                      |
+| 매핑        | `mapping(KeyType => ValueType)`     | `Object` 또는 `Map`              |
+| 구조체      | `struct` (사용자 정의 데이터 타입)  | `Object` (사용자 정의 속성)      |
+
+- **정수 타입**: Solidity는 고정 크기의 정수 타입(`int`, `uint`)을 사용하며, 이는 JavaScript의 동적 `Number` 타입과 다릅니다.
+- **주소 타입**: Solidity의 `address` 타입은 Ethereum 주소를 나타내며, JavaScript에는 이에 해당하는 타입이 없습니다.
+- **매핑**: Solidity의 `mapping`은 블록체인 저장을 위해 특화된 구조로, JavaScript의 `Object` 또는 `Map`과 유사하지만 특정 블록체인 관련 기능을 제공합니다.
+
+## 2. 함수
+
+Solidity 함수는 JavaScript 함수와 유사한 구조를 가지지만, 추가적인 가시성 제어 및 상태 불변성 옵션이 있습니다.
+
+| 기능        | Solidity                                 | JavaScript                      |
+| ----------- | ---------------------------------------- | ------------------------------- |
+| 함수 정의   | `function functionName() public {...}`   | `function functionName() {...}` |
+| 수정자      | 가시성 (`public`, `private`, `internal`) | 내장 가시성 수정자 없음         |
+| 반환 타입   | 함수 시그니처 뒤에 명시                  | 함수 내 `return` 키워드 사용    |
+| 상태 불변성 | `view`, `pure`, `payable`                | N/A                             |
+
+- **가시성**: Solidity에서는 함수의 가시성을 명시적으로 선언해야 하며, 이는 함수가 계약 내부 또는 외부에서 어떻게 접근될 수 있는지를 결정합니다.
+- **상태 불변성**: Solidity는 블록체인 상태에 영향을 미치는지 여부에 따라 `view`, `pure`, `payable` 등의 상태 불변성 수정자를 사용합니다.
+
+## 3. 제어 구조
+
+Solidity는 JavaScript와 유사한 제어 구조를 지원하지만, 가스 비용을 고려해야 하므로 일부 사용에 제한이 있습니다.
+
+| 구조           | Solidity                   | JavaScript                 |
+| -------------- | -------------------------- | -------------------------- |
+| 조건문         | `if`, `else`, `ternary`    | `if`, `else`, `ternary`    |
+| 반복문         | `for`, `while`, `do-while` | `for`, `while`, `do-while` |
+| Break/Continue | 지원                       | 지원                       |
+
+- **반복문 사용**: Solidity에서는 가스 제한 때문에 무한 반복문을 피해야 하며, 이는 JavaScript와의 중요한 차이점입니다.
+
+## 4. 계약 구조
+
+Solidity 계약은 JavaScript의 클래스와 유사하지만, 스마트 계약의 특성상 몇 가지 추가 기능이 있습니다.
+
+| 구성 요소   | Solidity                              | JavaScript              |
+| ----------- | ------------------------------------- | ----------------------- |
+| 계약/클래스 | `contract ContractName {...}`         | `class ClassName {...}` |
+| 상속        | `is` 키워드 (`contract B is A {...}`) | `extends` 키워드        |
+| 상태 변수   | `uint public x;` (영구 저장)          | 클래스 속성             |
+| 이벤트      | `event EventName(parameters);`        | N/A                     |
+
+- **계약**: Solidity의 계약은 블록체인에 배포되며, 상태 변수는 블록체인에 영구적으로 저장됩니다. 이는 JavaScript 클래스와의 큰 차이점입니다.
+- **이벤트**: Solidity는 이벤트를 통해 블록체인 상에서 발생하는 중요한 활동을 기록할 수 있습니다. JavaScript에는 이에 상응하는 기능이 없습니다.
+
+## 5. 수정자
+
+Solidity의 수정자는 함수의 동작을 제어하는 고유한 방법을 제공합니다.
+
+| 기능   | Solidity                   | JavaScript         |
+| ------ | -------------------------- | ------------------ |
+| 사용법 | `modifier onlyOwner {...}` | 직접적인 대응 없음 |
+| 적용   | 함수에 적용                | N/A                |
+
+- **수정자**: Solidity의 수정자는 함수 호출 전에 특정 조건을 확인하는 등의 역할을 하며, 이를 통해 코드의 재사용성을 높일 수 있습니다. JavaScript에는 직접적인 대응이 없습니다.
+
+## 6. 오류 처리
+
+Solidity에서 오류 처리는 블록체인 트랜잭션의 특성에 맞춘 방식으로 이루어집니다.
+
+| 메서드    | Solidity                       | JavaScript                   |
+| --------- | ------------------------------ | ---------------------------- |
+| Assertion | `assert(condition);`           | `console.assert(condition);` |
+| 예외 처리 | `require(condition, message);` | `throw new Error(message);`  |
+| 되돌리기  | `revert(message);`             | `throw new Error(message);`  |
+
+- **오류 처리**: Solidity는 트랜잭션의 모든 상태 변경을 되돌리기 위해 `require`, `assert`, `revert`를 사용합니다. JavaScript에서는 오류 발생 시 상태를 되돌리는 기능이 기본적으로 제공되지 않습니다.
+
+## 7. 상속 및 인터페이스
+
+Solidity는 상속을 지원하며, 인터페이스는 계약 개발에서 중요한 역할을 합니다.
+
+| 기능       | Solidity                        | JavaScript                                  |
+| ---------- | ------------------------------- | ------------------------------------------- |
+| 상속       | `contract B is A {...}`         | `class B extends A {...}`                   |
+| 인터페이스 | `interface InterfaceName {...}` | 기본적으로 지원하지 않음 (클래스 사용 가능) |
+
+- **인터페이스**: Solidity 인터페이스는 구현 없이 함수 시그니처만 정의하여, 계약 간 표준을 강제합니다. JavaScript에는 명시적인 인터페이스가 없지만, 클래스를 사용해 유사한 구조를 구현할 수 있습니다.
