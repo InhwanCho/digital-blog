@@ -190,6 +190,10 @@ td {
   @apply text-left py-3 px-4 border-[#B2B2B2];
 }
 
+td {
+  @apply min-w-20
+}
+
 .prose :where(thead th):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
   @apply font-extrabold;
 }
