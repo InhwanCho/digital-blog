@@ -1,5 +1,5 @@
 ---
-title: 'Nextjs 란?'
+title: "Next.js 란?"
 
 tags:
   - nextjs
@@ -18,9 +18,9 @@ date: 2023-11-16
 <h4>
   장점으로는 <br />
 </h4>
-1. `SSR`을 사용하여 `SEO`에 최적화되어있고, 2. 개발 생산성 향상 - `Routing(라우팅) 및 설정`이 매우 편리하게
-되어있습니다. 3. TypeScript 지원 4. 배포 용이성 - vercel에서 손쉬운 배포가 가능합니다. 5. 안정성 및 성능
-- 업데이트 주기가 빠릅니다.
+1. `SSR`을 사용하여 `SEO`에 최적화되어있고, 2. 개발 생산성 향상 - `Routing(라우팅)
+및 설정`이 매우 편리하게 되어있습니다. 3. TypeScript 지원 4. 배포 용이성 - vercel에서
+손쉬운 배포가 가능합니다. 5. 안정성 및 성능 - 업데이트 주기가 빠릅니다.
 
 ---
 
@@ -102,7 +102,7 @@ export const metadata : Metadata= {
 `[id].page` 인 경우 dynamic metadata가 필요한 경우가 있습니다.
 아래와 같이 `export generateMetadata`를 하면 됩니다.
 params은 page가 받는 인자를 동일하게 받을 수 있습니다.
-또한, getMovie 처럼 server side fetching한 경우, 
+또한, getMovie 처럼 server side fetching한 경우,
 앞에서(앞 페이지) 받은 api를 그대로 사용하기 때문에 실제로 fetch하지 않아, 로딩이 없습니다.
 
 ```JavaScript

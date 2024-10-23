@@ -1,5 +1,5 @@
 ---
-title: 'Nextjs(pages-router) - data fetching'
+title: "Next.js(pages-router) - data fetching"
 
 tags:
   - nextjs
@@ -18,13 +18,12 @@ date: 2024-02-03
 
 `export default function` 으로 `데이터`를 `await으로 fetch`하고 `return` 합니다.
 
-
 ```JavaScript:(home)/page.tsx
 export const URL = 'https...'
 
 async function getMovies() {
   //1초간 로딩(로딩 함수 확인용)
-  await new Promise((resolve) => setTimeout(resolve, 1000)) 
+  await new Promise((resolve) => setTimeout(resolve, 1000))
   const response = await fetch(URL)
   const json = await response.json()
   return json
