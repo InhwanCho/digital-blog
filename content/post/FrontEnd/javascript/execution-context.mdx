@@ -1,10 +1,10 @@
 ---
-title: '실행 컨텍스트(Execution Context)'
+title: "실행 컨텍스트(Execution Context)"
 
 tags:
   - execution-context
   - must-know
-description: '자바스크립트에서 중요한 개념 중 하나인 실행 컨텍스트를 설명하고, 이해를 돕기위한 부가적인 용어들 환경레코드, 호이스팅, this 바인딩, 스코프와 클로저, 네이티브 객체, 호스트 객체에 대해 설명합니다.'
+description: "자바스크립트에서 중요한 개념 중 하나인 실행 컨텍스트를 설명하고, 이해를 돕기위한 부가적인 용어들 환경레코드, 호이스팅, this 바인딩, 스코프와 클로저, 네이티브 객체, 호스트 객체에 대해 설명합니다."
 date: 2024-03-09
 ---
 
@@ -44,7 +44,7 @@ JavaScript 코드가 실행되면, 가장 먼저 글로벌 실행 컨텍스트�
 
 ## 실행 컨텍스트의 생성 과정
 
-실행 컨텍스트의 생성에는 크게 두 단계, 즉 생성 단계와 실행 단계가 있습니다.
+실행 컨텍스트의 생성에는 크게 두 단계, 즉 `생성 단계`와 `실행 단계`가 있습니다.
 
 생성 단계에서는 환경 레코드(Environment Record)와 호이스팅, this 바인딩이 일어납니다.
 
@@ -189,7 +189,7 @@ function varScopeExample() {
 
 // 함수 내 선언된 것은 호출 불가능.
 // ReferenceError: y is not defined
-// console.log(test) 
+// console.log(test)
 ```
 
 ## let
@@ -206,9 +206,9 @@ console.log(greeting) // ReferenceError: Cannot access 'greeting' before initial
 let greeting = "안녕하세요";
 greeting = "반갑습니다"; // 재할당 가능
 
-// 다시 선언 불가능 
+// 다시 선언 불가능
 // SyntaxError: Identifier 'greeting' has already been declared
-// let greeting = "다시 선언"; 
+// let greeting = "다시 선언";
 
 if (true) {
   let blockScope = "저는 블록 스코프 안에서만 유효합니다.";
@@ -217,7 +217,7 @@ if (true) {
 
 // 함수 내에서 선언된 let을 외부에서 호출 불가능.
 // ReferenceError: blockScope is not defined
-// console.log(blockScope); 
+// console.log(blockScope);
 ```
 
 ## const
@@ -233,7 +233,7 @@ if (true) {
 const greeting = "안녕하세요";
 // 값 변경 불가능.
 // TypeError: Assignment to constant variable.
-// greeting = "반갑습니다"; 
+// greeting = "반갑습니다";
 
 const obj = { key: "값" };
 obj.key = "새로운 값"; // 가능

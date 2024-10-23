@@ -1,5 +1,5 @@
 ---
-title: 'CSS'
+title: "CSS"
 
 tags:
   - css
@@ -9,8 +9,10 @@ date: 2023-11-21
 
 ## Flex
 
-Flex 아이템들은 가로 방향으로 배치됩니다, 
-inline 요소들 처럼 자신이 가진 내용물의 width 만큼만 차지하게 되지요. 
+Flex 아이템들은 가로 방향으로 배치됩니다.
+
+inline 요소들 처럼 자신이 가진 내용물의 width 만큼만 차지하게 됩니다.
+
 height는 컨테이너의 높이만큼 자동으로 생성됩니다.
 
 `justify`는 가로(메인) 방향으로 정렬
@@ -57,19 +59,20 @@ height는 컨테이너의 높이만큼 자동으로 생성됩니다.
 
 ## Grid
 
-Flex와 Grid 차이는 
-Flex는 한 방향 레이아웃 시스템(가로 방향 혹은 세로 방향)
-Grid는 두 방향(가로-세로 모두 가능) 레이아웃 시스템
+Flex와 Grid 차이는 `Flex`는 한 방향 레이아웃 시스템(가로 방향 혹은 세로 방향)
 
-> Grid Container<br/>Grid의 전체(최외곽) 영역입니다. 
+`Grid`는 두 방향(가로-세로 모두 가능) 레이아웃 시스템
+
+> Grid Container<br/>Grid의 전체(최외곽) 영역입니다.
 
 > 그리드 아이템 (Grid Item)<br/>
-Grid 컨테이너의 자식 요소들입니다. <br/>
-바로 이 아이템들이 Grid 규칙에 의해 배치되는 거예요.(내부 박스)
+> Grid 컨테이너의 자식 요소들입니다. <br/>
+> 바로 이 아이템들이 Grid 규칙에 의해 배치되는 거예요.(내부 박스)
 
 ## Transition
 
-전환 에니매이션! 과정은 다음과 같습니다.
+`전환 에니매이션` 과정은 다음과 같습니다.
+
 1. 에니메이션 동작 전 ClassName 만들기
 2. 에니메이션 동작 후 ClassName 만들기
 3. ClassName에 Transition 추가하기
@@ -80,7 +83,7 @@ Grid 컨테이너의 자식 요소들입니다. <br/>
   opacity: 0.1;
   transform: scale(0);
 }
-.end{
+.end {
   opacity: 1;
   transform: scale(1);
   transition: all 1s;
@@ -88,52 +91,61 @@ Grid 컨테이너의 자식 요소들입니다. <br/>
 ```
 
 ```js
-  let [tr,setTr] = useState('');
-  useEffect(()=>{
-    setTimeout(() => {
-      setTr('end')
-    }, 10);
-    return ()=> setTr('')
-  },[tab])
-  return (
-    <div className={'start '+tr}>
-      {[<div>0</div>,<div>1</div>][tab]}
-    </div>
-  )
+let [tr, setTr] = useState("");
+useEffect(() => {
+  setTimeout(() => {
+    setTr("end");
+  }, 10);
+  return () => setTr("");
+}, [tab]);
+return <div className={"start " + tr}>{[<div>0</div>, <div>1</div>][tab]}</div>;
 ```
 
 ## box-sizing 살펴보기
 
-컨테이너(box)를 생성하면 
+컨테이너(box)를 생성하면
+
 `margin` = 컨테이너 최외곽 요소
+
 `border` = 컨테이너 외곽 요소(box 경계)
+
 `padding` = 컨테이너 내부 요소
+
 만약 `width: 100px`로 입력한다면,
 
-
 `box-sizing: content-box`로 설정 시(default)
+
 최종 `box-sizing(width) = 100px + padding + border + margin`이 됩니다.
 
 `box-sizing: border-box`로 설정 시
+
 `width = 100px + margin`이 최종 width가 됩니다.
 
 ## 반응형 웹 - display:inline-block
 
 위의 box-sizing을 참고하면 반응형 웹을 디자인할 수 있습니다.
+
 display:block;인 box를 만들고(자동으로 width:100%)
+
 padding: 10%;같은 속성으로 디스플레이 크기마다 box-size를 바꾸는게 핵심입니다.
 
 나란히 배치하기 위해서는 display:inline-block;을 해주면 되는데, 안 될때가 있습니다.
+
 그 경우 빈 문자가 있어서 그럴 수 있습니다.
+
 예를들어 div태그가 2개가 있으면 첫 번째 div태그에 enter를 쳐서 100%가 넘어가서 그렇습니다.
+
 <div>1</div>
 <div>2</div>
 
 이를 해결하기 위해 -> `<div>1</div><div>2</div>`이렇게 해줘도 되지만,
+
 부모 태그에 font-size=0을 주고 자식태그에 font-size를 따로 부여하는 방법도 있습니다.
+
 rem == root em == html 즉, 아래 css와 동일합니다.
 
 1rem == 16px;
+
 ```css
 html{
   font-size = 16px;
@@ -142,14 +154,18 @@ html{
 ```
 
 또한, inline-block으로 같은 선으로 배치했을 때, height가 다를 경우
+
 위치를 수정하는 css 옵션은 `vertical-align : [top,middle, bottom];`입니다.
 
 그리고 width를 설정하는게 아닌 `max-width를 설정`을 하여 스크롤이 생기지 않게 유의해야합니다.
+
 이 max-width를 넘어가면 여백이 생기는데 이때 좌우 정렬(가운데 정렬)을 하려면
+
 `margin-left:auto; margin-right:auto;` 또는
+
 `margin: 0 auto`를 하면됩니다(top, bottom =0)
 
-## Position 
+## Position
 
 요소를 옮길 위치의 기준점을 정하는 css
 
@@ -174,8 +190,7 @@ antialiased - 폰트를 부드럽게 만들어주는 속성
 -moz-osx-font-smoothing: grayscale;
 ```
 
-
 ## 참고
 
-[스튜디오 meal](https://studiomeal.com/archives/197 '슈튜디오 meal')
-[MDN doc](https://developer.mozilla.org/en-US/docs/Web/CSS/display 'mdn doc')
+[스튜디오 meal](https://studiomeal.com/archives/197 "슈튜디오 meal")
+[MDN doc](https://developer.mozilla.org/en-US/docs/Web/CSS/display "mdn doc")

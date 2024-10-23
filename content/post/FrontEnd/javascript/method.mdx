@@ -1,0 +1,121 @@
+---
+title: "JavaScript Array(배열) 메서드 총정리"
+tags:
+  - javascript
+  - html
+description: "JavaScript에서 자주 사용되는 배열 메서드인 forEach, map, filter, find, push, pop, sort, slice, reduce, concat, join에 대해 알아봅니다."
+date: 2024-10-23
+---
+
+## forEach()
+
+`forEach()`는 배열의 **각 요소를 순회**하며, 주어진 콜백 함수를 실행합니다. 하지만 반환값은 없고, 단순히 반복 작업에 사용됩니다.
+
+```javascript
+const arr = [1, 2, 3];
+arr.forEach((value) => console.log(value));
+// 1
+// 2
+// 3
+```
+
+## map()
+
+`map()`은 배열의 각 요소를 변환하여 새로운 배열을 반환합니다. 원본 배열은 변경되지 않습니다.
+
+```javascript
+const arr = [1, 2, 3];
+const doubled = arr.map((value) => value * 2);
+console.log(doubled); // [2, 4, 6]
+```
+
+## filter()
+
+`filter()`는 조건을 만족하는 요소들만 남겨 새로운 배열을 반환합니다.
+
+```javascript
+const arr = [1, 2, 3, 4];
+const even = arr.filter((value) => value % 2 === 0);
+console.log(even); // [2, 4]
+```
+
+## find()
+
+`find()`는 조건을 만족하는 첫 번째 요소를 반환합니다. 찾는 요소가 없으면 undefined를 반환합니다.
+
+```javascript
+const arr = [1, 2, 3, 4];
+const result = arr.find((value) => value > 2);
+console.log(result); // 3
+```
+
+## push()
+
+`push()`는 배열의 끝에 요소를 추가하고, 배열의 새로운 길이를 반환합니다.
+
+```javascript
+const arr = [1, 2];
+arr.push(3);
+console.log(arr); // [1, 2, 3]
+```
+
+## pop()
+
+`pop()`은 배열의 마지막 요소를 제거하고, 그 제거된 요소를 반환합니다.
+
+```javascript
+const arr = [1, 2, 3];
+const removed = arr.pop();
+console.log(removed); // 3
+console.log(arr); // [1, 2]
+```
+
+## sort()
+
+`sort()`는 배열을 정렬합니다. 기본적으로 문자열로 정렬되기 때문에, 숫자 정렬을 위해서는 콜백 함수를 제공해야 합니다.
+
+```javascript
+const arr = [3, 1, 4, 2];
+arr.sort((a, b) => a - b);
+console.log(arr); // [1, 2, 3, 4]
+```
+
+## slice()
+
+`slice()`는 배열의 일부를 추출하여 새로운 배열을 반환합니다. 원본 배열은 변경되지 않습니다.
+
+```javascript
+const arr = [1, 2, 3, 4];
+const sliced = arr.slice(1, 3); // 인덱스 1부터 3 이전까지 추출
+console.log(sliced); // [2, 3]
+```
+
+## reduce()
+
+`reduce()`는 배열의 모든 요소를 누적하여 하나의 값으로 줄입니다.
+
+```javascript
+const arr = [1, 2, 3, 4];
+const sum = arr.reduce((acc, value) => acc + value, 0);
+console.log(sum); // 10
+```
+
+## concat()
+
+`concat()`은 두 개 이상의 배열을 연결하여 새로운 배열을 반환합니다.
+
+```javascript
+const arr1 = [1, 2];
+const arr2 = [3, 4];
+const combined = arr1.concat(arr2);
+console.log(combined); // [1, 2, 3, 4]
+```
+
+## join()
+
+`join()`은 배열의 모든 요소를 문자열로 연결합니다.
+
+```javascript
+const arr = ["Hello", "World"];
+console.log(arr.join(" ")); // "Hello World"
+```

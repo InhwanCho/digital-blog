@@ -1,11 +1,11 @@
 ---
-title: 'BOM(Browser Object Model)과 DOM(Document Object Model)'
+title: "BOM(Browser Object Model)과 DOM(Document Object Model)"
 
 tags:
   - bom
   - dom
   - must-know
-description: '이 글에서는 웹페이지를 구성하는 두가지 핵심 구성 요소인 BOM과 DOM의 차이점과 상호 작용 방법에 대해서 상세하게 살펴봅니다.'
+description: "이 글에서는 웹페이지를 구성하는 두가지 핵심 구성 요소인 BOM과 DOM의 차이점과 상호 작용 방법에 대해서 상세하게 살펴봅니다."
 date: 2024-06-09
 ---
 
@@ -17,7 +17,11 @@ BOM과 DOM이 무엇이며, 이들의 차이점 및 상호 작용 방법에 대�
 
 ## BOM(Browser Object Model)이란?
 
-<MdxImage src='https://github.com/InhwanCho/nextjs_blog_v2/assets/111936229/0abfb801-818b-4159-9e3f-7552710e6c64' width='700' alt='bom'/>
+<MdxImage
+  src="https://github.com/InhwanCho/nextjs_blog_v2/assets/111936229/0abfb801-818b-4159-9e3f-7552710e6c64"
+  width="700"
+  alt="bom"
+/>
 
 BOM은 브라우저의 창이나 프레임을 포함한 웹페이지의 모든 요소를 객체로 다루어 접근할 수 있게 하는 모델입니다.
 
@@ -27,7 +31,11 @@ BOM은 브라우저의 창이나 프레임을 포함한 웹페이지의 모든 �
 
 ## DOM(Document Object Model)이란?
 
-<MdxImage src='https://github.com/InhwanCho/nextjs_blog_v2/assets/111936229/69f87797-d2b3-4c32-847d-6de05ea4f581' width='700' alt='dom'/>
+<MdxImage
+  src="https://github.com/InhwanCho/nextjs_blog_v2/assets/111936229/69f87797-d2b3-4c32-847d-6de05ea4f581"
+  width="700"
+  alt="dom"
+/>
 
 DOM은 HTML 문서의 구조를 객체 형태로 표현한 것으로, 웹 페이지의 문서를 프로그래밍적으로 제어할 수 있는 API를 제공합니다.
 
@@ -39,7 +47,7 @@ HTML이나 XML 문서의 각 요소를 `노드`(node)라는 객체로 표현하�
 
 BOM과 DOM은 모두 웹 페이지를 스크립트를 통해 제어하기 위한 객체 모델입니다만, 그 적용 범위와 사용 목적에서 차이를 보입니다.
 
-아래 표는 BOM과 DOM의 주요 차이점을 정리한 것입니다.
+아래 표는 BOM과 DOM의 주요 차이점, 객체들을 정리한 것입니다
 
 | 기준      | BOM                    | DOM                   |
 | --------- | ---------------------- | --------------------- |
@@ -47,11 +55,28 @@ BOM과 DOM은 모두 웹 페이지를 스크립트를 통해 제어하기 위한
 | 적용 범위 | 브라우저 창 및 기능    | 문서 구조 및 내용     |
 | 사용 예   | 창 크기 변경, URL 접근 | 요소 추가, 수정, 삭제 |
 
+| **구분** | **객체**      | **설명**                                                                 | **주요 속성 / 메서드**                                                         |
+| -------- | ------------- | ------------------------------------------------------------------------ | ------------------------------------------------------------------------------ |
+| **BOM**  | `window`      | 브라우저 창을 나타내는 최상위 객체. 전역 함수와 변수가 속해 있음.        | `window.open()`, `window.alert()`, `window.innerWidth`, `window.location`      |
+|          | `location`    | 현재 페이지의 URL 정보를 담고 있는 객체.                                 | `location.href`, `location.reload()`, `location.assign()`, `location.pathname` |
+|          | `navigator`   | 브라우저와 운영체제 정보를 제공. 사용자의 에이전트나 온라인 상태를 감지. | `navigator.userAgent`, `navigator.onLine`, `navigator.language`                |
+|          | `history`     | 사용자가 방문한 페이지 기록을 관리.                                      | `history.back()`, `history.forward()`, `history.length`                        |
+|          | `screen`      | 사용자의 화면 정보 제공. 해상도 및 색상 깊이 등을 알 수 있음.            | `screen.width`, `screen.height`, `screen.availWidth`, `screen.colorDepth`      |
+| **DOM**  | `document`    | HTML 문서의 루트 객체. 웹 페이지의 콘텐츠를 프로그래밍적으로 조작 가능.  | `document.title`, `document.body`, `document.getElementById()`                 |
+|          | **Element**   | HTML 요소를 나타내며 DOM 트리의 각 노드로 구성됨.                        | `element.innerHTML`, `element.classList`, `element.style`                      |
+|          | **Text**      | HTML 요소의 텍스트 노드를 나타냄.                                        | `textNode.nodeValue`                                                           |
+|          | **Attribute** | 요소의 속성 노드를 나타냄.                                               | `element.getAttribute()`, `element.setAttribute()`                             |
+|          | **Event**     | DOM에서 발생하는 사용자 상호작용을 나타냄.                               | `addEventListener()`, `removeEventListener()`, `event.type`                    |
+
 ---
 
 ## 주요 BOM 객체
 
-<MdxImage src='https://github.com/InhwanCho/nextjs_blog_v2/assets/111936229/0abfb801-818b-4159-9e3f-7552710e6c64' width='700' alt='bom'/>
+<MdxImage
+  src="https://github.com/InhwanCho/nextjs_blog_v2/assets/111936229/0abfb801-818b-4159-9e3f-7552710e6c64"
+  width="700"
+  alt="bom"
+/>
 
 ### window 객체
 
@@ -93,7 +118,11 @@ BOM과 DOM은 모두 웹 페이지를 스크립트를 통해 제어하기 위한
 
 ## 주요 DOM 객체
 
-<MdxImage src='https://github.com/InhwanCho/nextjs_blog_v2/assets/111936229/69f87797-d2b3-4c32-847d-6de05ea4f581' width='700' alt='dom'/>
+<MdxImage
+  src="https://github.com/InhwanCho/nextjs_blog_v2/assets/111936229/69f87797-d2b3-4c32-847d-6de05ea4f581"
+  width="700"
+  alt="dom"
+/>
 
 ### Document 객체
 
@@ -136,13 +165,13 @@ BOM과 DOM은 모두 웹 페이지를 스크립트를 통해 제어하기 위한
 ```html
 <!DOCTYPE html>
 <html>
-<head>
-  <title>My Document</title>
-</head>
-<body>
-  <h1 id="main-heading">Hello, World!</h1>
-  <p>This is a paragraph.</p>
-</body>
+  <head>
+    <title>My Document</title>
+  </head>
+  <body>
+    <h1 id="main-heading">Hello, World!</h1>
+    <p>This is a paragraph.</p>
+  </body>
 </html>
 ```
 
@@ -176,3 +205,11 @@ var newParagraph = document.createElement("p");
 newParagraph.innerText = "This is a new paragraph.";
 document.body.appendChild(newParagraph);
 ```
+
+### 요약
+
+- **BOM**은 브라우저 창과 관련된 정보와 기능을 제공하며, 브라우저의 **창, URL, 히스토리, 화면 정보** 등을 조작할 수 있습니다.
+
+- **DOM**은 **HTML 문서의 구조와 내용**을 조작하는 객체 모델로, 웹 페이지 내의 **요소 추가, 삭제, 수정** 등을 가능하게 합니다.
+
+- `window` 객체는 BOM의 최상위 객체이며, **`document` 객체**는 DOM의 진입점으로 웹 문서를 조작할 수 있습니다.
