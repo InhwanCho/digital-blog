@@ -26,9 +26,12 @@ export default function CodeBlock({ children, title, className }: React.Componen
   });
 
   const handleCopy = async () => {
-    const text = ref.current?.querySelector('code')?.innerText;
+    let text = ref.current?.querySelector('code')?.textContent;
     if (!text) return;
-
+  
+    // 연속된 빈 줄은 하나의 줄로 줄이고, 정상적인 줄바꿈은 유지 - 줄바꿈 버그 수정
+    text = text.replace(/\n\s*\n/g, '\n\n').trim();
+  
     try {
       await navigator.clipboard.writeText(text);
       setCopied(true);
@@ -37,7 +40,8 @@ export default function CodeBlock({ children, title, className }: React.Componen
       console.error(e);
       toast.error('코드 복사에 실패했습니다.', { position: 'bottom-center' });
     }
-  };  
+  };
+  
 
   return (
     <div className="group w-full relative my-2 -mx-2 overflow-hidden rounded-lg sm:mx-0 sm:my-5">

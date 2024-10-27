@@ -82,30 +82,24 @@ Babel은 최신 JavaScript 코드를 구형 브라우저에서도 호환 가능�
 - **Polyfill**: 새로운 JavaScript 기능을 구형 브라우저에서도 사용할 수 있게 해주는 코드. 예: `@babel/polyfill`.
 - **Transpiling**: 최신 JavaScript 코드를 구형 브라우저에서도 호환되게 변환하는 과정.
 
+| **비교 항목**       | **Webpack**                                          | **Babel**                                           |
+| ------------------- | ---------------------------------------------------- | --------------------------------------------------- |
+| **주요 역할**       | 모듈 번들러                                          | JavaScript 컴파일러                                 |
+| **사용 목적**       | 여러 파일을 하나의 번들로 묶고 최적화                | 최신 JavaScript를 구 버전으로 변환                  |
+| **핵심 기능**       | 코드 스플리팅, 로더, 플러그인                        | 코드 변환, JSX 처리, 폴리필 추가                    |
+| **대상 파일**       | JavaScript, CSS, 이미지 등 다양한 파일               | JavaScript 파일                                     |
+| **로더와 플러그인** | CSS, 이미지 등 다양한 파일 형식을 로딩하는 로더 제공 | 프리셋과 플러그인으로 코드 변환 규칙 설정           |
+| **React와의 관계**  | React 프로젝트의 번들링에 사용                       | JSX 코드를 순수 JavaScript로 변환                   |
+| **호환성 관련**     | 번들 파일을 생성하여 웹 성능 최적화                  | 구형 브라우저 호환성을 위한 코드 변환               |
+| **설치 명령어**     | `npm install webpack webpack-cli`                    | `npm install @babel/core @babel/preset-env`         |
+| **환경 설정 파일**  | `webpack.config.js`                                  | `.babelrc`, `babel.config.js`                       |
+| **실행 방식**       | 엔트리 포인트에서 시작하여 모든 파일을 번들로 묶음   | 최신 문법을 구문 변환 후 브라우저가 이해하도록 만듦 |
+
 ---
 
-## Next.js의 `next.config.mjs`
+## 결론
 
-Next.js의 `next.config.mjs` 파일은 빌드 및 런타임 동작을 커스터마이즈할 수 있게 해줍니다.
+Next.js에서는 `Webpack`과 `Babel`이 함께 사용되어 모듈 번들링과 코드 변환을 수행합니다.
 
-[Next.js config options](https://digital-blog-eosin.vercel.app/post/FrontEnd/nextjs/nextconfig "nextjs config options")
-
-## mjs vs js
-
-- mjs 확장자는 ECMAScript 모듈(ES 모듈)을 명시적으로 사용하는 파일을 나타냅니다.
-
-- ES 모듈은 JavaScript의 최신 표준 모듈 시스템으로, import와 export 구문을 사용합니다.
-
-| 특징            | .mjs 파일                                                                                         | .js 파일                                    |
-| --------------- | ------------------------------------------------------------------------------------------------- | ------------------------------------------- |
-| 모듈 시스템     | ES 모듈 (ECMAScript Modules)                                                                      | CommonJS 모듈 시스템                        |
-| 사용 구문       | import / export                                                                                   | require / module.exports                    |
-| 로드 방식       | 비동기 로드                                                                                       | 동기 로드                                   |
-| 엄격 모드       | 기본적으로 엄격 모드 적용 (strict mode)                                                           | 기본적으로 엄격 모드가 적용되지 않음        |
-| Node.js 설정    | Node.js에서 사용하려면 --experimental-modules 플래그 또는 package.json에 type: "module" 설정 필요 | 별도의 설정 없이 기본적으로 지원            |
-| 파일 확장자     | .mjs                                                                                              | .js                                         |
-| 브라우저 호환성 | 브라우저에서 직접 사용 가능                                                                       | 브라우저에서 직접 사용하려면 번들링 필요    |
-| 스코프          | 모듈 스코프                                                                                       | 모듈 스코프                                 |
-| 사용 사례       | 최신 JavaScript 표준을 따르는 모듈 시스템 필요 시                                                 | 전통적인 Node.js 환경에서 널리 사용         |
-| 기능 공유 방법  | export로 내보내고, import로 가져옴                                                                | module.exports로 내보내고, require로 가져옴 |
-| 모듈 해석 방식  | 파일 경로에서 확장자를 명시해야 함                                                                | 확장자를 명시하지 않아도 자동으로 해석 가능 |
+- Webpack: 애플리케이션의 성능 최적화와 코드 스플리팅을 담당합니다.
+- Babel: 최신 JavaScript와 JSX를 구형 브라우저에서 동작하도록 변환합니다.

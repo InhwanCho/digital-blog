@@ -38,3 +38,6 @@ next-env.d.ts
 
 # velite
 .velite
+
+test.js
+test.ts

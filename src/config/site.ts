@@ -48,10 +48,10 @@ export const siteConfig = {
       label: "Categories",
       path: "/categories",
     },
-    {
-      label: "Puppies",
-      path: "/gallery",
-    },
+    // {
+    //   label: "Puppies",
+    //   path: "/gallery",
+    // },
     // {
     //   label: "Tags",
     //   path: "/tags",
