@@ -1,6 +1,7 @@
 import { Post } from "#site/content";
 import { type ClassValue, clsx } from "clsx";
 import { slug } from "github-slugger";
+import { useEffect, useRef, useState } from "react";
 import { twMerge } from "tailwind-merge";
 
 interface Categories {
