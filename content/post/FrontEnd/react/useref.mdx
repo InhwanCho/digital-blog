@@ -113,6 +113,23 @@ function PreventDuplicateSubmission() {
 }
 ```
 
+이 코드에서 초기값을 null이 아닌 `""`빈 문자열로 설정한 이유는
+
+null인 경우 아래의 경우가 있을때, 코드가 길어질 수 있기 때문입니다.
+
+```javascript
+if (inputValue === lastSubmittedValue.current) {
+  alert("중복된 값은 제출할 수 없습니다.");
+}
+
+if (
+  lastSubmittedValue.current === null ||
+  inputValue === lastSubmittedValue.current
+) {
+  alert("중복된 값은 제출할 수 없습니다.");
+}
+```
+
 - renderCount는 렌더링 횟수를 저장하지만, 값이 변경되어도 컴포넌트를 다시 렌더링하지 않습니다.
 - useEffect를 통해 렌더링 횟수를 추적하고, 값을 증가시킵니다.
 
