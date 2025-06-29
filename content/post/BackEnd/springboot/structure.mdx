@@ -1,0 +1,181 @@
+---
+title: "Spring Boot 핵심 구성요소와 프로젝트 구조 총정리"
+
+tags:
+  - springboot
+  - backend
+  - java
+
+description: "Spring Boot 실무 개발 시 반드시 알아야 하는 Controller, Service, Repository, Entity, Bean 등 핵심 구성요소와 프로젝트 구조를 한눈에 정리했습니다."
+
+date: 2025-05-11
+---
+
+# Spring Boot 핵심 구성요소와 프로젝트 구조 총정리
+
+Spring Boot로 백엔드 개발을 시작할 때 반드시 알아야 하는 구성요소와 프로젝트 구조를 실무 중심으로 정리했습니다.  
+이 글 하나로 Spring Boot 아키텍처의 큰 그림을 한 번에 이해할 수 있습니다.
+
+---
+
+## Spring Boot 주요 구성요소
+
+| 용어           | 설명                                                                         | 비고                                     |
+| -------------- | ---------------------------------------------------------------------------- | ---------------------------------------- |
+| Controller     | 클라이언트의 요청을 받아 처리. Service를 호출하고 결과를 반환                | @Controller, @RestController             |
+| Service        | 비즈니스 로직을 담당. Repository 호출 및 데이터 가공                         | @Service                                 |
+| Service 구현체 | Service 인터페이스를 실제로 구현한 클래스. 인터페이스-구현체 패턴으로 구조화 | UserService → UserServiceImpl            |
+| Model          | DTO, Entity 등 데이터를 담는 객체                                            | @Entity, 일반 POJO                       |
+| Bean           | Spring IoC 컨테이너가 관리하는 객체. 모든 컴포넌트가 Bean                    | @Component, @Service, @Repository, @Bean |
+| Repository     | DB와의 데이터 조회, 저장 등 직접적인 데이터 액세스를 담당                    | @Repository, JpaRepository               |
+| Entity         | JPA 기반 DB 테이블과 매핑되는 클래스                                         | @Entity, @Id, @Column                    |
+| DTO            | Controller와 Service 간 데이터 전달용 객체                                   | View, Request, Response 용               |
+| Configuration  | 설정 클래스. 외부 라이브러리, Bean 등록 등                                   | @Configuration                           |
+| Component      | 일반적인 Bean 등록 시 사용                                                   | @Component                               |
+
+---
+
+## Spring Boot 계층 구조
+
+(사용자 요청)  
+→ Controller  
+→ Service  
+→ Repository  
+→ DB  
+→ Entity 또는 DTO 반환
+
+Controller → Service → Repository → DB → Entity  
+모든 계층이 Spring IoC 컨테이너의 Bean으로 관리됩니다.
+
+---
+
+## 용어 관계 요약
+
+| 계층          | 역할                                   | 대표 어노테이션                          |
+| ------------- | -------------------------------------- | ---------------------------------------- |
+| Controller    | HTTP 요청 수신, 응답 반환              | @RestController, @Controller             |
+| Service       | 핵심 비즈니스 로직 처리                | @Service                                 |
+| Repository    | DB와의 데이터 조회, 저장               | @Repository, JpaRepository               |
+| Model         | 데이터 전달, DB 매핑                   | @Entity, 일반 POJO                       |
+| Bean          | Spring IoC Container에서 관리되는 객체 | @Component, @Service, @Repository, @Bean |
+| Configuration | 설정 클래스                            | @Configuration                           |
+| Component     | 범용 Bean 등록                         | @Component                               |
+
+---
+
+## Spring Bean이란?
+
+**Spring Bean**은  
+Spring IoC 컨테이너가 생성하고 관리하는 객체를 의미합니다.
+
+즉, 개발자가 직접 `new`로 만들지 않아도 Spring이 알아서 생성하고,  
+필요할 때 주입(Dependency Injection)해서 사용할 수 있게 해주는 **일반 자바 객체**입니다.
+
+### Bean의 대표적인 예
+
+- `@Component` : 일반 Bean 등록
+- `@Service` : Service Layer Bean
+- `@Repository` : Repository Layer Bean
+- `@Controller` : Controller Layer Bean
+
+```java
+@Service
+public class UserService {
+    // 이 클래스는 Spring Bean으로 등록되어 관리됩니다.
+}
+```
+
+### Bean의 장점
+
+- 의존성 주입 (DI)으로 객체 생성과 관리를 Spring이 대신
+
+- 기본적으로 싱글톤으로 관리 → 메모리 낭비 방지
+
+- 객체의 생성, 소멸, 초기화, 종료 등을 Spring이 알아서 처리
+
+## DTO란? (Data Transfer Object)
+
+계층 간 또는 시스템 간에 데이터를 전달할 때 사용하는 객체입니다.
+
+주로 `Controller → Service → Repository`
+
+또는 `클라이언트 ↔ 서버` 간 통신 시 사용됩니다.
+
+### DTO의 목적
+
+Entity(DB 매핑 객체)를 외부에 노출하지 않음
+
+필요한 필드만 전달하여 보안성과 효율성 확보
+
+### 예시
+
+```
+@Entity
+public class User {
+    @Id
+    private Long id;
+    private String name;
+    private String password; // 민감정보
+}
+```
+
+## Service Interface + 구현체(Impl) 패턴의 장점
+
+### 예시 코드
+
+```java
+public interface UserService {
+UserDto getUser(Long id);
+}
+
+@Service
+public class UserServiceImpl implements UserService {
+@Override
+public UserDto getUser(Long id) {
+return userRepository.findById(id)
+.orElseThrow(() -> new NotFoundException("사용자 없음"));
+}}
+```
+
+### 주요 장점
+
+- 테스트 시 Mock 객체로 쉽게 교체 가능
+- AOP, Proxy 적용이 쉬움
+- 구조적으로 역할이 명확
+
+---
+
+## Spring Boot 전형적인 프로젝트 구조 예시
+
+```
+src/
+├── main/
+│ ├── java/com/example/project/
+│ │ ├── ProjectApplication.java → 메인 클래스
+│ │ ├── controller/ → Controller 클래스
+│ │ ├── service/ → Service 인터페이스, 구현체
+│ │ ├── repository/ → Repository 인터페이스
+│ │ ├── entity/ → JPA Entity 클래스
+│ │ ├── config/ → 설정 클래스
+│ ├── resources/
+│ │ ├── application.yml or application.properties
+│ │ ├── static/ → css, js, img
+│ │ ├── templates/ → Thymeleaf 등 서버 템플릿
+├── test/ → 테스트 코드
+├── build.gradle or pom.xml → 빌드 설정
+```
+
+## Spring Boot 개발 핵심 키워드
+
+- DI (Dependency Injection) → @Autowired, 생성자 주입
+- AOP (Aspect Oriented Programming) → 공통 로직(로그, 트랜잭션) 모듈화
+- Bean 관리 → 모든 객체는 Spring IoC 컨테이너에서 관리
+
+---
+
+## 결론
+
+Spring Boot 개발은 Controller → Service → Repository → Entity로 이어지는 구조가 가장 일반적입니다.  
+이를 이해하고 잘 설계하면 유지보수, 테스트, 확장성에서 큰 장점을 누릴 수 있습니다.
+
+---

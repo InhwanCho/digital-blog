@@ -1,0 +1,220 @@
+---
+title: "React에서 커스텀 모달 구현"
+tags:
+  - React
+  - Modal
+  - ContextAPI
+  - TypeScript
+  - UI
+description: "React Context와 createPortal을 이용해 여러 개의 모달을 손쉽게 관리하는 방법을 A–Z로 풀어봅니다. ESC 닫기, 백드롭, zIndex 자동 계산, 스크롤 잠금까지 한 번에"
+date: 2025-06-15
+---
+
+## A. 전체 구조 개요
+
+이 글에서는 **ModalContext + useModal 훅 + CustomModal 컴포넌트**가 어떻게 유기적으로 동작해서 다중 모달을 깔끔하게 관리하는지 단계별로 설명합니다.
+
+- Context: 전역 상태(열린 모달 ID 목록) 관리
+- useModal: 각 모달에서 상태 조회·제어 + zIndex 계산
+- CustomModal: createPortal을 활용한 실질적 렌더링
+- 부가 기능: ESC 키 닫기, 백드롭 닫기, body 스크롤 잠금
+
+---
+
+## B. Context 정의 & 상태 관리
+
+```tsx:providers/ModalProvider.tsx
+import React, {
+  createContext,
+  useState,
+  useCallback,
+  ReactNode,
+} from "react";
+
+export interface ModalContextValue {
+  openModals: string[];              // 열린 모달 ID 목록
+  open: (id: string) => void;        // 모달 열기
+  close: (id: string) => void;       // 모달 닫기
+}
+
+export const ModalContext = createContext<ModalContextValue | undefined>(
+  undefined
+);
+```
+
+### 1. openModals
+
+ID 문자열 배열로 현재 열려 있는 모달을 순서대로 보관
+
+### 2. open(id)
+
+중복 체크 후 스택처럼 맨 뒤에 id 추가
+
+### 3. close(id)
+
+해당 id를 배열에서 필터링하여 제거
+
+## C. ModalProvider 구현
+
+```tsx:providers/ModalProvider.tsx
+import { createPortal } from "react-dom";
+import { useEffect, useMemo } from "react";
+
+export function ModalProvider({ children }: { children: ReactNode }) {
+  const [openModals, setOpenModals] = useState<string[]>([]);
+
+  // C-1. open: 중복 없이 ID 추가
+  const open = useCallback((id: string) => {
+    setOpenModals(prev =>
+      prev.includes(id) ? prev : [...prev, id]
+    );
+  }, []);
+
+  // C-2. close: 해당 ID 제거
+  const close = useCallback((id: string) => {
+    setOpenModals(prev => prev.filter(modal => modal !== id));
+  }, []);
+
+  // C-3. ESC 키 처리 → 마지막 열린 모달만 닫기
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => {
+      if (e.key === "Escape" && openModals.length) {
+        close(openModals[openModals.length - 1]);
+      }
+    };
+    window.addEventListener("keydown", handler);
+    return () => window.removeEventListener("keydown", handler);
+  }, [openModals, close]);
+
+  // C-4. body 스크롤 잠금 처리
+  useEffect(() => {
+    document.body.style.overflow = openModals.length ? "hidden" : "";
+  }, [openModals]);
+
+  // C-5. 공통 백드롭 (가장 밑에 렌더링)
+  const backdrop = openModals.length > 0 && createPortal(
+    <div
+      className="fixed inset-0 bg-black/70"
+      style={{ zIndex: 1000 }}
+      onClick={() => close(openModals[openModals.length - 1])}
+    />,
+    document.body
+  );
+
+  const value = useMemo(
+    () => ({ openModals, open, close }),
+    [openModals, open, close]
+  );
+
+  return (
+    <ModalContext.Provider value={value}>
+      {children}
+      {backdrop}
+    </ModalContext.Provider>
+  );
+}
+```
+
+- `useMemo`로 value 객체 재생성을 최소화
+
+- `백드롭`은 가장 먼저 렌더링되어, zIndex 1000 이하 모달 뒤에 깔림
+
+## D.useModal hook
+
+```tsx:hooks/useModal.ts
+import { useContext } from "react";
+import { ModalContext } from "@/components/providers/ModalProvider";
+
+export function useModal(id: string) {
+  const ctx = useContext(ModalContext);
+  if (!ctx) {
+    throw new Error("useModal must be used within a ModalProvider");
+  }
+  const { openModals, open, close } = ctx;
+
+  // D-1. isOpen: 해당 ID가 열린 상태인지
+  const isOpen = openModals.includes(id);
+
+  // D-2. index: 스택에서의 순서 인덱스
+  const index = openModals.indexOf(id);
+
+  // D-3. zIndex: 순서별로 겹침 우선순위 설정
+  const zIndex = 1000 + (index + 1) * 10;
+
+  return {
+    isOpen,
+    open: () => open(id),    // D-4. 모달 열기 트리거
+    close: () => close(id),  // D-5. 모달 닫기 트리거
+    zIndex,
+  };
+}
+```
+
+- zIndex 계산: 첫 모달은 1010, 두 번째는 1020… 이렇게 자동 부여
+
+- isOpen: 컴포넌트가 렌더링될지 판단
+
+## E. CustomModal 컴포넌트
+
+```tsx:components/ui/CustomModal.tsx
+import { createPortal } from "react-dom";
+import { useModal } from "@/hooks/useModal";
+import XIcon from "../icons/x-icon";
+import { cn } from "@/utils/utils";
+
+export default function CustomModal({
+  id,
+  closeBtnStyle,
+  children,
+}: {
+  id: string;
+  closeBtnStyle?: string;
+  children: React.ReactNode;
+}) {
+  const { isOpen, close, zIndex } = useModal(id);
+  if (!isOpen) return null;  // E-1. 닫힌 모달은 렌더링 안 함
+
+  return createPortal(
+    <div
+      className="fixed inset-0 flex items-center justify-center"
+      style={{ zIndex }}
+      onClick={close}         // E-2. 백드롭 클릭으로 닫기
+    >
+      <div
+        className="relative bg-white rounded-lg"
+        onClick={e => e.stopPropagation()} // E-3. 내부 클릭 버블 방지
+      >
+        <button className="absolute top-4 right-4" onClick={close}>
+          <XIcon className={cn("size-5 cursor-pointer", closeBtnStyle)} />
+        </button>
+        {children}            // E-4. 모달 콘텐츠
+      </div>
+    </div>,
+    document.body           // E-5. body에 직접 포탈
+  );
+}
+```
+
+- `Early return`: isOpen === false면 null 반환
+
+- `백드롭 영역(onClick={close})`과 `내부 영역(stopPropagation)` 구분
+
+- `createPortal`으로 DOM 트리 최상단에 삽입
+
+## F. createPortal 깊이 이해
+
+```text
+- 문법: createPortal(children, container)
+
+Q: 왜 쓰는가?
+
+A: 부모 컴포넌트의 CSS 규칙(overflow, z-index 등)에 영향받지 않고 최상위 레이어 제어가 가능해짐
+
+사용 예: 모달, 툴팁, 드롭다운, 알림 배너 등
+```
+
+## G. 활용 팁
+
+- 확장성: useModal로 다른 훅이나 컴포넌트에서도 쉽게 재사용 가능
+
+- UX: ESC 닫기, 백드롭 클릭, 스크롤 잠금으로 일관된 경험 제공
