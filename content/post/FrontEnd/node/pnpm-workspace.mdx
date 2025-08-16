@@ -1,0 +1,204 @@
+---
+title: "PNPM Workspace Monorepo 설정 가이드"
+tags:
+  - pnpm
+  - monorepo
+  - typescript
+  - nextjs
+
+description: "PNPM workspace를 활용한 Monorepo 구조에서 Next.js 앱라우트 프로젝트, 디자인 시스템을 설정하는 방법을 정리한 가이드"
+date: 2025-08-16
+---
+
+# pnpm workspace 설치 과정
+
+```bash
+$ mkdir click-front-monorepo
+$ cd .\click-front-monorepo
+$ pnpm init
+$ pnpm add -D -w typescript @types/node eslint @typescript-eslint/parser @typescript-eslint/eslint-plugin eslint-config-next eslint-plugin-react eslint-plugin-react-hooks eslint-plugin-import prettier eslint-config-prettier eslint-plugin-prettier
+```
+
+1. 루트에 설정
+
+- package.json 변경하기
+
+```jsonc:package.json
+{
+  "name": "click-front-monorepo", // 이름 지정
+  "version": "1.0.0",
+  "packageManager": "pnpm@10.3.0", // pnpm version 설정
+  "description": "",
+  "workspaces": [ // 여러 개의 패키지(앱/라이브러리)를 한꺼번에 관리하고 연결(link)
+    "apps/*","packages/*"
+  ],
+  "private": "true",
+  "scripts": { // main 지우고, scripts 알맞게 설정
+    "app1": "pnpm --filter app1", // --filter 옵션을 매번 작성하기 귀찮으니 생성
+    "app2": "pnpm --filter app2",
+    "design": "pnpm --filter design-system"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/node": "^24.0.14",
+    "@typescript-eslint/eslint-plugin": "^8.37.0",
+    "@typescript-eslint/parser": "^8.37.0",
+    "eslint": "^9.31.0",
+    "eslint-config-next": "^15.4.1",
+    "eslint-config-prettier": "^10.1.5",
+    "eslint-plugin-import": "^2.32.0",
+    "eslint-plugin-prettier": "^5.5.1",
+    "eslint-plugin-react": "^7.37.5",
+    "eslint-plugin-react-hooks": "^5.2.0",
+    "prettier": "^3.6.2",
+    "typescript": "^5.8.3"
+  }
+}
+```
+
+- pnpm-workspace.yaml 만들고 설정하기
+
+어떤 디렉토리들을 workspace에 포함시킬지를 설정
+
+```yaml:pnpm-workspace.yaml
+packages:
+  - 'apps/*'
+  - 'packages/*'
+```
+
+.gitignore, prrier.config.js 등 작성
+
+2. 사용자 프로젝트 설정
+
+- 설치
+
+```bash
+$ pnpm create next-app apps/app1
+$ pnpm create next-app apps/app2
+$ pnpm create vite packages/design-system --template react-ts
+```
+
+- package 설정
+
+```json:apps/app1/package.json
+{
+  "name": "@services/app1",
+  "private": true,
+  "packageManager": "pnpm@10.3.0",
+  // exports를 간결하게 최적화 하고 싶은 경우 사용
+  "exports": {
+    "./components": "./src/components/index.tsx"
+  }
+}
+```
+
+```tsx:packages/design-system/src/components/index.tsx
+export { default as TestButton } from "./ui/button";
+export { default as TestBadge } from "./ui/badge";
+```
+
+각 프로젝트에서 해당 패키지들에 접근하려면 `pnpm --filter app1` 이런식으로 `--filter` 또는 `-F` 옵션을 넣어서 실행해야하며,
+
+루트 프로젝트를 접근하려면 `pnpm -w ...`으로 `-w` 옵션을 넣어서 실행해야합니다.
+
+`eslint.config.mjs`를 루트에 생성, 각 패키지에 있는 파일 제거
+
+- 루트에서 `pnpm [사용자 프로젝트명] add [커스텀 패키지명] --workspace`명령어를 사용하여 의존성을 추가
+
+- `pnpm app1 add @workspace/design-system --workspace`
+
+```jsonc:app/app1/package.json
+// pnpm app1 add @workspace/design-system --workspace하면 아래의 의존성이 주입됩니다.
+"dependencies": {
+    "@workspace/design-system": "workspace:^"
+}
+```
+
+3. Import Alias 설정
+
+```jsonc:tsconfig.json
+{
+  "compilerOptions": {
+    //...
+    "baseUrl": ".",
+    "paths": {
+      "@workspace/design-system/*": ["packages/design-system/src"]
+    }
+  },
+  "include": ["**/*.ts", "**/*.tsx"],
+  "exclude": ["node_modules"]
+}
+```
+
+```json:apps/app1/package.json
+{
+  // exports를 간결하게 최적화 하고 싶은 경우 사용
+  "exports": {
+    "./components": "./src/components/index.tsx"
+  }
+}
+```
+
+4. vite에 tailwind 설치
+
+- `pnpm install --filter design-system tailwindcss @tailwindcss/vite`
+
+```ts:vite.config.ts
+import tailwindcss from "@tailwindcss/vite";
+import react from "@vitejs/plugin-react-swc";
+import { defineConfig } from "vite";
+
+// https://vite.dev/config/
+export default defineConfig({
+  plugins: [react(), tailwindcss()],
+});
+```
+
+- `package/design-system/tailwind.config.js`를 생성(tailwind prettier를 사용하려면 ts가 아닌 js사용)
+
+```css:pacakge/design-system/src/App.css
+@import "tailwindcss";
+@config "../tailwind.config.js";
+```
+
+```jsonc:app/app1/tsconfig.json
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "plugins": [
+      {
+        "name": "next"
+      }
+    ],
+    "paths": {
+      "@/*": ["./src/*"]
+    }
+  },
+  "include": [
+    "next-env.d.ts",
+    "**/*.ts",
+    "**/*.tsx",
+    ".next/types/**/*.ts",
+    "../../packages/design-system/tailwind.config.js"
+  ],
+  "exclude": ["node_modules"]
+}
+```
+
+```css:app/app1/src/app/globals.css
+@import "tailwindcss";
+@config "../../../../packages/design-system/tailwind.config.js";
+```
+
+- prettier에 tailwindcss도 적용
+- `pnpm install -D prettier-plugin-tailwindcss -w`
+
+```js:preiier.config.js
+{
+  //...
+  plugins: ["prettier-plugin-tailwindcss"],
+  tailwindConfig: "./packages/design-system/tailwind.config.js",
+};
+```
